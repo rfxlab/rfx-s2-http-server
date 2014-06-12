@@ -59,37 +59,8 @@ public class HttpLogChannelHandler extends SimpleChannelInboundHandler<Object> {
 
 		String description;
 	}
-	
-	static abstract class HttpEventProcessor {
-		String ipAddress;
-		String uri;
-		ChannelHandlerContext ctx;
-		HttpRequest request;
-		FullHttpResponse response;
-				
-		public HttpEventProcessor init(String ipAddress, String uri, ChannelHandlerContext ctx, HttpRequest request){
-			this.ipAddress = ipAddress;
-			this.uri = uri;
-			this.ctx = ctx;
-			this.request = request;
-			return this;
-		}
-		public FullHttpResponse process(){
-			if(ctx == null ){
-				throw new IllegalArgumentException("init must be called before process");
-			}
-			//System.out.println("IP:"+ipAddress);
-			String rs = handler();
-			if(rs != null){
-				return NettyHttpUtil.theHttpContent(rs);
-			} else {
-				return NettyHttpUtil.theHttpContent(StringPool.BLANK);
-			}
-		}
-		protected abstract String handler();		
-	}
-	
-	static class TestHttpEventProcessor extends HttpEventProcessor {			
+		
+	static class TestHttpEventProcessor extends HttpProcessor {			
 		@Override
 		public String handler() {	
 			StringWriter stringWriter = new StringWriter();
@@ -106,7 +77,7 @@ public class HttpLogChannelHandler extends SimpleChannelInboundHandler<Object> {
 	
 	static final MustacheFactory mf = new DefaultMustacheFactory();
 	static final Mustache mustache = mf.compile("resources/tpl/template.mustache");
-	static final Map<String, HttpEventProcessor> handlers = new HashMap<>();
+	static final Map<String, HttpProcessor> handlers = new HashMap<>();
 	static {
 		handlers.put("/ad-delivery", new TestHttpEventProcessor());
 	}
@@ -114,8 +85,7 @@ public class HttpLogChannelHandler extends SimpleChannelInboundHandler<Object> {
 	public HttpLogChannelHandler(){}	
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
-    	
+    protected void channelRead0(ChannelHandlerContext ctx, Object msg) {    	
         if (msg instanceof HttpRequest) {        	
         	HttpRequest request = (HttpRequest) msg;
         	//TODO filter DDOS/bad/attacking requests 
@@ -158,25 +128,8 @@ public class HttpLogChannelHandler extends SimpleChannelInboundHandler<Object> {
             	NettyHttpUtil.returnImage1pxGifResponse(ctx);
             }
         }
-    }
-    
-    void returnResponseByUri(ChannelHandlerContext ctx, FullHttpResponse response) {
-        // Decide whether to close the connection or not.                   
-       
-    	//HttpHeaders requestHeaders = request.headers();
-    	 
-    	//HttpHeaders responseHeaders = response.headers();
-
-        // Write the response.
-    	ChannelFuture future = ctx.write(response);
-        ctx.flush();
-		 
-		//Close the non-keep-alive connection after the write operation is done.
-		future.addListener(ChannelFutureListener.CLOSE);	       
-    }
-
-  
-
+    }    
+   
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
     	ctx.flush();
@@ -195,5 +148,4 @@ public class HttpLogChannelHandler extends SimpleChannelInboundHandler<Object> {
 		ctx.flush();
         ctx.close();   
 	}
-
 }
