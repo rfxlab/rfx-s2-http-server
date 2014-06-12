@@ -18,7 +18,7 @@ import rfx.server.util.FileUtils;
 import rfx.server.util.StringPool;
 
 public class StaticFileHandler {
-	static final String staticCrossdomainFile = "./static/crossdomain.xml";	
+	static final String staticCrossdomainFile = "./resources/static/crossdomain.xml";	
 	static final String HTTP_HEADER_CACHE = "must_revalidate, private, max-age=";
 	static final String HEADER_CONNECTION_CLOSE = "Close";
 		

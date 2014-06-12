@@ -74,27 +74,33 @@ public class HttpLogChannelHandler extends SimpleChannelInboundHandler<Object> {
 			this.request = request;
 			return this;
 		}
-		public abstract FullHttpResponse process();		
+		public FullHttpResponse process(){
+			if(ctx == null ){
+				throw new IllegalArgumentException("init must be called before process");
+			}
+			//System.out.println("IP:"+ipAddress);
+			String rs = handler();
+			if(rs != null){
+				return NettyHttpUtil.theHttpContent(rs);
+			} else {
+				return NettyHttpUtil.theHttpContent(StringPool.BLANK);
+			}
+		}
+		protected abstract String handler();		
 	}
 	
 	static class TestHttpEventProcessor extends HttpEventProcessor {			
 		@Override
-		public FullHttpResponse process() {
-			if(request == null){
-				throw new IllegalArgumentException("init must be called before process");
-			}
+		public String handler() {	
 			StringWriter stringWriter = new StringWriter();
 			try {
 				mustache.execute(stringWriter, new Model()).flush();
+				stringWriter.flush();
+				stringWriter.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-			};
-			stringWriter.flush();
-			FullHttpResponse response = NettyHttpUtil.theHttpContent(stringWriter.toString());
-			try {
-				stringWriter.close();
-			} catch (IOException e) {}
-			return response;
+			};	
+			return stringWriter.toString();
 		}
 	}
 	
