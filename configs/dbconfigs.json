@@ -1,0 +1,13 @@
+{
+	map : {				
+		dbMySqlLookupLocationConfigs : {			
+			username : "trieunt"
+			,password : "trieunt@123"
+			,database : "test"
+			,host : "127.0.0.1"
+			,port : 3306			
+			,dbdriver : "mysql"
+			,dbdriverclasspath : "com.mysql.jdbc.Driver"
+		}
+	}
+}
