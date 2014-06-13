@@ -9,6 +9,7 @@ import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.codec.http.QueryStringDecoder;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
@@ -18,9 +19,7 @@ import java.util.Set;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.reflections.Reflections;
 
-import rfx.server.http.common.AccessLogUtil;
 import rfx.server.http.common.NettyHttpUtil;
-import rfx.server.util.LogUtil;
 
 
 
@@ -71,24 +70,31 @@ public class RountingHttpProcessorHandler extends SimpleChannelInboundHandler<Ob
     		if (uri.equalsIgnoreCase(NettyHttpUtil.FAVICON_URI)) {
     			NettyHttpUtil.returnImage1pxGifResponse(ctx);
     		} else {
-    			FullHttpResponse response = null;    			
-				try {
-					AccessLogUtil.logAccess(request, ipAddress, uri);
-					response = UriMapper.buildHttpResponse(ipAddress,ctx,request , uri);
-				} catch (Exception e) {
-					e.printStackTrace();
-					LogUtil.error("HttpLogChannelHandler", e.getMessage());
-				}
+    			FullHttpResponse response = null;
+    			//TODO access log
+//				try {
+//					AccessLogUtil.logAccess(request, ipAddress, uri);
+//					response = UriMapper.buildHttpResponse(ipAddress,ctx,request , uri);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					LogUtil.error("HttpLogChannelHandler", e.getMessage());
+//				}
 				if(response == null){
-					HttpProcessor httpProcessor = handlers.get(uri);
+					QueryStringDecoder queryDecoder = new QueryStringDecoder(uri);
+//					System.out.println(queryDecoder.path());
+//					System.out.println(queryDecoder.parameters());
+					
+					HttpProcessor httpProcessor = handlers.get(queryDecoder.path());
 					if(httpProcessor != null){
 						try {
-							response = httpProcessor.init(ipAddress, uri, ctx, request).doProcessing();
+							response = httpProcessor.init(ipAddress, uri, queryDecoder.parameters(), ctx, request).doProcessing();
 						} catch (Exception e) {
 							StringBuilder s = new StringBuilder("Error###");
 							s.append(e.getMessage());
 							s.append(" ### <br>\n StackTrace: ").append(ExceptionUtils.getStackTrace(e));							
 							response = NettyHttpUtil.theHttpContent( s.toString() );	
+						} finally {
+							httpProcessor.clear();
 						}
 					} else {
 						String s = "Not found HttpProcessor for URI: "+uri;
