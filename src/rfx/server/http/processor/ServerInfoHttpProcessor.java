@@ -1,9 +1,5 @@
 package rfx.server.http.processor;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.REFERER;
-import static io.netty.handler.codec.http.HttpHeaders.Names.USER_AGENT;
-import io.netty.handler.codec.http.HttpHeaders;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -18,12 +14,12 @@ import rfx.server.util.StringPool;
 public class ServerInfoHttpProcessor extends HttpProcessor {
 
 	@Override
-	protected String handler() {
-		HttpHeaders headers = request.headers();
-		String referer = headers.get(REFERER);
-		String userAgent = headers.get(USER_AGENT);
-		System.out.println("referer: "+referer);
-		System.out.println("userAgent: "+userAgent);
+	protected String process() {
+//		HttpHeaders headers = request.headers();
+//		String referer = headers.get(REFERER);
+//		String userAgent = headers.get(USER_AGENT);
+//		System.out.println("referer: "+referer);
+//		System.out.println("userAgent: "+userAgent);
 		System.out.println("filter: "+param("filter"));
 		
 		return render(new ServerInfoModel());

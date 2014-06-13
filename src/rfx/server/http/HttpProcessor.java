@@ -30,7 +30,7 @@ public abstract class HttpProcessor {
 	private String templatePath;
 	
 
-	public HttpProcessor init(String ipAddress, String path, Map<String, List<String>> params, ChannelHandlerContext ctx, HttpRequest request) {
+	public HttpProcessor injectContext(String ipAddress, String path, Map<String, List<String>> params, ChannelHandlerContext ctx, HttpRequest request) {
 		this.ipAddress = ipAddress;
 		this.path = path;
 		this.params = params;
@@ -49,8 +49,9 @@ public abstract class HttpProcessor {
 			throw new IllegalArgumentException(ErrorMessagePool.INIT_BEFORE_PROCESS);
 		}
 		// System.out.println("IP:"+ipAddress);
-		String rs = handler();
+		String rs = process();
 //		System.out.println(rs);
+		this.clear();
 		if (rs != null) {
 			return NettyHttpUtil.theHttpContent(rs, contentType);
 		} else {
@@ -59,7 +60,7 @@ public abstract class HttpProcessor {
 	}
 
 	///////////// for the implementation class /////////////
-	protected abstract String handler();	
+	protected abstract String process();	
 	protected String render(Object model) {
 		return MustacheUtil.execute(templatePath, model);
 	}	
@@ -103,9 +104,11 @@ public abstract class HttpProcessor {
 	}
 	
 	public void clear(){
-		this.request = null;
 		this.params.clear();
+		this.request = null;		
 		this.path = null;
+		this.ctx = null;		
+		this.ipAddress = null;
 	}
 
 }

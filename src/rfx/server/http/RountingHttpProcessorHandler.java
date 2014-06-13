@@ -64,7 +64,7 @@ public class RountingHttpProcessorHandler extends SimpleChannelInboundHandler<Ob
         	//TODO filter DDOS/bad/attacking requests 
         	        	
         	String uri = request.getUri();
-        	String ipAddress = NettyHttpUtil.getRequestIP(ctx, request);
+        	String ip = NettyHttpUtil.getRequestIP(ctx, request);
         	
         	//System.out.println("===> uri: " + uri);
     		if (uri.equalsIgnoreCase(NettyHttpUtil.FAVICON_URI)) {
@@ -80,21 +80,21 @@ public class RountingHttpProcessorHandler extends SimpleChannelInboundHandler<Ob
 //					LogUtil.error("HttpLogChannelHandler", e.getMessage());
 //				}
 				if(response == null){
-					QueryStringDecoder queryDecoder = new QueryStringDecoder(uri);
+					QueryStringDecoder qDecoder = new QueryStringDecoder(uri);
 //					System.out.println(queryDecoder.path());
 //					System.out.println(queryDecoder.parameters());
 					
-					HttpProcessor httpProcessor = handlers.get(queryDecoder.path());
+					HttpProcessor httpProcessor = handlers.get(qDecoder.path());
 					if(httpProcessor != null){
 						try {
-							response = httpProcessor.init(ipAddress, uri, queryDecoder.parameters(), ctx, request).doProcessing();
+							response = httpProcessor.injectContext(ip, uri, qDecoder.parameters(), ctx, request).doProcessing();
 						} catch (Exception e) {
 							StringBuilder s = new StringBuilder("Error###");
 							s.append(e.getMessage());
 							s.append(" ### <br>\n StackTrace: ").append(ExceptionUtils.getStackTrace(e));							
 							response = NettyHttpUtil.theHttpContent( s.toString() );	
 						} finally {
-							httpProcessor.clear();
+							//httpProcessor.clear();
 						}
 					} else {
 						String s = "Not found HttpProcessor for URI: "+uri;

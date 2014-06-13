@@ -24,10 +24,10 @@ public class StressTestHttpServer {
 
 	
 	@Test
-	@PerfTest(invocations = 10000, threads = 200)
+	@PerfTest(invocations = 100000, threads = 500)
 	@Required(max = 4000, average = 400)
 	public void test() throws Exception {
-		String url = "http://localhost:9090/server-info";
+		String url = "http://localhost:9090/server-info?filter=all";
 		String rs = HttpClientUtil.executeGet(url);
 
 		if (rs.contains("Time:")) {
@@ -39,12 +39,13 @@ public class StressTestHttpServer {
 			throw new IllegalArgumentException("Bad response!");
 		}
 		
-//		Throughput:	3,114 / s	
+//		Throughput:	3,835 / s	
 //		Min. latency:	0 ms	
-//		Average latency:	190 ms	1,000 ms
-//		Median:	172 ms	
-//		90%:	366 ms	
-//		Max latency:	5,288 ms	6,000 ms
+//		Average latency:	128 ms	400 ms
+//		Median:	80 ms	
+//		90%:	286 ms	
+//		Max latency:	2,516 ms	4,000 ms
+
 
 
 	}
