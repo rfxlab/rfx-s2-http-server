@@ -1,7 +1,7 @@
 package rfx.server.http.common;
 
 
-import rfx.server.http.HttpLogChannelHandler;
+import rfx.server.http.RountingHttpProcessorHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -12,20 +12,20 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 public class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
 	
 	
-	public static final int HTTP_KAFKA_LOG = 2;
+	public static final int HTTP_SERVER_MODE = 2;
 		
-	private int logType = 0;
+	private int mode = 0;
 	ChannelHandler getLogChannelHandler(){
-		if(logType == HTTP_KAFKA_LOG){
-			return new HttpLogChannelHandler();
+		if(mode == HTTP_SERVER_MODE){			
+			return new RountingHttpProcessorHandler();
 		} else {
 			throw new IllegalArgumentException("");
 		}
 	}	
 
-	public HttpServerInitializer(int logType) {
+	public HttpServerInitializer(int mode) {
 		super();
-		this.logType = logType;
+		this.mode = mode;
 	}
 
 	@Override

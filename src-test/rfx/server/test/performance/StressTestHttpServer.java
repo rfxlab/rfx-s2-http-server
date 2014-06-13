@@ -24,14 +24,14 @@ public class StressTestHttpServer {
 
 	
 	@Test
-	@PerfTest(invocations = 20000, threads = 600)
-	@Required(max = 3000, average = 400)
-	public void test20000() throws Exception {
-		String url = "http://localhost:9090/ad-delivery";
+	@PerfTest(invocations = 10000, threads = 200)
+	@Required(max = 4000, average = 400)
+	public void test() throws Exception {
+		String url = "http://localhost:9090/server-info";
 		String rs = HttpClientUtil.executeGet(url);
 
-		if (rs.contains("text")) {
-//			System.out.println("ok");
+		if (rs.contains("Time:")) {
+			//System.out.println(rs+" \n");
 			validCount.incrementAndGet();
 		} else {
 			System.out.println(rs);

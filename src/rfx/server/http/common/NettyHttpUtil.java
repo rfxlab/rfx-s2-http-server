@@ -108,6 +108,24 @@ public class NettyHttpUtil {
 		response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
 		return response;
 	}
+	
+	public static FullHttpResponse theHttpContent(String str, String contentType) {
+		ByteBuf byteBuf = Unpooled.copiedBuffer(str.getBytes());
+		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.OK ,byteBuf);
+		response.headers().set(CONTENT_TYPE, contentType);
+		response.headers().set(CONTENT_LENGTH, byteBuf.readableBytes());
+		response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
+		return response;
+	}
+	
+	public static FullHttpResponse theHttpContent(String str, HttpResponseStatus status) {
+		ByteBuf byteBuf = Unpooled.copiedBuffer(str.getBytes());
+		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status ,byteBuf);
+		response.headers().set(CONTENT_TYPE, StringPool.MIME_TYPE_UTF8_TEXT);
+		response.headers().set(CONTENT_LENGTH, byteBuf.readableBytes());
+		response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
+		return response;
+	}
 
 	public static String getParamValue(String name, Map<String, List<String>> params) {
 		return getParamValue(name, params, StringPool.BLANK);

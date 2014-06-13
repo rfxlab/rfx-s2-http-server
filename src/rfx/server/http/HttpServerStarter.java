@@ -46,7 +46,8 @@ public class HttpServerStarter {
             } else {
             	b.childOption(ChannelOption.TCP_NODELAY, false)
                 .childOption(ChannelOption.SO_KEEPALIVE, false)
-                .childHandler(new HttpServerInitializer(HttpServerInitializer.HTTP_KAFKA_LOG));
+                .childHandler(new HttpServerInitializer(HttpServerInitializer.HTTP_SERVER_MODE));
+            	RountingHttpProcessorHandler.initHandlers();
             }
 
             Channel ch = b.bind(ip,port).sync().channel();  
@@ -85,7 +86,7 @@ public class HttpServerStarter {
         if(websocket){
         	System.out.println(" #############  WebsocketEnabled Mode  #############");
         } else {
-        	System.out.println(" #############  Http Log Kafka Enabled Mode  #############");
+        	System.out.println(" #############  Http Enabled Mode  #############");
         }
         //MemoryManagementUtil.startMemoryUsageTask();
         new HttpServerStarter(ip,port).run(websocket);        
