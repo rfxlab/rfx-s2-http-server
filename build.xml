@@ -6,7 +6,13 @@
 	<loadproperties srcFile="build.properties"/>
 	
 	<!-- set global properties for this build -->	
-	<property name="dist" location="deploy" />
+	<property name="dist" location="" />	
+	<property name="src" location="src" />
+	<property name="build" location="build" />		
+	<property name="lib" location="lib" />
+	<property name="configs" location="configs" />
+	<property name="static" location="static" />
+	<property name="script" location="script" />
 
 	<property name="class_path_for_server" value=" . ;
 		lib/aopalliance.jar ; 
@@ -14,6 +20,7 @@
 		lib/commons-codec-1.6.jar ; 
 		lib/commons-dbcp-1.4.jar ; 
 		lib/commons-io-1.4.jar ; 
+		lib/commons-lang3-3.3.2.jar ; 
 		lib/commons-logging-1.1.3.jar ; 
 		lib/commons-net-3.2.jar ; 
 		lib/commons-pool2-2.2.jar ; 
@@ -27,6 +34,7 @@
 		lib/httpclient-cache-4.3.3.jar ; 
 		lib/httpcore-4.3.2.jar ; 
 		lib/httpmime-4.3.3.jar ; 
+		lib/javassist-3.12.1.GA.jar ; 
 		lib/javax.inject.jar ; 
 		lib/je-5.0.84.jar ; 
 		lib/jedis-2.5.1.jar ; 
@@ -48,33 +56,10 @@
 		lib/snappy-java-1.0.5.jar ; 
 		lib/spymemcached-2.11.3.jar ; 
 		lib/zkclient-0.3.jar ; 
-		lib/zookeeper-3.3.4.jar ;    
+		lib/zookeeper-3.3.4.jar ;  
 	" />
 	
-	<property name="class_path_for_groovy_script" value=" . ;			
-			libs/gson-2.2.4.jar ; 
-			lib/log4j-1.2.17.jar ; 
-			lib/slf4j-api-1.7.7.jar ; 
-			lib/slf4j-simple-1.7.7.jar ; 	
-			lib/commons-codec-1.6.jar ; 
-			lib/commons-dbcp-1.4.jar ; 
-			lib/commons-io-1.4.jar ; 
-			lib/commons-logging-1.1.3.jar ; 
-			lib/commons-net-3.2.jar ; 
-			lib/commons-pool2-2.2.jar ;
-			lib/groovy-all-2.3.3-indy.jar ; 
-			lib/mysql-connector-java-5.1.31-bin.jar ; 
-			lib/jedis-2.5.1.jar ;
-			" />
 
-	<!-- set global properties for this build -->
-
-	<property name="src" location="src" />
-	<property name="build" location="build" />		
-	<property name="lib" location="lib" />
-	<property name="configs" location="configs" />
-	<property name="static" location="static" />
-	<property name="script" location="script" />
 
 	<target name="init">
 		<!-- Create the time stamp -->
@@ -89,8 +74,8 @@
 
 	<target name="compile" depends="init" description="compile the source ">
 		<!-- Compile the java code from ${src} into ${build} -->
-		<javac srcdir="${src}" destdir="${build}" classpathref="jars" debug="on" encoding="utf-8" optimize="on" target="1.7"
-			 fork="yes"	executable="${javac_path}" compiler="javac1.7" />
+		<javac srcdir="${src}" destdir="${build}" classpathref="jars" debug="on" encoding="utf-8" optimize="on" target="1.8"
+			 fork="yes"	executable="${javac_path}" compiler="javac1.8" />
 		<fileset dir="bin">
 			<exclude name="**/.svn/*" />
 			<exclude name="**/tests/*" />
@@ -106,6 +91,7 @@
 
 	
 	<target name="http-server" depends="compile" description="http-log-server BUILD">
+		<!--
 		<copy todir="${dist}/lib">
 			<fileset dir="${lib}" includes="**" excludes="**/.svn/*" />
 		</copy>
@@ -124,6 +110,7 @@
 				<exclude name="**/src/" />
 			</fileset>
 		</copy>
+		-->
 		
 		<!-- http server jar -->
 		<delete file="${dist}/http-server.jar" />
@@ -141,82 +128,5 @@
 		<delete dir="${build}" />
 	</target>
 	
-	<target name="groovy-script-runner" depends="compile" description="groovy-script-runner BUILD">
-			<copy todir="${dist}/lib">
-				<fileset dir="${lib}" includes="**" excludes="**/.svn/*" />
-			</copy>
-		
-			<copy todir="${dist}/script">
-				<fileset dir="${script}" includes="**.groovy">
-					<exclude name="**/.svn/*" />
-					<exclude name="**/src/" />
-				</fileset>
-			</copy>
-			
-			<!-- groovy script eval engine -->
-			<delete file="${dist}/groovy-script-runner.jar" />
-			<jar jarfile="${dist}/groovy-script-runner.jar" basedir="${build}" filesetmanifest="mergewithoutmain">
-				<manifest>
-					<attribute name="Main-Class" value="rfx.server.util.EvalGroovyScript" />
-					<attribute name="Class-Path" value="${class_path_for_groovy_script}" />
-				</manifest>
-				<fileset dir="${build}">
-					<exclude name="**/.svn/*" />
-					<exclude name="**/tests/*" />
-				</fileset>
-			</jar>
-			
-			<delete dir="${build}" />
-		</target>
-
-	<target name="dist-s2-http-log-server" depends="compile" description="generate the binary distribution">
-		<copy todir="${dist}/lib">
-			<fileset dir="${lib}" includes="**" excludes="**/.svn/*" />
-		</copy>
-		<copy todir="${dist}/configs">
-			<fileset dir="${configs}" includes="**" excludes="**/.svn/*" />
-		</copy>
-		<copy todir="${dist}/static">
-			<fileset dir="${static}" includes="**">
-				<exclude name="**/.svn/*" />
-				<exclude name="**/src/" />
-			</fileset>
-		</copy>
-		<copy todir="${dist}/script">
-			<fileset dir="${script}" includes="**.groovy">
-				<exclude name="**/.svn/*" />
-				<exclude name="**/src/" />
-			</fileset>
-		</copy>
-	
-		
-		<!-- http server jar -->
-		<delete file="${dist}/http-server.jar" />
-		<jar jarfile="${dist}/http-server.jar" basedir="${build}" filesetmanifest="mergewithoutmain">
-			<manifest>
-				<attribute name="Main-Class" value="rfx.server.http.HttpServerStarter" />
-				<attribute name="Class-Path" value="${class_path_for_server}" />
-			</manifest>
-			<fileset dir="${build}">
-				<exclude name="**/.svn/*" />
-				<exclude name="**/tests/*" />
-			</fileset>
-		</jar>
-		
-		<!-- groovy script eval engine -->
-		<delete file="${dist}/groovy-script-runner.jar" />
-		<jar jarfile="${dist}/groovy-script-runner.jar" basedir="${build}" filesetmanifest="mergewithoutmain">
-			<manifest>
-				<attribute name="Main-Class" value="rfx.server.util.EvalGroovyScript" />
-				<attribute name="Class-Path" value="${class_path_for_server}" />
-			</manifest>
-			<fileset dir="${build}">
-				<exclude name="**/.svn/*" />
-				<exclude name="**/tests/*" />
-			</fileset>
-		</jar>
-		
-		<delete dir="${build}" />
-	</target>
 
 </project>

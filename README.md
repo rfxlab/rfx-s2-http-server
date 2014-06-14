@@ -1,23 +1,24 @@
-netty-s2-http-server
+rfx-s2-http-server
 ====================
 
-Small and Scalable HTTP Server for real-time big data processing
+Reactive Small and Scalable HTTP Server for real-time big data processing
 
 RUN:
 
-    You need java 1.5 or later installed and 
+    You need java 1.8 or later installed and 
     added to the path and JAVA_HOME set to run 
     the server.
 
     >run.sh OR
-    >run.bat
+    >run.bat OR
+    >/usr/lib/jvm/jdk1.8.0/bin/java -jar -Xms256M -Xmx1048M  -server  -XX:+UseCompressedOops -X+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSScavengeBeforeRemark -XX:+DisableExplicitGC -Djava.awt.headless=true http-server.jar
     
     ##IMPORTANT##
 
 
 BUILD AND TEST OR DOCUMENT:
 
-    You need ant 1.7.0 installed and added 
+    You need ant 1.8.0 installed and added 
     to the path and ANT_HOME set to build the 
     server.
 
@@ -29,4 +30,5 @@ VERSION:
     0.1 - Alpha
 
         
-have fun!
+Have fun! Trieu
+This project is implemented by https://twitter.com/tantrieuf31
