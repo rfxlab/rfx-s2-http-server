@@ -24,7 +24,7 @@ public class StressTestHttpServer {
 
 	
 	@Test
-	@PerfTest(invocations = 100000, threads = 1000)
+	@PerfTest(invocations = 10000, threads = 200)
 	@Required(max = 8000, average = 500)
 	public void test() throws Exception {
 		String url = "http://localhost:9090/server-info?filter=all";
