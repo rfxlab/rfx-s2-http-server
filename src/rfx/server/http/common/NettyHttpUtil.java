@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import rfx.server.configs.ContentTypePool;
 import rfx.server.configs.LogFilterConfigs;
 import rfx.server.log.handlers.StaticFileHandler;
 import rfx.server.util.CharPool;
@@ -93,7 +94,7 @@ public class NettyHttpUtil {
 		ByteBuf byteBuf = Unpooled.copiedBuffer(html.getBytes());		
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1,HttpResponseStatus.OK, byteBuf);		
 		response.headers().set(HEADER_LOCATION_NAME, url);
-		response.headers().set(CONTENT_TYPE, StringPool.MIME_TYPE_UTF8_HTML);
+		response.headers().set(CONTENT_TYPE, ContentTypePool.HTML_UTF8);
 		response.headers().set(CONTENT_LENGTH, byteBuf.readableBytes());
 		response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
 		return response;
@@ -103,7 +104,7 @@ public class NettyHttpUtil {
 	public static FullHttpResponse theHttpContent(String str) {
 		ByteBuf byteBuf = Unpooled.copiedBuffer(str.getBytes());
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.OK ,byteBuf);
-		response.headers().set(CONTENT_TYPE, StringPool.MIME_TYPE_UTF8_TEXT);
+		response.headers().set(CONTENT_TYPE, ContentTypePool.TEXT_UTF8);
 		response.headers().set(CONTENT_LENGTH, byteBuf.readableBytes());
 		response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
 		return response;
@@ -121,7 +122,7 @@ public class NettyHttpUtil {
 	public static FullHttpResponse theHttpContent(String str, HttpResponseStatus status) {
 		ByteBuf byteBuf = Unpooled.copiedBuffer(str.getBytes());
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status ,byteBuf);
-		response.headers().set(CONTENT_TYPE, StringPool.MIME_TYPE_UTF8_TEXT);
+		response.headers().set(CONTENT_TYPE, ContentTypePool.TEXT_UTF8);
 		response.headers().set(CONTENT_LENGTH, byteBuf.readableBytes());
 		response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
 		return response;

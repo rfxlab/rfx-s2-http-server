@@ -123,12 +123,7 @@ public final class StringPool {
     
     public static final String BASE64_GIF_BLANK = "R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
     
-    public static final String MIME_TYPE_GIF = "image/gif";
-    public static final String MIME_TYPE_JS = "application/javascript";
-    public static final String MIME_TYPE_UTF8_TEXT = "text/plain; charset=UTF-8";
-    public static final String MIME_TYPE_UTF8_HTML = "text/html; charset=UTF-8";
-    public static final String MIME_TYPE_XML = "application/xml";
-    public static final String MIME_TYPE_JSON = "application/json";
+
     
     public static final String S2_CONFIG_FILE = "configs/log-server-configs.json";
     public static final String REDIS_CONFIG_FILE = "configs/redis-pool-configs.json";

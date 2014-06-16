@@ -13,6 +13,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 
 import java.io.IOException;
 
+import rfx.server.configs.ContentTypePool;
 import rfx.server.configs.HttpServerConfigs;
 import rfx.server.util.FileUtils;
 import rfx.server.util.StringPool;
@@ -42,7 +43,7 @@ public class StaticFileHandler {
 	public static FullHttpResponse theBase64Image1pxGif() {
 		ByteBuf byteBuf = Base64.decode(Unpooled.copiedBuffer(BASE64GIF_BYTES));
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK , byteBuf);
-		response.headers().set(CONTENT_TYPE, StringPool.MIME_TYPE_GIF);
+		response.headers().set(CONTENT_TYPE, ContentTypePool.GIF);
 		response.headers().set(CONTENT_LENGTH, byteBuf.readableBytes());
 		response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
 		return response;
@@ -51,7 +52,7 @@ public class StaticFileHandler {
 	public static FullHttpResponse staticCrossdomainFileContent() {
 		ByteBuf byteBuf = Unpooled.copiedBuffer(CROSSDOMAINXML_BYTES);
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK ,byteBuf);
-		response.headers().set(CONTENT_TYPE, StringPool.MIME_TYPE_XML);
+		response.headers().set(CONTENT_TYPE, ContentTypePool.XML);
 		response.headers().set("cache-control",httpHeaderCache);
 		response.headers().set(CONTENT_LENGTH, byteBuf.readableBytes());
 		response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
@@ -61,7 +62,7 @@ public class StaticFileHandler {
 	public static FullHttpResponse theJavaScriptContent(String str) {
 		ByteBuf byteBuf = Unpooled.copiedBuffer(str.getBytes());
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1,OK ,byteBuf);
-		response.headers().set(CONTENT_TYPE, StringPool.MIME_TYPE_JS);
+		response.headers().set(CONTENT_TYPE, ContentTypePool.JAVA_SCRIPT);
 		response.headers().set(CONTENT_LENGTH, byteBuf.readableBytes());
 		response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
 		return response;
@@ -70,7 +71,7 @@ public class StaticFileHandler {
 	public static FullHttpResponse theJSONContent(String str) {
 		ByteBuf byteBuf = Unpooled.copiedBuffer(str.getBytes());
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1,OK ,byteBuf);
-		response.headers().set(CONTENT_TYPE, StringPool.MIME_TYPE_JSON);
+		response.headers().set(CONTENT_TYPE, ContentTypePool.JSON);
 		response.headers().set(CONTENT_LENGTH, byteBuf.readableBytes());
 		response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
 		return response;

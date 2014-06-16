@@ -6,11 +6,11 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
+import rfx.server.configs.ContentTypePool;
 import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorMapper;
-import rfx.server.util.StringPool;
 
-@HttpProcessorMapper(uriPath = "/server-info", templatePath = "server-info.mustache", contentType = StringPool.MIME_TYPE_UTF8_HTML)
+@HttpProcessorMapper(uriPath = "/server-info", templatePath = "server-info.mustache", contentType = ContentTypePool.HTML_UTF8)
 public class ServerInfoHttpProcessor extends HttpProcessor {
 
 	@Override
