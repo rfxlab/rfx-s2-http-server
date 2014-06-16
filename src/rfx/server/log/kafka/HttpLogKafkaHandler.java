@@ -19,10 +19,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import kafka.producer.ProducerConfig;
 import rfx.server.configs.HttpServerConfigs;
 import rfx.server.http.common.CookieUtil;
-import rfx.server.util.KafkaProducerUtil;
 import rfx.server.util.LogUtil;
 import rfx.server.util.StringPool;
 import rfx.server.util.StringUtil;
+import rfx.server.util.kafka.KafkaProducerUtil;
 
 public class HttpLogKafkaHandler implements KafkaLogHandler {
 	

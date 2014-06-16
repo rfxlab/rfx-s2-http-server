@@ -1,4 +1,4 @@
-package rfx.server.util;
+package rfx.server.util.http;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -28,6 +28,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+
+import rfx.server.util.LogUtil;
+import rfx.server.util.StringPool;
 
 
 

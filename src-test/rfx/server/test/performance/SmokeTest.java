@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
-import rfx.server.util.HttpClientUtil;
+import rfx.server.util.http.HttpClientUtil;
 
 
 public class SmokeTest {

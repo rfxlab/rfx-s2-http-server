@@ -3,8 +3,8 @@ package rfx.server.log.kafka;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import rfx.server.util.KafkaProducerUtil;
 import rfx.server.util.LogUtil;
+import rfx.server.util.kafka.KafkaProducerUtil;
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 

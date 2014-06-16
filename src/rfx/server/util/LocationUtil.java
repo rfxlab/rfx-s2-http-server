@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
+import rfx.server.util.redis.RedisManagerUtil;
 
 public class LocationUtil {
 

@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import rfx.server.util.HttpClientUtil;
+import rfx.server.util.http.HttpClientUtil;
 
 import com.google.common.base.Stopwatch;
 

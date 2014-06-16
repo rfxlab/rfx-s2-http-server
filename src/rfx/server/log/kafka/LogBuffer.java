@@ -11,9 +11,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import rfx.server.configs.HttpServerConfigs;
-import rfx.server.util.KafkaProducerUtil;
 import rfx.server.util.LogUtil;
 import rfx.server.util.Utils;
+import rfx.server.util.kafka.KafkaProducerUtil;
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;

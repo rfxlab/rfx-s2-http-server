@@ -1,4 +1,4 @@
-package rfx.server.util;
+package rfx.server.util.template;
 
 import java.io.StringWriter;
 import java.util.HashMap;

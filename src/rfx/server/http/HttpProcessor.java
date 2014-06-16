@@ -2,6 +2,7 @@ package rfx.server.http;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders.Names;
 import io.netty.handler.codec.http.HttpRequest;
 
 import java.util.List;
@@ -9,8 +10,8 @@ import java.util.Map;
 
 import rfx.server.configs.ErrorMessagePool;
 import rfx.server.http.common.NettyHttpUtil;
-import rfx.server.util.MustacheUtil;
 import rfx.server.util.StringPool;
+import rfx.server.util.template.MustacheUtil;
 
 /**
  * @author Trieu.nguyen
@@ -20,14 +21,15 @@ import rfx.server.util.StringPool;
  */
 public abstract class HttpProcessor {
 	protected String ipAddress;
-	protected String path;
-	protected Map<String, List<String>> params;
+	protected String path;	
 	protected String contentType;
 	protected ChannelHandlerContext ctx;
 	protected HttpRequest request;
+	protected Map<String, List<String>> params;
 	protected FullHttpResponse response;
 
 	private String templatePath;
+	
 	
 
 	public HttpProcessor injectContext(String ipAddress, String path, Map<String, List<String>> params, ChannelHandlerContext ctx, HttpRequest request) {
@@ -58,17 +60,27 @@ public abstract class HttpProcessor {
 			return NettyHttpUtil.theHttpContent(StringPool.BLANK);
 		}
 	}
-
+	
 	///////////// for the implementation class /////////////
 	protected abstract String process();	
 	protected String render(Object model) {
 		return MustacheUtil.execute(templatePath, model);
-	}	
+	}
+	
 	protected String param(String name){
 		return NettyHttpUtil.getParamValue(name, params);
 	}
+	
 	protected String param(String name, String defaultVal){
 		return NettyHttpUtil.getParamValue(name, params, defaultVal);
+	}
+	
+	protected String getHost(){
+		return request.headers().get(Names.HOST);
+	}
+	
+	protected String getDomain(){
+		return getHost().replaceAll(".*\\.(?=.*\\.)", "");
 	}
 	///////////// for the implementation class /////////////
 

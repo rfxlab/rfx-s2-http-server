@@ -1,4 +1,4 @@
-package rfx.server.util;
+package rfx.server.util.kafka;
 
 import java.util.Collection;
 import java.util.HashMap;

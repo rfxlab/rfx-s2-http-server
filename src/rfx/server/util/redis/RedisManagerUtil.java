@@ -1,4 +1,4 @@
-package rfx.server.util;
+package rfx.server.util.redis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 import rfx.server.configs.RedisPoolConfigs;
+import rfx.server.util.StringPool;
 
 public class RedisManagerUtil {
 	static Logger logger = Logger.getLogger(RedisManagerUtil.class);
