@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Formatter;
 import java.util.List;
 
@@ -280,6 +281,10 @@ public class StringUtil {
 		response.append( charset.decode( buffer ) );
 		buffer.flip();
 		return response.toString();
+	}
+	
+	public static String base64StringDecode(String value){
+		return new String(Base64.getDecoder().decode(value.replace("@", "/")));
 	}
 	
 	public static void main(String[] args) {
