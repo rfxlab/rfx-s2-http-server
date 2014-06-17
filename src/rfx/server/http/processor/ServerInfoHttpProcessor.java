@@ -14,31 +14,51 @@ import rfx.server.http.HttpProcessorMapper;
 public class ServerInfoHttpProcessor extends HttpProcessor {
 
 	@Override
-	protected String process() {
-//		HttpHeaders headers = request.headers();
-//		String referer = headers.get(REFERER);
-//		String userAgent = headers.get(USER_AGENT);
-//		System.out.println("referer: "+referer);
-//		System.out.println("userAgent: "+userAgent);
-		System.out.println("filter: "+param("filter"));
+	protected Object process() {
+		// HttpHeaders headers = request.headers();
+		// String referer = headers.get(REFERER);
+		// String userAgent = headers.get(USER_AGENT);
+		// System.out.println("referer: "+referer);
+		// System.out.println("userAgent: "+userAgent);
 		
-		return render(new ServerInfoModel());
+		String filter = param("filter", "");
+		System.out.println("filter: " + filter);
+		return new ServerInfoModel(filter);
 	}
 
 	static class ServerInfoModel {
 		String time;
 		List<String> infos = new ArrayList<>();
+		String filter;
+		boolean showAll;
+		boolean showCompact;
 
-		public ServerInfoModel() {
+		public ServerInfoModel(String filter) {
+			this.filter = filter;
 			time = new Date().toString();
+			if (filter.equals("all")) {
+				showAll = true;
+				showCompact = false;
+			} else if (filter.equals("compact")) {
+				showAll = false;
+				showCompact = true;
+			}
+
 			Properties props = System.getProperties();
 			Enumeration e = props.propertyNames();
 			while (e.hasMoreElements()) {
 				String key = (String) e.nextElement();
-				if (key.startsWith("java.vm")) {
-					String s = (key + " : " + props.getProperty(key));
+				String s = (key + " : " + props.getProperty(key));
+				if (showAll) {
 					infos.add(s);
+				} else if (showCompact) {
+					{
+						if (key.startsWith("java.vm")) {
+							infos.add(s);
+						}
+					}
 				}
+
 			}
 		}
 	}

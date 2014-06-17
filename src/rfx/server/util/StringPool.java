@@ -123,6 +123,8 @@ public final class StringPool {
     
     public static final String BASE64_GIF_BLANK = "R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
     
+        
+    
 
     
     public static final String S2_CONFIG_FILE = "configs/log-server-configs.json";

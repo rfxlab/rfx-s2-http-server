@@ -21,37 +21,13 @@ public class StressTestHttpServer {
 
 	@Rule
 	public ContiPerfRule i = new ContiPerfRule();
-
+	
 	
 	@Test
-	@PerfTest(invocations = 10000, threads = 250)
-	@Required(max = 5000, average = 500)
-	public void test1() throws Exception {
-		String url = "http://delivery.adnetwork.vn/247/inpagead/zid_1340349210/wid_1286789098/div_InPage_728_90/sc_1600x900/cd_24/fl_14/lg_ZW4tVVM=/jv_1/urf_/cb_417152/";
-		String rs = HttpClientUtil.executeGet(url);
-
-		if (rs.contains("AbdVNPC")) {
-			//System.out.println(rs+" \n");
-			validCount.incrementAndGet();
-		} else {
-			System.out.println(rs);
-			invalidCount.incrementAndGet();
-			throw new IllegalArgumentException("Bad response!");
-		}
-		
-//		Throughput:	3,835 / s	
-//		Min. latency:	0 ms	
-//		Average latency:	128 ms	400 ms
-//		Median:	80 ms	
-//		90%:	286 ms	
-//		Max latency:	2,516 ms	4,000 ms
-	}
-	
-	@Test
-	@PerfTest(invocations = 50000, threads = 500)
+	@PerfTest(invocations = 20000, threads = 100)
 	@Required(max = 4000, average = 400)
 	public void test2() throws Exception {
-		String url = "http://localhost:9090/server-info?filter=all";
+		String url = "http://localhost/server-info?filter=compact";
 		String rs = HttpClientUtil.executeGet(url);
 
 		if (rs.contains("Time:")) {

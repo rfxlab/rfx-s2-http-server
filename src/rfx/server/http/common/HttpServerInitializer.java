@@ -1,31 +1,48 @@
 package rfx.server.http.common;
 
 
-import rfx.server.http.RountingHttpProcessorHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import rfx.server.http.UrlMappingSingleProcessorHandler;
 
 public class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
 	
 	
-	public static final int HTTP_SERVER_MODE = 2;
+	public static final int SINGLE_PROCESSOR_MODE = 1;
+	public static final int MULTI_PROCESSOR_MODE = 2;
 		
 	private int mode = 0;
 	ChannelHandler getLogChannelHandler(){
-		if(mode == HTTP_SERVER_MODE){			
-			return new RountingHttpProcessorHandler();
-		} else {
-			throw new IllegalArgumentException("");
+//		System.out.println("-----------------getLogChannelHandler-----------------");
+		if(mode == SINGLE_PROCESSOR_MODE){			
+			return new UrlMappingSingleProcessorHandler();
+		} 
+		else if(mode == MULTI_PROCESSOR_MODE){
+			//return new UrlMappingMultiProcessorsHandler();
+			throw new IllegalArgumentException("Not support MULTI_PROCESSOR_MODE");
+		}
+		else {
+			throw new IllegalArgumentException("Bad http server processer mode");
 		}
 	}	
 
 	public HttpServerInitializer(int mode) {
 		super();
 		this.mode = mode;
+		if(mode == SINGLE_PROCESSOR_MODE){			
+			UrlMappingSingleProcessorHandler.initHandlers();
+		} 
+		else if(mode == MULTI_PROCESSOR_MODE){
+//			UrlMappingMultiProcessorsHandler.initHandlers();
+			throw new IllegalArgumentException("Not support MULTI_PROCESSOR_MODE");
+		}
+		else {
+			throw new IllegalArgumentException("Bad http server processer mode");
+		}    	
 	}
 
 	@Override
@@ -37,6 +54,7 @@ public class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
         //SSLEngine engine = SecureChatSslContextFactory.getServerContext().createSSLEngine();
         //engine.setUseClientMode(false);
         //p.addLast("ssl", new SslHandler(engine));
+        //TODO support SSL HTTP
 
         p.addLast("decoder", new HttpRequestDecoder());
         // Uncomment the following line if you don't want to handle HttpChunks.

@@ -34,7 +34,7 @@ public class HttpServerStarter {
 		return host;
 	}
     
-	public void run(boolean websocket) throws Exception {
+	public void run(boolean websocket, int processingMode) throws Exception {
         // Configure the server.
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -46,8 +46,7 @@ public class HttpServerStarter {
             } else {
             	b.childOption(ChannelOption.TCP_NODELAY, false)
                 .childOption(ChannelOption.SO_KEEPALIVE, false)
-                .childHandler(new HttpServerInitializer(HttpServerInitializer.HTTP_SERVER_MODE));
-            	RountingHttpProcessorHandler.initHandlers();
+                .childHandler(new HttpServerInitializer(processingMode));
             }
 
             Channel ch = b.bind(ip,port).sync().channel();  
@@ -89,6 +88,7 @@ public class HttpServerStarter {
         	System.out.println(" #############  Http Enabled Mode  #############");
         }
         //MemoryManagementUtil.startMemoryUsageTask();
-        new HttpServerStarter(ip,port).run(websocket);        
+        int mode = HttpServerInitializer.SINGLE_PROCESSOR_MODE;
+        new HttpServerStarter(ip,port).run(websocket,mode);
     }
 }

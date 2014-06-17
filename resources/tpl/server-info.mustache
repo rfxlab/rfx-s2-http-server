@@ -4,11 +4,23 @@
 
 	<h3>Server Info</h3>
 	<h3>Time: {{time}}</h3>
+	
+	<strong>		
+	{{#showAll}}
+	  All System JVM information
+	{{/showAll}}
+	
+	{{#showCompact}}
+	  Important JVM information
+	{{/showCompact}}
+	</strong>
+	
 	<ul>
 		{{#infos}}
 			<li>{{.}}</li> 
 		{{/infos}}
 	</ul>
-
+		
+	
 </body>
 </html>

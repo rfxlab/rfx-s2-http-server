@@ -1,8 +1,8 @@
 package rfx.server.util.template;
 
 import java.io.StringWriter;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -12,17 +12,25 @@ import com.github.mustachejava.MustacheException;
 import com.github.mustachejava.MustacheFactory;
 
 public class MustacheUtil {
-	static MustacheFactory mf = new DefaultMustacheFactory();
-	static Map<String, Mustache> mustacheMap = new HashMap<>();
+	static MustacheFactory mustacheFactory = new DefaultMustacheFactory();
+	static Map<String, Mustache> mustacheMap = new ConcurrentHashMap<>();
 	final static String BASE_TEMPLATE_PATH = "resources/tpl/";
+	
+	//flag
+	static boolean isUsedCache = true;
 	
 	public static Mustache getCompiledTemplate(String tplPath){
 		String path = BASE_TEMPLATE_PATH + tplPath;
-		Mustache mustache = mustacheMap.get(path);
-		if(mustache == null){
-			mustache = mf.compile(path);
+		if(isUsedCache){
+			Mustache mustache = mustacheMap.get(path);
+			if(mustache == null){
+				mustache = mustacheFactory.compile(path);
+				mustacheMap.put(path, mustache);
+			}		
+			return mustache;
+		} else {			
+			return new DefaultMustacheFactory().compile(path);
 		}
-		return mustache;
 	}
 	
 	public static String execute(String tplPath, Object model){	
