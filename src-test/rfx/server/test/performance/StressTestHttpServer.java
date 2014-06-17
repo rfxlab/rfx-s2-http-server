@@ -21,13 +21,13 @@ public class StressTestHttpServer {
 
 	@Rule
 	public ContiPerfRule i = new ContiPerfRule();
-	
+	//https://github.com/LMAX-Exchange/disruptor
 	
 	@Test
-	@PerfTest(invocations = 20000, threads = 100)
+	@PerfTest(invocations = 100000, threads = 500)
 	@Required(max = 4000, average = 400)
 	public void test2() throws Exception {
-		String url = "http://localhost/server-info?filter=compact";
+		String url = "http://localhost:9090/server-info?filter=compact";
 		String rs = HttpClientUtil.executeGet(url);
 
 		if (rs.contains("Time:")) {

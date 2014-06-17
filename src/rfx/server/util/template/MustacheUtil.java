@@ -12,19 +12,31 @@ import com.github.mustachejava.MustacheException;
 import com.github.mustachejava.MustacheFactory;
 
 public class MustacheUtil {
-	static MustacheFactory mustacheFactory = new DefaultMustacheFactory();
-	static Map<String, Mustache> mustacheMap = new ConcurrentHashMap<>();
+	static MustacheFactory mustacheFactory = null;
+	static Map<String, Mustache> mustacheMap = new ConcurrentHashMap<>();//for hot deployment & update template 
 	final static String BASE_TEMPLATE_PATH = "resources/tpl/";
 	
 	//flag
 	static boolean isUsedCache = true;
+	
+	public static MustacheFactory getMustacheFactory() {
+		if(mustacheFactory == null){
+			mustacheFactory = new DefaultMustacheFactory();
+		}
+		return mustacheFactory;
+	}
+	
+	public static void refreshTemplateCache(){
+		mustacheFactory = null;
+		mustacheMap.clear();
+	}
 	
 	public static Mustache getCompiledTemplate(String tplPath){
 		String path = BASE_TEMPLATE_PATH + tplPath;
 		if(isUsedCache){
 			Mustache mustache = mustacheMap.get(path);
 			if(mustache == null){
-				mustache = mustacheFactory.compile(path);
+				mustache = getMustacheFactory().compile(path);
 				mustacheMap.put(path, mustache);
 			}		
 			return mustache;

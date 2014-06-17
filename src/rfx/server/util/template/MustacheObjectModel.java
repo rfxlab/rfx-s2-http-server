@@ -3,7 +3,9 @@ package rfx.server.util.template;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MustacheObjectModel extends HashMap<String, Object>{
+import rfx.server.http.BaseModel;
+
+public class MustacheObjectModel extends HashMap<String, Object> implements BaseModel{
 
 	private static final long serialVersionUID = 5072021270346354454L;
 	
@@ -19,6 +21,11 @@ public class MustacheObjectModel extends HashMap<String, Object>{
 	
 	public void set(String name, Object val){
 		this.put(name, val);
+	}
+
+	@Override
+	public void freeResource() {
+		clear();
 	}	
 	
 }

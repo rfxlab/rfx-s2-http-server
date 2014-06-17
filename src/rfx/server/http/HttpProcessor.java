@@ -1,13 +1,11 @@
 package rfx.server.http;
 
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpHeaders.Names;
 import io.netty.handler.codec.http.HttpRequest;
 
 import java.util.List;
 import java.util.Map;
 
-import rfx.server.configs.ErrorMessagePool;
 import rfx.server.http.common.NettyHttpUtil;
 import rfx.server.util.template.MustacheObjectModel;
 
@@ -21,8 +19,7 @@ public abstract class HttpProcessor {
 	
 	//for implementer access
 	protected String ipAddress;
-	protected String path;
-	protected ChannelHandlerContext ctx;
+	protected String uriPath;
 	protected HttpRequest request;
 	protected Map<String, List<String>> params;
 
@@ -31,15 +28,12 @@ public abstract class HttpProcessor {
 	 * 
 	 * @return processed model object
 	 */
-	public Object doProcessing(String ipAddress, String path, Map<String, List<String>> params, ChannelHandlerContext ctx, HttpRequest request) {
-		if (ctx == null) {
-			throw new IllegalArgumentException(ErrorMessagePool.INIT_BEFORE_PROCESS);
-		}
-		this.ipAddress = ipAddress;
-		this.path = path;
-		this.params = params;
-		this.ctx = ctx;
-		this.request = request;	
+	public BaseModel doProcessing(HttpRequestEvent requestEvent) {
+		
+		this.ipAddress = requestEvent.getIpAddress();
+		this.uriPath = requestEvent.getUriPath();
+		this.params = requestEvent.getParams();
+		this.request = requestEvent.getRequest();	
 			
 		//call the implemented process method
 		return process();
@@ -74,8 +68,8 @@ public abstract class HttpProcessor {
 		return ipAddress;
 	}
 
-	public String getUri() {
-		return path;
+	public String getUriPath() {
+		return uriPath;
 	}
 
 	public HttpRequest getRequest() {
@@ -89,13 +83,12 @@ public abstract class HttpProcessor {
 			this.params.clear();
 		}
 		this.request = null;		
-		this.path = null;
-		this.ctx = null;		
+		this.uriPath = null;	
 		this.ipAddress = null;
 	}
 	
 	
 	///////////// for the implementation class /////////////
-	protected abstract Object process();
+	protected abstract BaseModel process();
 
 }

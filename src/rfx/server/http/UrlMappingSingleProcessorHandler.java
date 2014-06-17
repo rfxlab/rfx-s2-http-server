@@ -17,11 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.reflections.Reflections;
 
 import rfx.server.http.common.NettyHttpUtil;
-import rfx.server.util.StringPool;
+import rfx.server.util.StringUtil;
 
 
 
@@ -32,8 +31,9 @@ public class UrlMappingSingleProcessorHandler extends SimpleChannelInboundHandle
 	
 	/**
 	 * run at server start-up
+	 * @throws Exception 
 	 */
-	public static void initHandlers() {		
+	public static void initHandlers() throws Exception {		
 		Reflections reflections = new Reflections(BASE_CONTROLLER_PACKAGE);
 		Set<Class<?>> clazzes =  reflections.getTypesAnnotatedWith(HttpProcessorMapper.class);
 	    for (Class<?> clazz : clazzes) {        		
@@ -44,11 +44,11 @@ public class UrlMappingSingleProcessorHandler extends SimpleChannelInboundHandle
 				HttpProcessorManager manager = handlers.get(mapper.uriPath());
 				if( manager == null ){
 					manager = new HttpProcessorManager(mapper.contentType(), mapper.templatePath(), clazz);						
-					if( ! StringPool.BLANK.equals(mapper.uriPath()) ){
-							handlers.put(mapper.uriPath(), manager);
-							System.out.println("...registered controller class: "+ clazz.getName() + " ;uriPath:"+mapper.uriPath()+" ;tpl:"+mapper.templatePath()+ " ;content-type"+mapper.contentType());
+					if( StringUtil.isNotEmpty(mapper.uriPath()) ){
+						handlers.put(mapper.uriPath(), manager);
+						System.out.println("...registered controller class: "+ clazz.getName() + " ;uriPath:"+mapper.uriPath()+" ;tpl:"+mapper.templatePath()+ " ;content-type"+mapper.contentType());
 					} 
-					else if( ! StringPool.BLANK.equals(mapper.uriPattern()) ){
+					else if( StringUtil.isNotEmpty(mapper.uriPattern()) ){
 						handlers.put(mapper.uriPattern(), manager);
 						System.out.println("...registered controller class: "+ clazz.getName() + " ;uriPattern:"+mapper.uriPattern()+" ;tpl:"+mapper.templatePath()+ " ;content-type"+mapper.contentType());
 					} 
@@ -60,37 +60,21 @@ public class UrlMappingSingleProcessorHandler extends SimpleChannelInboundHandle
 	    }
 	}
 	
-	static HttpProcessorManager routingForUriPath(QueryStringDecoder qDecoder){		
+	static final HttpProcessorManager routingForUriPath(QueryStringDecoder qDecoder){		
 		return handlers.get(qDecoder.path());
 	}
 	
 	static int PATTERN_INDEX = 2;
-	static HttpProcessorManager routingForUriPattern(QueryStringDecoder qDecoder){
+	static final HttpProcessorManager routingForUriPattern(QueryStringDecoder qDecoder){
 		String[] toks = qDecoder.path().split("/");
 		if(toks.length>PATTERN_INDEX){
-			String pathPattern = toks[PATTERN_INDEX];	
-			if(handlers.containsKey(pathPattern)){				
-				return handlers.get(pathPattern);
-			}			
+			String pathPattern = toks[PATTERN_INDEX];
+			return handlers.get(pathPattern);						
 		}
 		return null;
 	}
 	
-	static FullHttpResponse callProcessor(HttpProcessorManager processorManager, String ip, String uri, Map<String, List<String>> params, ChannelHandlerContext ctx, HttpRequest request  ){
-		FullHttpResponse response;
-		try {
-			response = processorManager.doProcessing(ip, uri, params, ctx, request);
-		} catch (Exception e) {
-			StringBuilder s = new StringBuilder("Error###");
-			s.append(e.getMessage());
-			s.append(" ### <br>\n StackTrace: ").append(ExceptionUtils.getStackTrace(e));							
-			response = NettyHttpUtil.theHttpContent( s.toString() );	
-		} finally {
-			//httpProcessor.clear();
-		}
-		return response;
-	}
-	
+		
 	public UrlMappingSingleProcessorHandler(){}	
 
     @Override
@@ -123,11 +107,13 @@ public class UrlMappingSingleProcessorHandler extends SimpleChannelInboundHandle
 				
 				HttpProcessorManager processorManager = routingForUriPath(qDecoder);
 				if(processorManager != null){
-					response = callProcessor(processorManager, ip, uri, params, ctx, request);
+					HttpRequestEvent requestEvent = new HttpRequestEvent(ip, uri, params, request);
+					response = processorManager.doProcessing(requestEvent);
 				} else {
 					processorManager = routingForUriPattern(qDecoder);
 					if(processorManager != null){
-						response = callProcessor(processorManager, ip, uri, params, ctx, request);	
+						HttpRequestEvent requestEvent = new HttpRequestEvent(ip, uri, params, request);
+						response = processorManager.doProcessing(requestEvent);
 					} else {
 						String s = "Not found HttpProcessor for URI: "+uri;
 						response = NettyHttpUtil.theHttpContent(s, HttpResponseStatus.NOT_FOUND);

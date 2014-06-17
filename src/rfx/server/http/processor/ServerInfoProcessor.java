@@ -7,14 +7,15 @@ import java.util.List;
 import java.util.Properties;
 
 import rfx.server.configs.ContentTypePool;
+import rfx.server.http.BaseModel;
 import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorMapper;
 
 @HttpProcessorMapper(uriPath = "/server-info", templatePath = "server-info.mustache", contentType = ContentTypePool.HTML_UTF8)
-public class ServerInfoHttpProcessor extends HttpProcessor {
+public class ServerInfoProcessor extends HttpProcessor {
 
 	@Override
-	protected Object process() {
+	protected BaseModel process() {
 		// HttpHeaders headers = request.headers();
 		// String referer = headers.get(REFERER);
 		// String userAgent = headers.get(USER_AGENT);
@@ -26,7 +27,7 @@ public class ServerInfoHttpProcessor extends HttpProcessor {
 		return new ServerInfoModel(filter);
 	}
 
-	static class ServerInfoModel {
+	static class ServerInfoModel implements BaseModel{
 		String time;
 		List<String> infos = new ArrayList<>();
 		String filter;
@@ -60,6 +61,11 @@ public class ServerInfoHttpProcessor extends HttpProcessor {
 				}
 
 			}
+		}
+	
+		@Override
+		public void freeResource() {
+			infos.clear();
 		}
 	}
 

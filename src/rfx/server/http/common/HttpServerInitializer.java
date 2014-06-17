@@ -30,7 +30,7 @@ public class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
 		}
 	}	
 
-	public HttpServerInitializer(int mode) {
+	public HttpServerInitializer(int mode) throws Exception {
 		super();
 		this.mode = mode;
 		if(mode == SINGLE_PROCESSOR_MODE){			

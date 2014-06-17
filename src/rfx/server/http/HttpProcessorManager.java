@@ -1,15 +1,19 @@
 package rfx.server.http;
 
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpRequest;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import rfx.server.configs.ContentTypePool;
 import rfx.server.http.common.NettyHttpUtil;
+import rfx.server.util.RoundRobin;
 import rfx.server.util.StringPool;
 import rfx.server.util.template.MustacheUtil;
+
+import com.google.gson.Gson;
 
 /**
  * @author Trieu.nguyen
@@ -22,52 +26,64 @@ public class HttpProcessorManager {
 	private String contentType;
 	private String templatePath;
 	Class<?> httpProcessorClass;
+	RoundRobin<HttpProcessor> roundRobinRounter;
+	private int maxPoolSize = 20000;	
 	
-	
-	
-	public HttpProcessorManager(String contentType, String templatePath,
-			Class<?> httpProcessorClass) {
+	public HttpProcessorManager(String contentType, String templatePath, Class<?> httpProcessorClass) throws Exception {
 		super();
 		this.contentType = contentType;
 		this.templatePath = templatePath;
 		this.httpProcessorClass = httpProcessorClass;
+		
+		List<HttpProcessor> pool = new ArrayList<>(maxPoolSize);
+		for (int i = 0; i < maxPoolSize; i++) {
+			HttpProcessor httpProcessor = (HttpProcessor) httpProcessorClass.newInstance();
+			pool.add(httpProcessor);
+		}
+		roundRobinRounter = new RoundRobin<>(pool);
 	}
 
 	/**
-	 * always called by RountingHttpProcessorHandler.channelRead0
+	 * always called by UrlMappingSingleProcessorHandler.callProcessor
 	 * 
 	 * @return FullHttpResponse
 	 */
-	public FullHttpResponse doProcessing(String ipAddress, String path,	Map<String, List<String>> params, ChannelHandlerContext ctx, HttpRequest request) {		
-		
-		HttpProcessor httpProcessor;
-		String rs = null;
-		try {
-			httpProcessor = (HttpProcessor) httpProcessorClass.newInstance();
-			Object model = httpProcessor.doProcessing(ipAddress, path, params, ctx, request);			
-			rs = render(model);			
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
+	public FullHttpResponse doProcessing(HttpRequestEvent requestEvent) {
+		String outStr = null;
+		BaseModel model = null;
+		FullHttpResponse response;
+		try {			
+			model = roundRobinRounter.next().doProcessing(requestEvent);
+			
+			if(contentType.equals(ContentTypePool.JSON)){
+				outStr = new Gson().toJson(model);
+			} else {
+				outStr = MustacheUtil.execute(templatePath, model);
+			}
+		} 
+		catch (Throwable e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			StringBuilder s = new StringBuilder("Error###");
+			s.append(e.getMessage());
+			s.append(" ### <br>\n StackTrace: ").append(ExceptionUtils.getStackTrace(e));							
+			response = NettyHttpUtil.theHttpContent( s.toString() );
+		} 
+		finally {
+			if(model != null){
+				model.freeResource();
+			}
 		}
 		
-		//TODO log the result 
+		//TODO log the result 		
 		
-		FullHttpResponse response;
-		if (rs != null) {
-			response = NettyHttpUtil.theHttpContent(rs, contentType);
+		if (outStr != null) {
+			response = NettyHttpUtil.theHttpContent(outStr, contentType);
 		} else {
 			response = NettyHttpUtil.theHttpContent(StringPool.BLANK);
 		}
 		return response;
 	}
 	
-	protected String render(Object model) {
-		return MustacheUtil.execute(templatePath, model);
-	}
 	
 	public String getContentType() {
 		return contentType;
