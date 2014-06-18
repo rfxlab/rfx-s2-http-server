@@ -246,6 +246,8 @@ public class LogUtil {
 			}
 		}			
 	}
+	
+
 
 	public static void info(String log) {
 		if (StringPool.BLANK.equals(remoteHost)) {
@@ -257,5 +259,10 @@ public class LogUtil {
 	public static void error(Object tag, Object log) {
 		System.err.println(ANSI_RED + tag + ANSI_RESET + " : " + log);
 		dumpToFile(tag + " : " + log, true);
+	}
+	
+	public static void error(Object log) {
+		System.err.println(log);		
+		dumpToFile(String.valueOf(log),true);
 	}
 }
