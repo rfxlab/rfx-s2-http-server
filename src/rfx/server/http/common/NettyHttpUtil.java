@@ -6,6 +6,7 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaders.Names.COOKIE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.REFERER;
 import static io.netty.handler.codec.http.HttpHeaders.Names.USER_AGENT;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import io.netty.buffer.ByteBuf;
@@ -16,6 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.QueryStringDecoder;
@@ -28,6 +30,8 @@ import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 import rfx.server.configs.ContentTypePool;
 import rfx.server.configs.LogFilterConfigs;
@@ -45,6 +49,8 @@ public class NettyHttpUtil {
 	public static final String HEADER_REFRESH_NAME = "Refresh";
 	public static final String HEADER_LOCATION_NAME = "Location";	
 	public static final String HEADER_CONNECTION_CLOSE = "Close";
+	public static final String[] REFERER_SEARCH_LIST = new String[]{"\t%s","\t","%s","\r\n","\n","\r"};
+	public static final String[] REFERER_REPLACE_LIST = new String[]{"","","","","",""};
 	
 	//redirect to url using HTML+JavaScript to preserve the referer, solution at https://coderwall.com/p/7a09ja
 	static final String HTML_FOR_REDIRECT;
@@ -280,5 +286,13 @@ public class NettyHttpUtil {
 	    ctx.close();			 
 		//Close the non-keep-alive connection after the write operation is done.
 		future.addListener(ChannelFutureListener.CLOSE);	     
+	}
+	
+	public static String getRefererUrl(HttpHeaders headers){
+		String refererUrl = headers.get(REFERER);
+		if(StringUtil.isNotEmpty(refererUrl)){
+			refererUrl = StringUtils.replaceEach(refererUrl, REFERER_SEARCH_LIST,  REFERER_REPLACE_LIST);
+		}
+		return refererUrl;
 	}
 }
