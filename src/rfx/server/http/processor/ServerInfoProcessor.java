@@ -9,9 +9,9 @@ import java.util.Properties;
 import rfx.server.configs.ContentTypePool;
 import rfx.server.http.BaseModel;
 import rfx.server.http.HttpProcessor;
-import rfx.server.http.HttpProcessorMapper;
+import rfx.server.http.HttpProcessorConfig;
 
-@HttpProcessorMapper(uriPath = "/server-info", templatePath = "server-info.mustache", contentType = ContentTypePool.HTML_UTF8)
+@HttpProcessorConfig(uriPath = "/server-info", templatePath = "server-info.mustache", contentType = ContentTypePool.HTML_UTF8)
 public class ServerInfoProcessor extends HttpProcessor {
 
 	@Override

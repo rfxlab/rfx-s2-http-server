@@ -11,71 +11,26 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
-import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.reflections.Reflections;
 
 import rfx.server.http.common.NettyHttpUtil;
-import rfx.server.util.StringUtil;
 
 
 
-public class UrlMappingSingleProcessorHandler extends SimpleChannelInboundHandler<Object> {
+public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandler<Object> {
 	
 	private static final Map<String, HttpProcessorManager> handlers = new HashMap<>();
 	final static String BASE_CONTROLLER_PACKAGE = "rfx.server.http.processor";
-	
-	/**
-	 * run at server start-up
-	 * @throws Exception 
-	 */
-	public static void initHandlers() throws Exception {		
-		Reflections reflections = new Reflections(BASE_CONTROLLER_PACKAGE);
-		Set<Class<?>> clazzes =  reflections.getTypesAnnotatedWith(HttpProcessorMapper.class);
-	    for (Class<?> clazz : clazzes) {        		
-			if (clazz.isAnnotationPresent(HttpProcessorMapper.class)) {        		     
-				Annotation annotation = clazz.getAnnotation(HttpProcessorMapper.class);
-				HttpProcessorMapper mapper = (HttpProcessorMapper) annotation;
-				
-				HttpProcessorManager manager = handlers.get(mapper.uriPath());
-				if( manager == null ){
-					manager = new HttpProcessorManager(mapper.contentType(), mapper.templatePath(), clazz);						
-					if( StringUtil.isNotEmpty(mapper.uriPath()) ){
-						handlers.put(mapper.uriPath(), manager);
-						System.out.println("...registered controller class: "+ clazz.getName() + " ;uriPath:"+mapper.uriPath()+" ;tpl:"+mapper.templatePath()+ " ;content-type"+mapper.contentType());
-					} 
-					else if( StringUtil.isNotEmpty(mapper.uriPattern()) ){
-						handlers.put(mapper.uriPattern(), manager);
-						System.out.println("...registered controller class: "+ clazz.getName() + " ;uriPattern:"+mapper.uriPattern()+" ;tpl:"+mapper.templatePath()+ " ;content-type"+mapper.contentType());
-					} 
-					else {
-						throw new IllegalArgumentException("the class "+clazz.getName() + " is missing uriPath or uriPattern config");
-					}    				
-				}
-			}        	        	
-	    }
-	}
-	
-	static final HttpProcessorManager routingForUriPath(QueryStringDecoder qDecoder){		
-		return handlers.get(qDecoder.path());
-	}
-	
-	static int PATTERN_INDEX = 2;
-	static final HttpProcessorManager routingForUriPattern(QueryStringDecoder qDecoder){
-		String[] toks = qDecoder.path().split("/");
-		if(toks.length>PATTERN_INDEX){
-			String pathPattern = toks[PATTERN_INDEX];
-			return handlers.get(pathPattern);						
-		}
-		return null;
-	}
-	
+	public static final int PATTERN_INDEX = 2;
+	public static int DEFAULT_MAX_POOL_SIZE = 20000;
 		
-	public UrlMappingSingleProcessorHandler(){}	
+	public PublicHttpProcessorRoutingHandler(){}
+	
+	public static void init() throws Exception{
+		handlers.putAll(HttpProcessorManager.loadHandlers(BASE_CONTROLLER_PACKAGE, HttpProcessorConfig.PUBLIC_ACCESS, DEFAULT_MAX_POOL_SIZE));
+	}
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) {    	
@@ -105,12 +60,12 @@ public class UrlMappingSingleProcessorHandler extends SimpleChannelInboundHandle
 //					System.out.println(queryDecoder.path());
 //					System.out.println(queryDecoder.parameters());
 				
-				HttpProcessorManager processorManager = routingForUriPath(qDecoder);
+				HttpProcessorManager processorManager = HttpProcessorManager.routingForUriPath(handlers,qDecoder);
 				if(processorManager != null){
 					HttpRequestEvent requestEvent = new HttpRequestEvent(ip, uri, params, request);
 					response = processorManager.doProcessing(requestEvent);
 				} else {
-					processorManager = routingForUriPattern(qDecoder);
+					processorManager = HttpProcessorManager.routingForUriPattern(handlers,qDecoder, PATTERN_INDEX);
 					if(processorManager != null){
 						HttpRequestEvent requestEvent = new HttpRequestEvent(ip, uri, params, request);
 						response = processorManager.doProcessing(requestEvent);

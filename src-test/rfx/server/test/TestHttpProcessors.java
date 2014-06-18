@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
-import rfx.server.http.HttpProcessorMapper;
+import rfx.server.http.HttpProcessorConfig;
 
 public class TestHttpProcessors {
 	final static String BASE_CONTROLLER_PACKAGE = "rfx.server.http.processor";
@@ -16,16 +16,16 @@ public class TestHttpProcessors {
 		// register root resource
 		Reflections reflections = new Reflections(BASE_CONTROLLER_PACKAGE);
 		Set<Class<?>> clazzes = reflections
-				.getTypesAnnotatedWith(HttpProcessorMapper.class);
+				.getTypesAnnotatedWith(HttpProcessorConfig.class);
 		for (Class<?> clazz : clazzes) {
 			if (!classes.contains(clazz)) {
 				classes.add(clazz);
 				System.out.println("...registered controller class: " + clazz);
-				if (clazz.isAnnotationPresent(HttpProcessorMapper.class)) {
+				if (clazz.isAnnotationPresent(HttpProcessorConfig.class)) {
 
 					Annotation annotation = clazz
-							.getAnnotation(HttpProcessorMapper.class);
-					HttpProcessorMapper mapper = (HttpProcessorMapper) annotation;
+							.getAnnotation(HttpProcessorConfig.class);
+					HttpProcessorConfig mapper = (HttpProcessorConfig) annotation;
 
 					System.out.println(mapper.uriPath());
 					System.out.println(mapper.templatePath());

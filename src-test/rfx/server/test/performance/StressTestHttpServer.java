@@ -24,7 +24,7 @@ public class StressTestHttpServer {
 	//https://github.com/LMAX-Exchange/disruptor
 	
 	@Test
-	@PerfTest(invocations = 100000, threads = 500)
+	@PerfTest(invocations = 20000, threads = 200)
 	@Required(max = 4000, average = 400)
 	public void test2() throws Exception {
 		String url = "http://localhost:9090/server-info?filter=compact";

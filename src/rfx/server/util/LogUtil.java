@@ -47,7 +47,7 @@ public class LogUtil {
 			debug(tag, log + "", false);
 		}
 		else {
-
+			
 		}
 	}
 

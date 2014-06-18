@@ -10,9 +10,13 @@ import rfx.server.util.StringPool;
 
 @Target(ElementType.TYPE) //on class level
 @Retention(RetentionPolicy.RUNTIME)
-public @interface HttpProcessorMapper {
+public @interface HttpProcessorConfig {
 	String templatePath() default StringPool.BLANK; 
 	String uriPath() default StringPool.BLANK; 
 	String uriPattern() default StringPool.BLANK; 
 	String contentType() default ContentTypePool.TEXT_UTF8;
+	int privateAccess() default 0;
+	
+	public static int PUBLIC_ACCESS = 0;
+	public static int PRIVATE_ACCESS = 1;
 }

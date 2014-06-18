@@ -7,9 +7,9 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import rfx.server.http.UrlMappingSingleProcessorHandler;
+import rfx.server.http.PublicHttpProcessorRoutingHandler;
 
-public class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
+public class PublicHttpServerInitializer extends ChannelInitializer<SocketChannel> {
 	
 	
 	public static final int SINGLE_PROCESSOR_MODE = 1;
@@ -19,26 +19,24 @@ public class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
 	ChannelHandler getLogChannelHandler(){
 //		System.out.println("-----------------getLogChannelHandler-----------------");
 		if(mode == SINGLE_PROCESSOR_MODE){			
-			return new UrlMappingSingleProcessorHandler();
+			return new PublicHttpProcessorRoutingHandler();
 		} 
-		else if(mode == MULTI_PROCESSOR_MODE){
-			//return new UrlMappingMultiProcessorsHandler();
-			throw new IllegalArgumentException("Not support MULTI_PROCESSOR_MODE");
+		else if(mode == MULTI_PROCESSOR_MODE){			
+			throw new IllegalArgumentException("Not support MULTI_PROCESSOR_MODE in version 1.0");
 		}
 		else {
 			throw new IllegalArgumentException("Bad http server processer mode");
 		}
 	}	
 
-	public HttpServerInitializer(int mode) throws Exception {
+	public PublicHttpServerInitializer(int mode) throws Exception {
 		super();
 		this.mode = mode;
 		if(mode == SINGLE_PROCESSOR_MODE){			
-			UrlMappingSingleProcessorHandler.initHandlers();
+			PublicHttpProcessorRoutingHandler.init();
 		} 
 		else if(mode == MULTI_PROCESSOR_MODE){
-//			UrlMappingMultiProcessorsHandler.initHandlers();
-			throw new IllegalArgumentException("Not support MULTI_PROCESSOR_MODE");
+			throw new IllegalArgumentException("Not support MULTI_PROCESSOR_MODE in version 1.0");
 		}
 		else {
 			throw new IllegalArgumentException("Bad http server processer mode");
