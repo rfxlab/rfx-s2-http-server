@@ -1,14 +1,18 @@
 package rfx.server.http;
 
+import io.netty.handler.codec.http.HttpHeaders.Names;
 import io.netty.handler.codec.http.HttpRequest;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import rfx.server.http.common.NettyHttpUtil;
+
 public class HttpRequestEvent implements Serializable{
 
 	private static final long serialVersionUID = 4820504738374857535L;
+	final static String REGEX_FOR_ROOT_DOMAIN = ".*\\.(?=.*\\.)";
 	
 	String ipAddress;
 	String uriPath; 
@@ -39,5 +43,27 @@ public class HttpRequestEvent implements Serializable{
 		return request;
 	}
 	
+	public String getHost(){
+		return request.headers().get(Names.HOST);
+	}
 	
+	public String getRootDomain(){
+		return getHost().replaceAll(REGEX_FOR_ROOT_DOMAIN, "");
+	}
+	
+	public String param(String name){
+		return NettyHttpUtil.getParamValue(name, params);
+	}
+	
+	public String param(String name, String defaultVal){
+		return NettyHttpUtil.getParamValue(name, params, defaultVal);
+	}
+	
+		
+	public void clear(){
+		this.ipAddress = null;
+		this.uriPath = null;
+		this.params = null;
+		this.request = null;
+	}
 }

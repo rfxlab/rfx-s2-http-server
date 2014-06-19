@@ -29,7 +29,7 @@ public class HttpServerStarter {
 		options.addOption("lcf","load-configs-from", true, "load from specified config-folder name");
 
 		if(args.length == 0){
-			args = new String[]{ "d" , "--load-configs-from=configs/" };	
+			args = new String[]{ "-d" , "--load-configs-from=configs/" };	
 		}
 
 		try {
@@ -62,14 +62,14 @@ public class HttpServerStarter {
 		}
     	
     	
-    	HttpServerConfigs configs;
+    	HttpServerConfigs configs = HttpServerConfigs.load();
     	int customPort = 0;
     	boolean websocket = false;
-    	if(args.length >= 1){
-    		configs = HttpServerConfigs.load(args[0]);    		
-    	} else {
-    		configs = HttpServerConfigs.load();
-    	}    	
+//    	if(args.length >= 1){
+//    		configs = HttpServerConfigs.load(args[0]);    		
+//    	} else {
+//    		configs = HttpServerConfigs.load();
+//    	}    	
     	websocket = configs.isWebsocketEnable();
     	
         int port = configs.getPort();

@@ -51,13 +51,14 @@ public class PrivateHttpProcessorRoutingHandler extends SimpleChannelInboundHand
 				Map<String, List<String>> params = qDecoder.parameters();
 				
 				HttpProcessorManager processorManager = HttpProcessorManager.routingForUriPath(handlers,qDecoder);
+				HttpRequestEvent requestEvent = null;
 				if(processorManager != null){
-					HttpRequestEvent requestEvent = new HttpRequestEvent(ip, uri, params, request);
+					requestEvent = new HttpRequestEvent(ip, uri, params, request);
 					response = processorManager.doProcessing(requestEvent);
 				} else {
 					processorManager = HttpProcessorManager.routingForUriPattern(handlers,qDecoder, PATTERN_INDEX);
 					if(processorManager != null){
-						HttpRequestEvent requestEvent = new HttpRequestEvent(ip, uri, params, request);
+						requestEvent = new HttpRequestEvent(ip, uri, params, request);
 						response = processorManager.doProcessing(requestEvent);
 					} else {
 						String s = "Not found HttpProcessor for URI: "+uri;
@@ -68,6 +69,10 @@ public class PrivateHttpProcessorRoutingHandler extends SimpleChannelInboundHand
 				// Write the response.				
 		        ChannelFuture future = ctx.write(response);
 		        ctx.flush().close();
+		        
+		        if(requestEvent != null){
+		        	requestEvent.clear();
+		        }
 				 
 				//Close the non-keep-alive connection after the write operation is done.
 				future.addListener(ChannelFutureListener.CLOSE);

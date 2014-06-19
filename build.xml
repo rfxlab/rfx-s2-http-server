@@ -18,7 +18,9 @@
 	<property name="class_path_for_server" value=" . ;
 		lib/aopalliance.jar ; 
 		lib/common-pherialize-1.1.jar ; 
+		lib/commons-cli-1.2.jar ; 
 		lib/commons-codec-1.6.jar ; 
+		lib/commons-configuration-1.10.jar ; 
 		lib/commons-dbcp-1.4.jar ; 
 		lib/commons-io-1.4.jar ; 
 		lib/commons-lang3-3.3.2.jar ; 

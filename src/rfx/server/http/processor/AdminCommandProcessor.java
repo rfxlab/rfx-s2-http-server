@@ -4,20 +4,21 @@ import rfx.server.configs.ContentTypePool;
 import rfx.server.http.BaseModel;
 import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorConfig;
+import rfx.server.http.HttpRequestEvent;
 import rfx.server.util.template.MustacheTemplateUtil;
 
 @HttpProcessorConfig(privateAccess = HttpProcessorConfig.PRIVATE_ACCESS, uriPath = "/", contentType = ContentTypePool.JSON)
 public class AdminCommandProcessor extends HttpProcessor {
 
 	@Override
-	protected BaseModel process() {
+	protected BaseModel process(HttpRequestEvent requestEvent) {
 		// HttpHeaders headers = request.headers();
 		// String referer = headers.get(REFERER);
 		// String userAgent = headers.get(USER_AGENT);
 		// System.out.println("referer: "+referer);
 		// System.out.println("userAgent: "+userAgent);
 
-		String cmd = param("cmd", "");
+		String cmd = requestEvent.param("cmd", "");
 		System.out.println("cmd: " + cmd);
 		String status = "fail";
 
