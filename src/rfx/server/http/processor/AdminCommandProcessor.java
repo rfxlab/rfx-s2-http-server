@@ -4,7 +4,7 @@ import rfx.server.configs.ContentTypePool;
 import rfx.server.http.BaseModel;
 import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorConfig;
-import rfx.server.util.template.MustacheUtil;
+import rfx.server.util.template.MustacheTemplateUtil;
 
 @HttpProcessorConfig(privateAccess = HttpProcessorConfig.PRIVATE_ACCESS, uriPath = "/admin", contentType = ContentTypePool.JSON)
 public class AdminCommandProcessor extends HttpProcessor {
@@ -22,7 +22,7 @@ public class AdminCommandProcessor extends HttpProcessor {
 		String status = "fail";
 
 		if (cmd.equals("refresh-templates")) {
-			MustacheUtil.refreshTemplateCache();
+			MustacheTemplateUtil.refreshCache();
 			status = cmd + " success";
 		}
 

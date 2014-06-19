@@ -24,10 +24,10 @@ public class StressTestHttpServer {
 	//https://github.com/LMAX-Exchange/disruptor
 	
 	@Test
-	@PerfTest(invocations = 50000, threads = 500)
+	@PerfTest(invocations = 60000, threads = 600)
 	@Required(max = 4000, average = 400)
 	public void test2() throws Exception {
-		String url = "http://localhost:9090/server-info?filter=compact";
+		String url = "http://192.168.10.221:9090/server-info?filter=compact";
 		String rs = HttpClientUtil.executeGet(url);
 
 		if (rs.contains("Time:")) {

@@ -43,7 +43,7 @@ public class AntBuilderUtil {
 	   {
 		   String libPath = files.get(i).getAbsolutePath();
 		   if(libPath.endsWith(".jar")){
-			   String name = libPath.replace(fullPathLibs, "");			   
+			   String name = libPath.replace(fullPathLibs, "").replace("\\", "/");
 			   StringBuilder s = new StringBuilder("lib");
 			   s.append(name).append(" ; ");
 			   System.out.println(s);

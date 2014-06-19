@@ -25,6 +25,7 @@
 		lib/commons-net-3.2.jar ; 
 		lib/commons-pool2-2.2.jar ; 
 		lib/contiperf-2.3.2.jar ; 
+		lib/disruptor-3.2.1.jar ; 
 		lib/groovy-all-2.3.3-indy.jar ; 
 		lib/gson-2.2.4.jar ; 
 		lib/guava-17.0.jar ; 
@@ -46,7 +47,7 @@
 		lib/metrics-core-2.2.0.jar ; 
 		lib/mustache-0.8.15.jar ; 
 		lib/mysql-connector-java-5.1.31-bin.jar ; 
-		lib/netty-all-4.0.19.Final.jar ; 
+		lib/netty-all-4.0.20.Final.jar ; 
 		lib/reflections-0.9.9-RC1.jar ; 
 		lib/rxjava-core-0.19.0.jar ; 
 		lib/scala-library-2.9.2.jar ; 
@@ -56,7 +57,7 @@
 		lib/snappy-java-1.0.5.jar ; 
 		lib/spymemcached-2.11.3.jar ; 
 		lib/zkclient-0.3.jar ; 
-		lib/zookeeper-3.3.4.jar ;  
+		lib/zookeeper-3.3.4.jar ;    
 	" />
 	
 
@@ -74,11 +75,11 @@
 
 	<target name="compile" depends="init" description="compile the source ">
 		<!-- Compile the java code from ${src} into ${build} -->
-		<javac srcdir="${src}" destdir="${build}" classpathref="jars" debug="on" encoding="utf-8" optimize="on" target="1.8"
+		<javac srcdir="${src}" destdir="${build}" classpathref="jars" debug="on" encoding="utf-8" optimize="on" target="1.8" includeantruntime="true"
 			 fork="yes"	executable="${javac_path}" compiler="javac1.8" />
 		<fileset dir="bin">
 			<exclude name="**/.svn/*" />
-			<exclude name="**/tests/*" />
+			<exclude name="**/test/*" />
 		</fileset>
 	</target>
 
@@ -121,7 +122,7 @@
 			</manifest>
 			<fileset dir="${build}">
 				<exclude name="**/.svn/*" />
-				<exclude name="**/tests/*" />
+				<exclude name="**/test/*" />
 			</fileset>
 		</jar>
 		

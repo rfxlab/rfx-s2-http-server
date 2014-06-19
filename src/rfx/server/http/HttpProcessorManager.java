@@ -19,7 +19,7 @@ import rfx.server.http.common.NettyHttpUtil;
 import rfx.server.util.RoundRobin;
 import rfx.server.util.StringPool;
 import rfx.server.util.StringUtil;
-import rfx.server.util.template.MustacheUtil;
+import rfx.server.util.template.MustacheTemplateUtil;
 
 import com.google.gson.Gson;
 
@@ -74,7 +74,7 @@ public class HttpProcessorManager {
 			if(contentType.equals(ContentTypePool.JSON)){
 				outStr = new Gson().toJson(model);
 			} else {
-				outStr = MustacheUtil.execute(templatePath, model);
+				outStr = MustacheTemplateUtil.execute(templatePath, model);
 			}
 		} 
 		catch (Throwable e) {
