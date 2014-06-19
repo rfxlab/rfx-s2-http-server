@@ -22,7 +22,7 @@ import rfx.server.http.common.NettyHttpUtil;
 public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandler<Object> {
 	
 	private static final Map<String, HttpProcessorManager> handlers = new HashMap<>();
-	final static String BASE_CONTROLLER_PACKAGE = "rfx.server.http.processor";
+	final static String BASE_CONTROLLER_PACKAGE = "sample.http.processor";
 	public static final int PATTERN_INDEX = 2;
 	public static int DEFAULT_MAX_POOL_SIZE = 20000;
 		

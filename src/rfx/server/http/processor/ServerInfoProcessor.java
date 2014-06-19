@@ -11,8 +11,9 @@ import rfx.server.http.BaseModel;
 import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorConfig;
 import rfx.server.http.HttpRequestEvent;
+import rfx.server.monitor.util.MemoryWatcher;
 
-@HttpProcessorConfig(uriPath = "/server-info", templatePath = "server-info.mustache", contentType = ContentTypePool.HTML_UTF8)
+@HttpProcessorConfig(privateAccess = HttpProcessorConfig.PRIVATE_ACCESS, uriPath = "/server-info", templatePath = "server-info.mustache", contentType = ContentTypePool.HTML_UTF8)
 public class ServerInfoProcessor extends HttpProcessor {
 
 	@Override
@@ -34,6 +35,7 @@ public class ServerInfoProcessor extends HttpProcessor {
 		String filter;
 		boolean showAll;
 		boolean showCompact;
+		String memoryStats;
 
 		public ServerInfoModel(String filter) {
 			this.filter = filter;
@@ -62,6 +64,7 @@ public class ServerInfoProcessor extends HttpProcessor {
 				}
 
 			}
+			memoryStats = MemoryWatcher.collectMemoryStats();
 		}
 	
 		@Override

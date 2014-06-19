@@ -7,7 +7,10 @@
 	
 	<!-- set global properties for this build -->	
 	<property name="dist" location="" />	
+	
 	<property name="src_core" location="src" />
+	<property name="src_processors" location="src-processors" />
+	
 	<property name="build" location="build" />		
 	<property name="lib" location="lib" />
 	<property name="configs" location="configs" />
@@ -75,10 +78,14 @@
 		<fileset dir="${lib}" includes="**/*.jar" excludes="**/.svn/*" />
 	</path>
 
-	<target name="compile-src-core" depends="init" description="compile the source ">
-		<!-- Compile the java code from ${src_core} into ${build} -->
+	<target name="compile-src" depends="init" description="compile the source ">
+		<!-- Compile src_core -->
 		<javac srcdir="${src_core}" destdir="${build}" classpathref="jars" debug="on" encoding="utf-8" optimize="on" 
 			target="1.8" includeantruntime="true" fork="yes"	executable="${javac_path}" compiler="javac1.8" />
+		
+		<!-- Compile src_processors -->
+		<javac srcdir="${src_processors}" destdir="${build}" classpathref="jars" debug="on" encoding="utf-8" optimize="on" 
+					target="1.8" includeantruntime="true" fork="yes"	executable="${javac_path}" compiler="javac1.8" />		
 		<fileset dir="bin">
 			<exclude name="**/.svn/*" />
 			<exclude name="${exclude_pattern_folder}" />
@@ -93,7 +100,7 @@
 	</target>
 
 	
-	<target name="compile-http-server" depends="compile-src-core" description="http-log-server BUILD">
+	<target name="compile-http-server" depends="compile-src" description="http-log-server BUILD">
 		<!--
 		<copy todir="${dist}/lib">
 			<fileset dir="${lib}" includes="**" excludes="**/.svn/*" />

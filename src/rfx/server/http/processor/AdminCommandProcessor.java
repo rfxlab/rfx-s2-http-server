@@ -7,7 +7,7 @@ import rfx.server.http.HttpProcessorConfig;
 import rfx.server.http.HttpRequestEvent;
 import rfx.server.util.template.MustacheTemplateUtil;
 
-@HttpProcessorConfig(privateAccess = HttpProcessorConfig.PRIVATE_ACCESS, uriPath = "/", contentType = ContentTypePool.JSON)
+@HttpProcessorConfig(privateAccess = HttpProcessorConfig.PRIVATE_ACCESS, uriPath = "/admin-command", contentType = ContentTypePool.JSON)
 public class AdminCommandProcessor extends HttpProcessor {
 
 	@Override

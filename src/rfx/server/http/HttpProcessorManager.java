@@ -123,7 +123,7 @@ public class HttpProcessorManager {
 		Reflections reflections = new Reflections(processorPackage);
 		Set<Class<?>> clazzes =  reflections.getTypesAnnotatedWith(HttpProcessorConfig.class);
 		Map<String, HttpProcessorManager> tempMap = new HashMap<>();
-		System.out.println("Http Processor Scanning "+processorPackage + " for access mode "+filteredAccessMode);
+		System.out.println("Http Processor Scanning "+processorPackage + " for access mode "+ (filteredAccessMode == 1 ? "PUBLIC" : "PRIVATE"));
 	    for (Class<?> clazz : clazzes) {
 			if (clazz.isAnnotationPresent(HttpProcessorConfig.class)) {        		     
 				Annotation annotation = clazz.getAnnotation(HttpProcessorConfig.class);
