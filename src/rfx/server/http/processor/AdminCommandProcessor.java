@@ -6,7 +6,7 @@ import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorConfig;
 import rfx.server.util.template.MustacheTemplateUtil;
 
-@HttpProcessorConfig(privateAccess = HttpProcessorConfig.PRIVATE_ACCESS, uriPath = "/admin", contentType = ContentTypePool.JSON)
+@HttpProcessorConfig(privateAccess = HttpProcessorConfig.PRIVATE_ACCESS, uriPath = "/", contentType = ContentTypePool.JSON)
 public class AdminCommandProcessor extends HttpProcessor {
 
 	@Override
@@ -25,7 +25,6 @@ public class AdminCommandProcessor extends HttpProcessor {
 			MustacheTemplateUtil.refreshCache();
 			status = cmd + " success";
 		}
-
 		return new AdminCommandResult(status);
 	}
 

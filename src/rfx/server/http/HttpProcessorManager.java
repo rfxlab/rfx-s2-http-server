@@ -35,30 +35,29 @@ public class HttpProcessorManager {
 	private String templatePath;
 	Class<?> httpProcessorClass;
 	RoundRobin<HttpProcessor> roundRobinRounter;
-	public static int DEFAULT_MAX_POOL_SIZE = 20000;	
-	
-	public HttpProcessorManager(String contentType, String templatePath, Class<?> httpProcessorClass) throws Exception {
-		super();	
-		init(contentType, templatePath, httpProcessorClass, DEFAULT_MAX_POOL_SIZE);
-	}
-	
+		
 	public HttpProcessorManager(String contentType, String templatePath, Class<?> httpProcessorClass, int maxPoolSize) throws Exception {
 		super();	
-		init(contentType, templatePath, httpProcessorClass, maxPoolSize);
+		initPool(contentType, templatePath, httpProcessorClass, maxPoolSize);
 	}
 	
-	void init(String contentType, String templatePath, Class<?> httpProcessorClass, int maxPoolSize) throws InstantiationException, IllegalAccessException {
+	void initPool(String contentType, String templatePath, Class<?> httpProcessorClass, int maxPoolSize) throws InstantiationException, IllegalAccessException {
 		this.contentType = contentType;
 		this.templatePath = templatePath;
 		this.httpProcessorClass = httpProcessorClass;
 		
-		List<HttpProcessor> pool = new ArrayList<>(maxPoolSize);
-		for (int i = 0; i < maxPoolSize; i++) {
-			HttpProcessor httpProcessor = (HttpProcessor) httpProcessorClass.newInstance();
-			pool.add(httpProcessor);
+		if(maxPoolSize == 1){
+			roundRobinRounter = new RoundRobin<>((HttpProcessor) httpProcessorClass.newInstance());
+		} else {
+			List<HttpProcessor> pool = new ArrayList<>(maxPoolSize);
+			for (int i = 0; i < maxPoolSize; i++) {
+				HttpProcessor httpProcessor = (HttpProcessor) httpProcessorClass.newInstance();
+				pool.add(httpProcessor);
+			}
+			roundRobinRounter = new RoundRobin<>(pool);	
 		}
-		roundRobinRounter = new RoundRobin<>(pool);
 	}
+	
 
 	/**
 	 * always called by UrlMappingSingleProcessorHandler.callProcessor
@@ -71,7 +70,7 @@ public class HttpProcessorManager {
 		FullHttpResponse response;
 		try {			
 			model = roundRobinRounter.next().doProcessing(requestEvent);			
-			if(contentType.equals(ContentTypePool.JSON)){
+			if(ContentTypePool.JSON.equals(contentType)){
 				outStr = new Gson().toJson(model);
 			} else {
 				outStr = MustacheTemplateUtil.execute(templatePath, model);
@@ -132,8 +131,9 @@ public class HttpProcessorManager {
 				
 				if( config.privateAccess() == filteredAccessMode){
 					HttpProcessorManager manager = tempMap.get(config.uriPath());
-					if( manager == null ){
-						manager = new HttpProcessorManager(config.contentType(), config.templatePath(), clazz, processorPoolSize);						
+					if( manager == null ){						
+						manager = new HttpProcessorManager(config.contentType(), config.templatePath(), clazz, processorPoolSize);
+						
 						if( StringUtil.isNotEmpty(config.uriPath()) ){
 							tempMap.put(config.uriPath(), manager);
 							String s = "...registered controller class: "+ clazz.getName() + " ;uriPath:"+config.uriPath()+" ;tpl:"+config.templatePath()+ " ;content-type"+config.contentType();

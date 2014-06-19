@@ -187,11 +187,9 @@ public class HttpClientUtil {
 			} else {
 				return "500";
 			}
-		}  catch (Throwable e) {
-			if( e instanceof java.net.ConnectException){
-				return "444";
-			}			
-			e.printStackTrace(); 
+		}  catch (Throwable e) {						
+			//e.printStackTrace();
+			return "444";
 		} finally {
 			response = null;
 		}

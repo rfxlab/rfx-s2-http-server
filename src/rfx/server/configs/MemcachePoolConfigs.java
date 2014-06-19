@@ -28,8 +28,8 @@ public class MemcachePoolConfigs {
 			return StringUtil.toString("ServerInfo[",host,":",port,"]");
 		}
 	}
-
-	public static void main(String[] args) {
+	
+	static void loadConfigFile(){
 		Properties props = new Properties();
 		InputStream input = null;			 
 		try {			 
@@ -60,6 +60,10 @@ public class MemcachePoolConfigs {
 				}
 			}
 		}
+	}
+
+	public static void main(String[] args) {
+		
 		
 		System.out.println(pools);
 	}

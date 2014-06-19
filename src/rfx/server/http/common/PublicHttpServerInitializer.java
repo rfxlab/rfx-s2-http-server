@@ -27,7 +27,7 @@ public class PublicHttpServerInitializer extends ChannelInitializer<SocketChanne
 		else {
 			throw new IllegalArgumentException("Bad http server processer mode");
 		}
-	}	
+	}
 
 	public PublicHttpServerInitializer(int mode) throws Exception {
 		super();
