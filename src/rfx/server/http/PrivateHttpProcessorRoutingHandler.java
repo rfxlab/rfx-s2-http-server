@@ -18,8 +18,12 @@ import java.util.Map;
 import rfx.server.http.common.NettyHttpUtil;
 
 
-
-
+/**
+ * @author trieu
+ * 
+ * the private handler for all Netty's message, transform to HttpRequestEvent and routing all matched processors  
+ *
+ */
 public class PrivateHttpProcessorRoutingHandler extends SimpleChannelInboundHandler<Object> {
 	
 	private static final Map<String, HttpProcessorManager> handlers = new HashMap<>();
@@ -36,16 +40,22 @@ public class PrivateHttpProcessorRoutingHandler extends SimpleChannelInboundHand
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) {    	
         if (msg instanceof HttpRequest) {        	
         	HttpRequest request = (HttpRequest) msg;
-        	//TODO filter DDOS/bad/attacking requests 
-        	        	
         	String uri = request.getUri();
         	String ip = NettyHttpUtil.getRequestIP(ctx, request);
-        	
-        	//System.out.println("===> uri: " + uri);
+        
     		if (uri.equalsIgnoreCase(NettyHttpUtil.FAVICON_URI)) {
     			NettyHttpUtil.returnImage1pxGifResponse(ctx);
     		} else {
     			FullHttpResponse response = null;
+    			
+    			//TODO access log
+//				try {
+//					AccessLogUtil.logAccess(request, ipAddress, uri);
+//					response = UriMapper.buildHttpResponse(ipAddress,ctx,request , uri);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					LogUtil.error("HttpLogChannelHandler", e.getMessage());
+//				}
 				
 				QueryStringDecoder qDecoder = new QueryStringDecoder(uri);
 				Map<String, List<String>> params = qDecoder.parameters();
@@ -70,6 +80,7 @@ public class PrivateHttpProcessorRoutingHandler extends SimpleChannelInboundHand
 		        ChannelFuture future = ctx.write(response);
 		        ctx.flush().close();
 		        
+		        //callback and free resources 
 		        if(requestEvent != null){
 		        	requestEvent.clear();
 		        }

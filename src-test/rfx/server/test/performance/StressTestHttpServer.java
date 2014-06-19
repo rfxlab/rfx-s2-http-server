@@ -27,7 +27,7 @@ public class StressTestHttpServer {
 	@PerfTest(invocations = 50000, threads = 500)
 	@Required(max = 4000, average = 400)
 	public void test2() throws Exception {
-		String url = "http://192.168.10.221:9090/247/inpagead/zid_1340349210/wid_1286789098/div_InPage_728_90/sc_1600x900/cd_24/fl_14/lg_ZW4tVVM=/jv_1/urf_/cb_417152/";
+		String url = "http://localhost:9090/hello?name=Albert%20Einstein";
 		//String url = "http://192.168.10.221:10000/";
 		String rs = HttpClientUtil.executeGet(url);
 

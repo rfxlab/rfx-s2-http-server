@@ -17,11 +17,17 @@ import java.util.Map;
 
 import rfx.server.http.common.NettyHttpUtil;
 
-
-
+/**
+ * @author trieu
+ *
+ * the public handler for all Netty's message, transform to HttpRequestEvent and routing all matched processors  
+ *
+ */
 public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandler<Object> {
 	
 	private static final Map<String, HttpProcessorManager> handlers = new HashMap<>();
+	
+	//TODO move to config file
 	final static String BASE_CONTROLLER_PACKAGE = "sample.http.processor";
 	public static final int PATTERN_INDEX = 2;
 	public static int DEFAULT_MAX_POOL_SIZE = 20000;
@@ -46,14 +52,7 @@ public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandl
     			NettyHttpUtil.returnImage1pxGifResponse(ctx);
     		} else {
     			FullHttpResponse response = null;
-    			//TODO access log
-//				try {
-//					AccessLogUtil.logAccess(request, ipAddress, uri);
-//					response = UriMapper.buildHttpResponse(ipAddress,ctx,request , uri);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					LogUtil.error("HttpLogChannelHandler", e.getMessage());
-//				}
+
 				
 				QueryStringDecoder qDecoder = new QueryStringDecoder(uri);
 				Map<String, List<String>> params = qDecoder.parameters();
@@ -78,6 +77,7 @@ public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandl
 		        ChannelFuture future = ctx.write(response);
 		        ctx.flush().close();
 		        
+		        //callback and free resources 
 		        if(requestEvent != null){
 		        	requestEvent.clear();
 		        }

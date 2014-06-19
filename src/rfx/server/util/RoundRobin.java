@@ -11,7 +11,6 @@ public class RoundRobin<T> {
     private T singleValue;
 
     public T next() {
-    	System.out.println(singleValue == null);
     	if(singleValue != null){
     		return singleValue;
     	} else {
