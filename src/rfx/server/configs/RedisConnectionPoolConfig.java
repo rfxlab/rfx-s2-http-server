@@ -12,9 +12,7 @@ public class RedisConnectionPoolConfig {
 	
 	protected static RedisConnectionPoolConfig _instance = null;
 	
-	public static RedisConnectionPoolConfig theInstance() {
-		return _instance;
-	}
+
 	public static JedisPoolConfig getJedisPoolConfigInstance(){
 		if(_instance == null){
 			try {
