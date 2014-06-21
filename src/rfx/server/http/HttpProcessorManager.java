@@ -16,6 +16,7 @@ import org.reflections.Reflections;
 
 import rfx.server.configs.ContentTypePool;
 import rfx.server.http.common.NettyHttpUtil;
+import rfx.server.log.handlers.StaticFileHandler;
 import rfx.server.util.RoundRobin;
 import rfx.server.util.StringPool;
 import rfx.server.util.StringUtil;
@@ -64,38 +65,43 @@ public class HttpProcessorManager {
 	 * 
 	 * @return FullHttpResponse
 	 */
-	public FullHttpResponse doProcessing(HttpRequestEvent requestEvent) {
-		String outStr = null;
+	public FullHttpResponse doProcessing(HttpRequestEvent requestEvent) {		
 		BaseModel model = null;
-		FullHttpResponse response;
+		FullHttpResponse response = null;
 		try {			
-			model = roundRobinRounter.next().doProcessing(requestEvent);			
-			if(ContentTypePool.JSON.equals(contentType)){
-				outStr = new Gson().toJson(model);
-			} else {
-				outStr = MustacheTemplateUtil.execute(templatePath, model);
-			}
+			model = roundRobinRounter.next().doProcessing(requestEvent);
+			
+			switch (contentType) {
+			case ContentTypePool.JSON:
+				String json = new Gson().toJson(model);
+				response = NettyHttpUtil.theHttpContent(json, contentType);
+				break;				
+			case ContentTypePool.TRACKING_GIF:
+				response = StaticFileHandler.theBase64Image1pxGif();
+				break;
+			default:
+				String text = MustacheTemplateUtil.execute(templatePath, model);
+				response = NettyHttpUtil.theHttpContent(text, contentType);
+				break;
+			}			
 		} 
 		catch (Throwable e) {
 			e.printStackTrace();
 			StringBuilder s = new StringBuilder("Error###");
 			s.append(e.getMessage());
 			s.append(" ### <br>\n StackTrace: ").append(ExceptionUtils.getStackTrace(e));							
-			response = NettyHttpUtil.theHttpContent( s.toString() );
+			response = NettyHttpUtil.theHttpContent(s.toString());
 		} 
 		finally {
 			if(model != null){
 				model.freeResource();
 			}
-		}
-		
+		}		
 		//TODO log the result
-		if (outStr != null) {
-			response = NettyHttpUtil.theHttpContent(outStr, contentType);
-		} else {
-			response = NettyHttpUtil.theHttpContent(StringPool.BLANK);
+		if(response != null){
+			return response;
 		}
-		return response;
+		return NettyHttpUtil.theHttpContent(StringPool.BLANK);
 	}
 	
 	

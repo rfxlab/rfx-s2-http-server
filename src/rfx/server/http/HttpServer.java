@@ -12,7 +12,8 @@ import rfx.server.http.websocket.WebSocketServerInitializer;
 import rfx.server.util.LogUtil;
 
 public class HttpServer {
-	 static String host = "localhost:8080";
+	static String host = "localhost:8080";
+	static final int PRIVATE_HTTP_PORT = 31000; 
 
     int port;
     String ip;
@@ -53,11 +54,11 @@ public class HttpServer {
             .childHandler(new PrivateHttpServerInitializer());
 
             //bind to private access (for administrator only) host info, default 10000
-            Channel ch2 = adminServerBootstrap.bind(ip,10000).sync().channel();  
+            Channel ch2 = adminServerBootstrap.bind(ip,PRIVATE_HTTP_PORT).sync().channel();  
             ch2.config().setConnectTimeoutMillis(1800);
             
             LogUtil.i("publicServerBootstrap ", "is started and listening at " + this.ip + ":" + this.port);
-            LogUtil.i("adminServerBootstrap ", "is started and listening at " + this.ip + ":" + 10000);
+            LogUtil.i("adminServerBootstrap ", "is started and listening at " + this.ip + ":" + PRIVATE_HTTP_PORT);
             ch1.closeFuture().sync();            
             ch2.closeFuture().sync();
             System.out.println("Shutdown...");

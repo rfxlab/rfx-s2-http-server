@@ -11,6 +11,7 @@ import org.apache.commons.cli.PosixParser;
 import rfx.server.configs.HttpServerConfigs;
 import rfx.server.http.common.AccessLogUtil;
 import rfx.server.http.common.PublicHttpServerInitializer;
+import rfx.server.log.kafka.HttpLogKafkaHandler;
 
 /**
  * HTTP Log server.
@@ -88,6 +89,10 @@ public class HttpServerStarter {
         }
         //MemoryManagementUtil.startMemoryUsageTask();
         int mode = PublicHttpServerInitializer.SINGLE_PROCESSOR_MODE;
+        
+        //init kafka handler pool
+        HttpLogKafkaHandler.initKafkaSession();
+        
         new HttpServer(ip,port).run(websocket,mode);
     }
 }

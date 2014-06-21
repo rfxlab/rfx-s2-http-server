@@ -52,7 +52,6 @@ public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandl
     			NettyHttpUtil.returnImage1pxGifResponse(ctx);
     		} else {
     			FullHttpResponse response = null;
-
 				
 				QueryStringDecoder qDecoder = new QueryStringDecoder(uri);
 				Map<String, List<String>> params = qDecoder.parameters();

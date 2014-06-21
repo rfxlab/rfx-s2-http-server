@@ -19,7 +19,9 @@ public class DateTimeUtil {
 	static final DateFormat DATE_NAME_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 	static final DateFormat HOUR_NAME_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:00:00");
 	static final DateFormat DATE_FORMAT_FOR_DB = new SimpleDateFormat("yyyy-MM-dd");
-	static final DateFormat DATEHOUR_FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH");
+	
+	static final DateFormat DATEHOUR_FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH");	
+	static final DateFormat DATEHOURMINUTE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
 	
 
 	public static String formatDate(Date d ){
@@ -80,5 +82,13 @@ public class DateTimeUtil {
 	
 	public static synchronized String getDateHourString(Date d ){
 		return DATEHOUR_FORMAT.format(d);
+	}
+	
+	public static String formatDateHourMinute(Date date) {
+		return DATEHOURMINUTE_FORMAT.format(date);		
+	}
+	
+	public static Date parseDateHourMinuteStr(String str) throws ParseException{
+		return DATEHOURMINUTE_FORMAT.parse(str);		
 	}
 }
