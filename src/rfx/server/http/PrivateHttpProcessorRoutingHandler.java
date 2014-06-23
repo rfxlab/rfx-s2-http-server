@@ -28,12 +28,16 @@ public class PrivateHttpProcessorRoutingHandler extends SimpleChannelInboundHand
 	private static final Map<String, HttpProcessorManager> handlers = new HashMap<>();
 	
 	public static final int PATTERN_INDEX = 2;
-	public static int DEFAULT_MAX_POOL_SIZE = 100;
+	public static int DEFAULT_MAX_POOL_SIZE = 20;
 		
 	public PrivateHttpProcessorRoutingHandler(){}
 	
+	public static void init(String classpath, int processorPoolSize) throws Exception{
+		handlers.putAll(HttpProcessorManager.initProcessorPool(classpath, HttpProcessorConfig.PRIVATE_ACCESS, processorPoolSize));
+	}
+	
 	public static void init(String classpath) throws Exception{
-		handlers.putAll(HttpProcessorManager.initProcessorPool(classpath, HttpProcessorConfig.PRIVATE_ACCESS, DEFAULT_MAX_POOL_SIZE));
+		init(classpath, DEFAULT_MAX_POOL_SIZE);
 	}
 
     @Override

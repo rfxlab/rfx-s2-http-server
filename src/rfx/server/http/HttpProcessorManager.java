@@ -70,7 +70,7 @@ public class HttpProcessorManager {
 		try {			
 			model = roundRobinRounter.next().doProcessing(requestEvent);
 			if(model.isOutputableText()){
-				System.out.println("..doProcessing:" + model );
+//				System.out.println("..doProcessing:" + model );
 				String templateLocation = TemplateConfigUtil.getTemplateLocation(model);
 				String text = HandlebarsTemplateUtil.execute(templateLocation, model);
 				response = NettyHttpUtil.theHttpContent(text, contentType);
@@ -125,7 +125,12 @@ public class HttpProcessorManager {
 		Reflections reflections = new Reflections(classpath);
 		Set<Class<?>> clazzes =  reflections.getTypesAnnotatedWith(HttpProcessorConfig.class);
 		Map<String, HttpProcessorManager> tempMap = new HashMap<>();
-		System.out.println("Http Processor Scanning "+classpath + " for access mode "+ (filteredAccessMode == 1 ? "PUBLIC" : "PRIVATE"));
+		
+		System.out.println("----------------------------initProcessorPool-----------------------------------");
+		System.out.println(" Access Mode "+ (filteredAccessMode == HttpProcessorConfig.PUBLIC_ACCESS ? "PUBLIC" : "PRIVATE"));
+		System.out.println("...classpath "+ classpath + " processorPoolSize = "+ processorPoolSize);
+		System.out.println("--------------------------------------------------------------------------------------");
+		
 	    for (Class<?> clazz : clazzes) {
 			if (clazz.isAnnotationPresent(HttpProcessorConfig.class)) {        		     
 				Annotation annotation = clazz.getAnnotation(HttpProcessorConfig.class);

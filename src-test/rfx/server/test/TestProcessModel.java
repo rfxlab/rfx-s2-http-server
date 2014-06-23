@@ -1,5 +1,7 @@
 package rfx.server.test;
 
+import java.io.IOException;
+
 import rfx.server.http.BaseModel;
 import rfx.server.http.processor.model.ServerInfoModel;
 import rfx.server.util.template.HandlebarsTemplateUtil;
@@ -7,7 +9,7 @@ import rfx.server.util.template.TemplateConfigUtil;
 
 public class TestProcessModel {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
 		
 		

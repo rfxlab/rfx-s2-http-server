@@ -28,7 +28,8 @@ public class RealtimeAnalyticsHttpProcessor extends HttpProcessor {
 		return new AnalyticData(cmd).processCommand();
 	}
 
-	static class AnalyticData implements BaseModel{		
+	static class AnalyticData implements BaseModel{	
+		static final String classpath = AnalyticData.class.getName();
 		String cmd = "Hello ";
 		Set<String> hotKeywords = new HashSet<>();
 
@@ -70,6 +71,11 @@ public class RealtimeAnalyticsHttpProcessor extends HttpProcessor {
 		public boolean isOutputableText() {
 			// TODO Auto-generated method stub
 			return false;
+		}
+
+		@Override
+		public String classpath() {			
+			return classpath;
 		}
 		
 	}

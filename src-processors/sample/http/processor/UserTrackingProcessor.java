@@ -19,7 +19,7 @@ public class UserTrackingProcessor extends HttpProcessor {
 		if(kafkaHandler != null){
 			kafkaHandler.writeLogToKafka(e.getIpAddress(), e.getRequest());
 		}
-		return null;
+		return EMPTY_MODEL;
 	}
 
 }

@@ -24,6 +24,7 @@ public class HelloHttpProcessor extends HttpProcessor {
 
 	static class MyData implements BaseModel{		
 		String data = "Hello ";		
+		static final String classpath = MyData.class.getName();
 
 		public MyData(String name) {
 			super();
@@ -40,6 +41,11 @@ public class HelloHttpProcessor extends HttpProcessor {
 		public boolean isOutputableText() {
 			// TODO Auto-generated method stub
 			return false;
+		}
+
+		@Override
+		public String classpath() {			
+			return classpath;
 		}
 		
 	}

@@ -30,6 +30,7 @@ public class AdminCommandProcessor extends HttpProcessor {
 	}
 
 	static class AdminCommandResult implements BaseModel {
+		static final String classpath = AdminCommandResult.class.getName();
 		String status;
 
 		public AdminCommandResult(String status) {
@@ -53,6 +54,11 @@ public class AdminCommandProcessor extends HttpProcessor {
 		@Override
 		public boolean isOutputableText() {	
 			return false;
+		}
+
+		@Override
+		public String classpath() {			
+			return classpath;
 		}
 	}
 

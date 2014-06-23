@@ -12,6 +12,7 @@ import rfx.server.monitor.util.MemoryWatcher;
 
 @TemplateConfig(location = "server-info")
 public class ServerInfoModel extends BaseViewableModel {
+	static final String classpath = ServerInfoModel.class.getName();
 	String time;
 	List<String> infos = new ArrayList<>();
 	String filter;
@@ -105,6 +106,11 @@ public class ServerInfoModel extends BaseViewableModel {
 		}
 		memoryStats = MemoryWatcher.collectMemoryStats();
 		return this;
+	}
+
+	@Override
+	public String classpath() {
+		return classpath;
 	}
 	
 }

@@ -34,8 +34,12 @@ public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandl
 		
 	public PublicHttpProcessorRoutingHandler(){}
 	
+	public static void init(String mainPackage, int processorPoolSize) throws Exception{
+		handlers.putAll(HttpProcessorManager.initProcessorPool(mainPackage, HttpProcessorConfig.PUBLIC_ACCESS, processorPoolSize));
+	}
+	
 	public static void init(String mainPackage) throws Exception{
-		handlers.putAll(HttpProcessorManager.initProcessorPool(mainPackage, HttpProcessorConfig.PUBLIC_ACCESS, DEFAULT_MAX_POOL_SIZE));
+		init(mainPackage, DEFAULT_MAX_POOL_SIZE);
 	}
 
     @Override

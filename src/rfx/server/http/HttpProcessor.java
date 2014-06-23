@@ -1,6 +1,5 @@
 package rfx.server.http;
 
-import rfx.server.util.template.MustacheObjectModel;
 
 /**
  * the base class for HTTP processor, input: HttpRequest output: processed model object
@@ -9,6 +8,19 @@ import rfx.server.util.template.MustacheObjectModel;
  *
  */
 public abstract class HttpProcessor {
+	
+	public static final BaseModel EMPTY_MODEL = new BaseModel() {		
+		@Override
+		public boolean isOutputableText() {			
+			return false;
+		}		
+		@Override
+		public void freeResource() {}
+		@Override
+		public String classpath() {			
+			return BaseModel.class.getName();
+		}
+	};
 	
 	/**
 	 * always called by HttpProcessorManager
@@ -22,14 +34,7 @@ public abstract class HttpProcessor {
 		return process(requestEvent);
 	}
 	
-	
-	protected MustacheObjectModel createModel() {		
-		return new MustacheObjectModel();
-	}	
-	
-	protected MustacheObjectModel createModel(int numberField) {		
-		return new MustacheObjectModel(numberField);
-	}	
+
 	
 	///////////// for the implementation class /////////////
 	protected abstract BaseModel process(HttpRequestEvent event);

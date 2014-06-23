@@ -6,7 +6,7 @@ import java.util.Map;
 import rfx.server.http.BaseModel;
 
 public class MustacheObjectModel extends HashMap<String, Object> implements BaseModel{
-
+	static final String classpath = MustacheObjectModel.class.getName();
 	private static final long serialVersionUID = 5072021270346354454L;
 	
 	public MustacheObjectModel(){}
@@ -31,6 +31,11 @@ public class MustacheObjectModel extends HashMap<String, Object> implements Base
 	@Override
 	public boolean isOutputableText() {		
 		return false;
+	}
+
+	@Override
+	public String classpath() {
+		return classpath;
 	}	
 	
 }

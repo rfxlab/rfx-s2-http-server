@@ -25,13 +25,12 @@ public class HandlebarsTemplateUtil {
 	final static String BASE_TEMPLATE_PATH = "resources/tpl/";
 	final static String TEMPLATE_SUFFIX = ".html";
 	
-	static TemplateLoader loader = new FileTemplateLoader(BASE_TEMPLATE_PATH, TEMPLATE_SUFFIX);
-	static Handlebars handlebars = new Handlebars(loader);
+	final static TemplateLoader loader = new FileTemplateLoader(BASE_TEMPLATE_PATH, TEMPLATE_SUFFIX);
+	final static Handlebars handlebars = new Handlebars(loader);
 	
-	final static AtomicBoolean isUsedCache = new AtomicBoolean(false);//TODO
+	final static AtomicBoolean isUsedCache = new AtomicBoolean(true);//TODO
 	public static void refreshCache(){		
-		mustacheMap.clear();		
-		
+		mustacheMap.clear();	
 	}
 	
 	public static void disableUsedCache(){
@@ -54,6 +53,10 @@ public class HandlebarsTemplateUtil {
 		} else {
 			return handlebars.compile(tplPath);
 		}        		
+	}
+	
+	public static void compileAndCache(String tplPath) throws IOException{		
+		mustacheMap.put(tplPath, handlebars.compile(tplPath));		
 	}
 	
 	public static String execute(String tplPath, Object model){

@@ -19,7 +19,7 @@ public class ServerInfoProcessor extends HttpProcessor {
 		// System.out.println("userAgent: "+userAgent);
 		
 		String filter = requestEvent.param("filter", "");
-		System.out.println("filter: " + filter);
+//		System.out.println("filter: " + filter);
 		return new ServerInfoModel(filter).prepareData();
 	}	
 

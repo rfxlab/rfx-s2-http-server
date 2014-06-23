@@ -6,25 +6,22 @@
 	<h3>Time: {{time}}</h3>
 	
 	<strong>		
-	{{#showAll}}
+	{{#if showAll}}
 	  All System JVM information
-	{{/showAll}}
+	{{/if}}
 	
-	{{#showCompact}}
+	{{#if showCompact}}
 	  Important JVM information
-	{{/showCompact}}
+	{{/if}}
 	</strong>
 	
 	<br>
-	<strong>Memory:</strong>
-	<p>
-		{{memoryStats}}
-	</p>
-	
+	<strong>Memory: {{memoryStats}}</strong>
+		
 	<ul>
-		{{#infos}}
+		{{#each infos}}
 			<li>{{.}}</li> 
-		{{/infos}}
+		{{/each}}
 	</ul>	
 </body>
 </html>

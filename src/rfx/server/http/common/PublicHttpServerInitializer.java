@@ -17,10 +17,14 @@ public class PublicHttpServerInitializer extends ChannelInitializer<SocketChanne
 		return new PublicHttpProcessorRoutingHandler();
 	}
 
+	public PublicHttpServerInitializer(String classpath, int processorPoolSize) throws Exception {
+		super();
+		PublicHttpProcessorRoutingHandler.init(classpath, processorPoolSize);
+	}
+	
 	public PublicHttpServerInitializer(String classpath) throws Exception {
 		super();
-		PublicHttpProcessorRoutingHandler.init(classpath);		 
-		    	
+		PublicHttpProcessorRoutingHandler.init(classpath);
 	}
 
 	@Override

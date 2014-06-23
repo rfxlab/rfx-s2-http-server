@@ -12,6 +12,11 @@ public interface BaseModel {
 	 */
 	public void freeResource();
 	
+	/**
+	 * @return String the class-path of implemented class 
+	 */
+	public String classpath();
+	
 	
 	/**
 	 * @return true if the model can be rendered with template engine

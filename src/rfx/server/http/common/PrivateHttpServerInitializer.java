@@ -11,6 +11,10 @@ import rfx.server.http.PrivateHttpProcessorRoutingHandler;
 public class PrivateHttpServerInitializer extends ChannelInitializer<SocketChannel> {
 	
 		
+	public PrivateHttpServerInitializer(String mainPackage, int processorPoolSize) throws Exception {
+		PrivateHttpProcessorRoutingHandler.init(mainPackage, processorPoolSize);
+	}
+	
 	public PrivateHttpServerInitializer(String mainPackage) throws Exception {
 		PrivateHttpProcessorRoutingHandler.init(mainPackage);
 	}

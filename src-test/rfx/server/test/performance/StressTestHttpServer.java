@@ -25,10 +25,10 @@ public class StressTestHttpServer {
 	
 	@Test
 	@PerfTest(invocations = 50000, threads = 500)
-	@Required(max = 4000, average = 400)
+	@Required(max = 10000, average = 1000)
 	public void test2() throws Exception {
-		String url = "http://localhost:9090/hello?name=Albert%20Einstein";
-		//String url = "http://192.168.10.221:10000/";
+		//String url = "http://localhost:9090/hello?name=Albert%20Einstein";
+		String url = "http://localhost:31000/server-info?filter=compact";
 		String rs = HttpClientUtil.executeGet(url);
 
 		if (rs.length()>3) {

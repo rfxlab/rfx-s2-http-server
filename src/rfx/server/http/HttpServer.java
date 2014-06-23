@@ -16,13 +16,26 @@ public class HttpServer {
 	static String host = "localhost:8080";
 	static final int PRIVATE_HTTP_PORT = 31000;
 	public final static String DEFAULT_CLASSPATH = "rfx";
+	
 
     int port;
     String ip;
-    public HttpServer(String ip, int port) {
+    int publicPoolSize = PublicHttpProcessorRoutingHandler.DEFAULT_MAX_POOL_SIZE;
+    int privatePoolSize = PrivateHttpProcessorRoutingHandler.DEFAULT_MAX_POOL_SIZE;
+    
+    void setHost(String ip, int port) {
         this.port = port;
         this.ip = ip;
         host = this.ip+":"+port;
+    }
+    
+    public HttpServer(String ip, int port) {
+    	setHost(ip, port);
+    }
+    
+    public HttpServer(String ip, int port, int processorPoolSize) {
+    	setHost(ip, port);
+    	this.privatePoolSize = this.publicPoolSize = processorPoolSize;
     }
     
     public static String getHost() {
@@ -35,6 +48,7 @@ public class HttpServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {        
         	//init cache for all public model
+        	TemplateConfigUtil.initTemplateConfigCache(DEFAULT_CLASSPATH);
         	TemplateConfigUtil.initTemplateConfigCache(classpath);
         	
         	//public service processor
@@ -45,7 +59,7 @@ public class HttpServer {
             } else {
             	publicServerBootstrap.childOption(ChannelOption.TCP_NODELAY, false)
                 .childOption(ChannelOption.SO_KEEPALIVE, false)
-                .childHandler(new PublicHttpServerInitializer(classpath));            	
+                .childHandler(new PublicHttpServerInitializer(classpath, this.publicPoolSize));            	
             }
             //bind to public access host info
             Channel ch1 = publicServerBootstrap.bind(ip,port).sync().channel();  
@@ -55,7 +69,7 @@ public class HttpServer {
             ServerBootstrap adminServerBootstrap = new ServerBootstrap();            
             adminServerBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
             .childOption(ChannelOption.TCP_NODELAY, false).childOption(ChannelOption.SO_KEEPALIVE, false)
-            .childHandler(new PrivateHttpServerInitializer(DEFAULT_CLASSPATH));
+            .childHandler(new PrivateHttpServerInitializer(DEFAULT_CLASSPATH, this.privatePoolSize ));
 
             //bind to private access (for administrator only) host info, default 10000
             Channel ch2 = adminServerBootstrap.bind(ip,PRIVATE_HTTP_PORT).sync().channel();  
@@ -67,7 +81,7 @@ public class HttpServer {
             ch2.closeFuture().sync();
             System.out.println("Shutdown...");
             
-        } catch (Exception e) {
+        } catch (Throwable e) {
 			e.printStackTrace();
 			System.exit(1);
         } finally {
