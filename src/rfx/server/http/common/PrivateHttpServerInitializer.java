@@ -10,10 +10,9 @@ import rfx.server.http.PrivateHttpProcessorRoutingHandler;
 
 public class PrivateHttpServerInitializer extends ChannelInitializer<SocketChannel> {
 	
-	public static int DEFAULT_MAX_POOL_SIZE = 1;
-	
-	public PrivateHttpServerInitializer() throws Exception {
-		PrivateHttpProcessorRoutingHandler.init(DEFAULT_MAX_POOL_SIZE);
+		
+	public PrivateHttpServerInitializer(String mainPackage) throws Exception {
+		PrivateHttpProcessorRoutingHandler.init(mainPackage);
 	}
 		
 

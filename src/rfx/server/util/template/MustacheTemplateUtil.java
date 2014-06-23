@@ -1,11 +1,14 @@
 package rfx.server.util.template;
 
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import rfx.server.util.StringUtil;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
@@ -13,15 +16,17 @@ import com.github.mustachejava.MustacheException;
 import com.github.mustachejava.MustacheFactory;
 
 /**
- * @author Trieu.nguyen
+ * the utility class for Mustache template (See more at http://mustache.github.io)
  * 
- * the utility class for Mustache template (See more at http://mustache.github.io) 
+ * @author Trieu.nguyen 
  *
  */
 public class MustacheTemplateUtil {
 
+	static final Map<String, String> EMPTY_MODEL = new HashMap<>(0);
 	final static Map<String, Mustache> mustacheMap = new ConcurrentHashMap<>();//for hot deployment & update template 
 	final static String BASE_TEMPLATE_PATH = "resources/tpl/";
+	final static String TEMPLATE_SUFFIX = ".html";
 	
 	//flag
 	final static AtomicBoolean isUsedCache = new AtomicBoolean(true);
@@ -49,15 +54,15 @@ public class MustacheTemplateUtil {
 	
 	public static Mustache getCompiledTemplate(String tplPath){		
 		if(isUsedCache.get()){
-			Mustache mustache = mustacheMap.get(tplPath);
-			if(mustache == null){
-				String fullpath = BASE_TEMPLATE_PATH + tplPath;
-				mustache = getMustacheFactory().compile(fullpath);
-				mustacheMap.put(tplPath, mustache);
+			Mustache tpl = mustacheMap.get(tplPath);
+			if(tpl == null){
+				String fullpath = StringUtil.toString(BASE_TEMPLATE_PATH , tplPath, TEMPLATE_SUFFIX);
+				tpl = getMustacheFactory().compile(fullpath);
+				mustacheMap.put(tplPath, tpl);
 			}		
-			return mustache;
+			return tpl;
 		} else {			
-			String fullpath = BASE_TEMPLATE_PATH + tplPath;
+			String fullpath = StringUtil.toString(BASE_TEMPLATE_PATH , tplPath, TEMPLATE_SUFFIX);
 			return new DefaultMustacheFactory().compile(fullpath);
 		}        		
 	}

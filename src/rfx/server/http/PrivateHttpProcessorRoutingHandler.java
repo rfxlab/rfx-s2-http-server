@@ -19,21 +19,21 @@ import rfx.server.http.common.NettyHttpUtil;
 
 
 /**
- * @author trieu
+ * the private handler for all Netty's message, transform to HttpRequestEvent and routing all matched processors
  * 
- * the private handler for all Netty's message, transform to HttpRequestEvent and routing all matched processors  
- *
+ * @author trieu
  */
 public class PrivateHttpProcessorRoutingHandler extends SimpleChannelInboundHandler<Object> {
 	
 	private static final Map<String, HttpProcessorManager> handlers = new HashMap<>();
-	final static String BASE_CONTROLLER_PACKAGE = "rfx.server.http.processor";
+	
 	public static final int PATTERN_INDEX = 2;
+	public static int DEFAULT_MAX_POOL_SIZE = 100;
 		
 	public PrivateHttpProcessorRoutingHandler(){}
 	
-	public static void init(int processorPoolSize) throws Exception{
-		handlers.putAll(HttpProcessorManager.loadHandlers(BASE_CONTROLLER_PACKAGE, HttpProcessorConfig.PRIVATE_ACCESS, processorPoolSize));
+	public static void init(String classpath) throws Exception{
+		handlers.putAll(HttpProcessorManager.initProcessorPool(classpath, HttpProcessorConfig.PRIVATE_ACCESS, DEFAULT_MAX_POOL_SIZE));
 	}
 
     @Override

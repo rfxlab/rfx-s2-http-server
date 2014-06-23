@@ -5,7 +5,7 @@ import rfx.server.http.BaseModel;
 import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorConfig;
 import rfx.server.http.HttpRequestEvent;
-import rfx.server.util.template.MustacheTemplateUtil;
+import rfx.server.util.template.HandlebarsTemplateUtil;
 
 @HttpProcessorConfig(privateAccess = HttpProcessorConfig.PRIVATE_ACCESS, uriPath = "/admin-command", contentType = ContentTypePool.JSON)
 public class AdminCommandProcessor extends HttpProcessor {
@@ -23,7 +23,7 @@ public class AdminCommandProcessor extends HttpProcessor {
 		String status = "fail";
 
 		if (cmd.equals("refresh-templates")) {
-			MustacheTemplateUtil.refreshCache();
+			HandlebarsTemplateUtil.refreshCache();
 			status = cmd + " success";
 		}
 		return new AdminCommandResult(status);
@@ -48,6 +48,11 @@ public class AdminCommandProcessor extends HttpProcessor {
 		@Override
 		public void freeResource() {
 			status = null;
+		}
+		
+		@Override
+		public boolean isOutputableText() {	
+			return false;
 		}
 	}
 

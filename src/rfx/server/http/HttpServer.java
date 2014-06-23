@@ -10,10 +10,12 @@ import rfx.server.http.common.PrivateHttpServerInitializer;
 import rfx.server.http.common.PublicHttpServerInitializer;
 import rfx.server.http.websocket.WebSocketServerInitializer;
 import rfx.server.util.LogUtil;
+import rfx.server.util.template.TemplateConfigUtil;
 
 public class HttpServer {
 	static String host = "localhost:8080";
-	static final int PRIVATE_HTTP_PORT = 31000; 
+	static final int PRIVATE_HTTP_PORT = 31000;
+	public final static String DEFAULT_CLASSPATH = "rfx";
 
     int port;
     String ip;
@@ -27,11 +29,13 @@ public class HttpServer {
 		return host;
 	}
     
-	public void run(boolean websocket, int processingMode) throws Exception {
+	public void run(boolean websocket, String classpath) throws Exception {
         // Configure the server.
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
-        try {        	
+        try {        
+        	//init cache for all public model
+        	TemplateConfigUtil.initTemplateConfigCache(classpath);
         	
         	//public service processor
             ServerBootstrap publicServerBootstrap = new ServerBootstrap();            
@@ -41,7 +45,7 @@ public class HttpServer {
             } else {
             	publicServerBootstrap.childOption(ChannelOption.TCP_NODELAY, false)
                 .childOption(ChannelOption.SO_KEEPALIVE, false)
-                .childHandler(new PublicHttpServerInitializer(processingMode));
+                .childHandler(new PublicHttpServerInitializer(classpath));            	
             }
             //bind to public access host info
             Channel ch1 = publicServerBootstrap.bind(ip,port).sync().channel();  
@@ -51,7 +55,7 @@ public class HttpServer {
             ServerBootstrap adminServerBootstrap = new ServerBootstrap();            
             adminServerBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
             .childOption(ChannelOption.TCP_NODELAY, false).childOption(ChannelOption.SO_KEEPALIVE, false)
-            .childHandler(new PrivateHttpServerInitializer());
+            .childHandler(new PrivateHttpServerInitializer(DEFAULT_CLASSPATH));
 
             //bind to private access (for administrator only) host info, default 10000
             Channel ch2 = adminServerBootstrap.bind(ip,PRIVATE_HTTP_PORT).sync().channel();  

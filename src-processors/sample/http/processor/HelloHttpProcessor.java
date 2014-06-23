@@ -35,6 +35,12 @@ public class HelloHttpProcessor extends HttpProcessor {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public boolean isOutputableText() {
+			// TODO Auto-generated method stub
+			return false;
+		}
 		
 	}
 

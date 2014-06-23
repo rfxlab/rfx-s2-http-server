@@ -65,6 +65,12 @@ public class RealtimeAnalyticsHttpProcessor extends HttpProcessor {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public boolean isOutputableText() {
+			// TODO Auto-generated method stub
+			return false;
+		}
 		
 	}
 

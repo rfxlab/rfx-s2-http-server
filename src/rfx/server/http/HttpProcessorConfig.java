@@ -10,8 +10,7 @@ import rfx.server.util.StringPool;
 
 @Target(ElementType.TYPE) //on class level
 @Retention(RetentionPolicy.RUNTIME)
-public @interface HttpProcessorConfig {
-	String templatePath() default StringPool.BLANK; 
+public @interface HttpProcessorConfig {	 
 	String uriPath() default StringPool.BLANK; 
 	String uriPattern() default StringPool.BLANK; 
 	String contentType() default ContentTypePool.TEXT_UTF8;

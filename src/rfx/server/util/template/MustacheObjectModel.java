@@ -26,6 +26,11 @@ public class MustacheObjectModel extends HashMap<String, Object> implements Base
 	@Override
 	public void freeResource() {
 		clear();
+	}
+
+	@Override
+	public boolean isOutputableText() {		
+		return false;
 	}	
 	
 }

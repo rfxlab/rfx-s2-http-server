@@ -3,9 +3,9 @@ package rfx.server.http;
 import rfx.server.util.template.MustacheObjectModel;
 
 /**
- * @author Trieu.nguyen
- * 
  * the base class for HTTP processor, input: HttpRequest output: processed model object
+ * 
+ * @author Trieu.nguyen
  *
  */
 public abstract class HttpProcessor {
@@ -32,6 +32,6 @@ public abstract class HttpProcessor {
 	}	
 	
 	///////////// for the implementation class /////////////
-	protected abstract BaseModel process(HttpRequestEvent requestEvent);
+	protected abstract BaseModel process(HttpRequestEvent event);
 
 }

@@ -27,8 +27,7 @@ public class TestHttpProcessors {
 							.getAnnotation(HttpProcessorConfig.class);
 					HttpProcessorConfig mapper = (HttpProcessorConfig) annotation;
 
-					System.out.println(mapper.uriPath());
-					System.out.println(mapper.templatePath());
+					System.out.println(mapper.uriPath());					
 					System.out.println(mapper.contentType());
 
 				}

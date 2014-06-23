@@ -20,7 +20,8 @@ import rfx.server.log.handlers.StaticFileHandler;
 import rfx.server.util.RoundRobin;
 import rfx.server.util.StringPool;
 import rfx.server.util.StringUtil;
-import rfx.server.util.template.MustacheTemplateUtil;
+import rfx.server.util.template.HandlebarsTemplateUtil;
+import rfx.server.util.template.TemplateConfigUtil;
 
 import com.google.gson.Gson;
 
@@ -32,19 +33,17 @@ import com.google.gson.Gson;
  */
 public class HttpProcessorManager {
 	
-	private String contentType;
-	private String templatePath;
+	private String contentType;	
 	Class<?> httpProcessorClass;
 	RoundRobin<HttpProcessor> roundRobinRounter;
 		
-	public HttpProcessorManager(String contentType, String templatePath, Class<?> httpProcessorClass, int maxPoolSize) throws Exception {
+	public HttpProcessorManager(String contentType, Class<?> httpProcessorClass, int maxPoolSize) throws Exception {
 		super();	
-		initPool(contentType, templatePath, httpProcessorClass, maxPoolSize);
+		initPool(contentType,httpProcessorClass, maxPoolSize);
 	}
 	
-	void initPool(String contentType, String templatePath, Class<?> httpProcessorClass, int maxPoolSize) throws InstantiationException, IllegalAccessException {
-		this.contentType = contentType;
-		this.templatePath = templatePath;
+	void initPool(String contentType, Class<?> httpProcessorClass, int maxPoolSize) throws InstantiationException, IllegalAccessException {
+		this.contentType = contentType;		
 		this.httpProcessorClass = httpProcessorClass;
 		
 		if(maxPoolSize == 1){
@@ -70,20 +69,24 @@ public class HttpProcessorManager {
 		FullHttpResponse response = null;
 		try {			
 			model = roundRobinRounter.next().doProcessing(requestEvent);
-			
-			switch (contentType) {
-			case ContentTypePool.JSON:
-				String json = new Gson().toJson(model);
-				response = NettyHttpUtil.theHttpContent(json, contentType);
-				break;				
-			case ContentTypePool.TRACKING_GIF:
-				response = StaticFileHandler.theBase64Image1pxGif();
-				break;
-			default:
-				String text = MustacheTemplateUtil.execute(templatePath, model);
+			if(model.isOutputableText()){
+				System.out.println("..doProcessing:" + model );
+				String templateLocation = TemplateConfigUtil.getTemplateLocation(model);
+				String text = HandlebarsTemplateUtil.execute(templateLocation, model);
 				response = NettyHttpUtil.theHttpContent(text, contentType);
-				break;
-			}			
+			} else {
+				switch (contentType) {
+					case ContentTypePool.JSON:
+						String json = new Gson().toJson(model);
+						response = NettyHttpUtil.theHttpContent(json, contentType);
+						break;				
+					case ContentTypePool.TRACKING_GIF:
+						response = StaticFileHandler.theBase64Image1pxGif();
+						break;
+					default:
+						break;
+				}	
+			}		
 		} 
 		catch (Throwable e) {
 			e.printStackTrace();
@@ -98,6 +101,7 @@ public class HttpProcessorManager {
 			}
 		}		
 		//TODO log the result
+		
 		if(response != null){
 			return response;
 		}
@@ -113,23 +117,15 @@ public class HttpProcessorManager {
 	}
 
 
-	public String getTemplatePath() {
-		return templatePath;
-	}
-	
-	public void setTemplatePath(String templatePath) {
-		this.templatePath = templatePath;
-	}	
-
 	/**
 	 * run at server bootstrap
 	 * @throws Exception 
 	 */
-	public static Map<String, HttpProcessorManager> loadHandlers(String processorPackage, int filteredAccessMode, int processorPoolSize) throws Exception {	
-		Reflections reflections = new Reflections(processorPackage);
+	public static Map<String, HttpProcessorManager> initProcessorPool(String classpath, int filteredAccessMode, int processorPoolSize) throws Exception {	
+		Reflections reflections = new Reflections(classpath);
 		Set<Class<?>> clazzes =  reflections.getTypesAnnotatedWith(HttpProcessorConfig.class);
 		Map<String, HttpProcessorManager> tempMap = new HashMap<>();
-		System.out.println("Http Processor Scanning "+processorPackage + " for access mode "+ (filteredAccessMode == 1 ? "PUBLIC" : "PRIVATE"));
+		System.out.println("Http Processor Scanning "+classpath + " for access mode "+ (filteredAccessMode == 1 ? "PUBLIC" : "PRIVATE"));
 	    for (Class<?> clazz : clazzes) {
 			if (clazz.isAnnotationPresent(HttpProcessorConfig.class)) {        		     
 				Annotation annotation = clazz.getAnnotation(HttpProcessorConfig.class);
@@ -138,16 +134,16 @@ public class HttpProcessorManager {
 				if( config.privateAccess() == filteredAccessMode){
 					HttpProcessorManager manager = tempMap.get(config.uriPath());
 					if( manager == null ){						
-						manager = new HttpProcessorManager(config.contentType(), config.templatePath(), clazz, processorPoolSize);
+						manager = new HttpProcessorManager(config.contentType(), clazz, processorPoolSize);
 						
 						if( StringUtil.isNotEmpty(config.uriPath()) ){
 							tempMap.put(config.uriPath(), manager);
-							String s = "...registered controller class: "+ clazz.getName() + " ;uriPath:"+config.uriPath()+" ;tpl:"+config.templatePath()+ " ;content-type"+config.contentType();
+							String s = "...registered controller class: "+ clazz.getName() + " ;uriPath:"+config.uriPath()+" ;content-type"+config.contentType();
 							System.out.println(s);
 						} 
 						else if( StringUtil.isNotEmpty(config.uriPattern()) ){
 							tempMap.put(config.uriPattern(), manager);
-							String s = "...registered controller class: "+ clazz.getName() + " ;uriPattern:"+config.uriPattern()+" ;tpl:"+config.templatePath()+ " ;content-type"+config.contentType();
+							String s = "...registered controller class: "+ clazz.getName() + " ;uriPattern:"+config.uriPattern() + " ;content-type"+config.contentType();
 							System.out.println(s);
 						}
 						else {

@@ -11,36 +11,16 @@ import rfx.server.http.PublicHttpProcessorRoutingHandler;
 
 public class PublicHttpServerInitializer extends ChannelInitializer<SocketChannel> {
 	
-	
-	public static final int SINGLE_PROCESSOR_MODE = 1;
-	public static final int MULTI_PROCESSOR_MODE = 2;
-		
-	private int mode = 0;
 	ChannelHandler getLogChannelHandler(){
 //		System.out.println("-----------------getLogChannelHandler-----------------");
-		if(mode == SINGLE_PROCESSOR_MODE){			
-			return new PublicHttpProcessorRoutingHandler();
-		} 
-		else if(mode == MULTI_PROCESSOR_MODE){			
-			throw new IllegalArgumentException("Not support MULTI_PROCESSOR_MODE in version 1.0");
-		}
-		else {
-			throw new IllegalArgumentException("Bad http server processer mode");
-		}
+		
+		return new PublicHttpProcessorRoutingHandler();
 	}
 
-	public PublicHttpServerInitializer(int mode) throws Exception {
+	public PublicHttpServerInitializer(String classpath) throws Exception {
 		super();
-		this.mode = mode;
-		if(mode == SINGLE_PROCESSOR_MODE){			
-			PublicHttpProcessorRoutingHandler.init();
-		} 
-		else if(mode == MULTI_PROCESSOR_MODE){
-			throw new IllegalArgumentException("Not support MULTI_PROCESSOR_MODE in version 1.0");
-		}
-		else {
-			throw new IllegalArgumentException("Bad http server processer mode");
-		}    	
+		PublicHttpProcessorRoutingHandler.init(classpath);		 
+		    	
 	}
 
 	@Override
