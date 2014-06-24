@@ -116,6 +116,13 @@ public class StringUtil {
 		return false;
 	}
 
+	public static boolean isEmpty(Object s) {
+		if (s == null) {
+			return true;
+		}		
+		return false;
+	}
+	
 	public static boolean isEmpty(String s) {
 		if (s == null) {
 			return true;
@@ -221,16 +228,24 @@ public class StringUtil {
 		return n;
 	}
 	
-	public static String safeString(String s, String defaultVal) {
+	public static double safeParseDouble(Object s){
+		if(isEmpty(s)){
+			return 0;
+		}		
+		return safeParseDouble(s.toString());
+	}
+	
+	public static String safeString(Object s, String defaultVal) {
 		if (isEmpty(s)) {
 			return defaultVal;
 		}
-		return s;
+		return s.toString();
 	}
 
-	public static String safeString(String s) {		
+	public static String safeString(Object s) {		
 		return safeString(s,StringPool.BLANK);
-	}
+	}	
+	
 	
 	public static String safeSplitAndGet(String s,String delimiter, int i){
 		try {

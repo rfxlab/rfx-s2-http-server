@@ -18,8 +18,7 @@ public abstract class DbCommand<T>  {
 	
 	/**
 	 * use dbSql for easily debug
-	 */
-	@Deprecated
+	 */	
 	protected CallableStatement cs = null;
 	
 	protected Connection con = null;

@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 
 
 /**
- * @author trieu
- * 
  * the helper class for building java.sql.CallableStatement
+ * 
+ * @author trieu
  *
  */
 public class DbSql {
