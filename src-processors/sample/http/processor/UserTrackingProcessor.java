@@ -1,7 +1,7 @@
 package sample.http.processor;
 
 import rfx.server.configs.ContentTypePool;
-import rfx.server.http.BaseModel;
+import rfx.server.http.DataService;
 import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorConfig;
 import rfx.server.http.HttpRequestEvent;
@@ -12,7 +12,7 @@ import rfx.server.log.kafka.KafkaLogHandler;
 public class UserTrackingProcessor extends HttpProcessor {
 	
 	@Override
-	protected BaseModel process(HttpRequestEvent e) {
+	protected DataService process(HttpRequestEvent e) {
 		System.out.println("UserTrackingProcessor "+e.getRequest().getUri());
 		String kafkaType =  HttpLogKafkaHandler.logSocialActivityKafka;
 		KafkaLogHandler kafkaHandler = HttpLogKafkaHandler.getKafkaHandler(kafkaType );

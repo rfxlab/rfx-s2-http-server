@@ -1,7 +1,7 @@
 package sample.http.processor;
 
 import rfx.server.configs.ContentTypePool;
-import rfx.server.http.BaseModel;
+import rfx.server.http.DataService;
 import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorConfig;
 import rfx.server.http.HttpRequestEvent;
@@ -16,13 +16,13 @@ import rfx.server.http.HttpRequestEvent;
 public class HelloHttpProcessor extends HttpProcessor {
 	
 	@Override
-	protected BaseModel process(HttpRequestEvent requestEvent) {		
+	protected DataService process(HttpRequestEvent requestEvent) {		
 		String name = requestEvent.param("name", "guest");
 		System.out.println("name: " + name);
 		return new MyData(name);
 	}
 
-	static class MyData implements BaseModel{		
+	static class MyData implements DataService{		
 		String data = "Hello ";		
 		static final String classpath = MyData.class.getName();
 
@@ -36,16 +36,17 @@ public class HelloHttpProcessor extends HttpProcessor {
 			// TODO Auto-generated method stub
 			
 		}
-
+		
 		@Override
-		public boolean isOutputableText() {
+		public String getClasspath() {
 			// TODO Auto-generated method stub
-			return false;
+			return null;
 		}
 
 		@Override
-		public String classpath() {			
-			return classpath;
+		public boolean isProcessable() {
+			// TODO Auto-generated method stub
+			return false;
 		}
 		
 	}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+	<h3>Server Info</h3>
+	
+	<b>
+	{{#ifCond rfxServerVersion '==' "0.1" }}
+		 Snapshot version
+	{{else}}	  
+		 Stable version
+	{{/ifCond}}
+	</b>
+	
+	<h3>Time: {{time}}</h3>
+	
+	<strong>
+	
+		{{#if showAll}}
+		  All System JVM information
+		{{/if}}
+		
+		{{#if showCompact}}
+		  Important JVM information	
+		{{/if}}
+	
+	</strong>	
+	
+	{{#ifHasData memoryStats}}
+	<br>
+	<strong>Memory:	{{memoryStats}}	</strong>
+	{{/ifHasData}}
+	
+	<ul>
+		{{#each infos}}
+			<li>{{.}}</li> 
+		{{/each}}
+	</ul>	
+	
+		
+	
+
+</body>
+</html>

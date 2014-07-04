@@ -1,7 +1,0 @@
-{
-	badIpMap : {},
-	refererDomains : {},	 
-	onlyWriteForDomains : {},
-	writeLogsForTopics : {},
-	secretCodeForSecuredAPI : "123!@Qazxsw8H091"
-}

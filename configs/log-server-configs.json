@@ -7,7 +7,7 @@
     accessLogEnable : 0,
     writeKafkaLogEnable : 1,
     accessLogFileName : "access.log",
-    debugLogFolderPath : "./logs",
+    debugLogFolderPath : "./log",
     debugModeEnabled : 1,
     timeSendKafkaPerBatchJob: 8000,
 	sendKafkaThreadPerBatchJob: 1,

@@ -5,7 +5,7 @@ import java.util.Set;
 
 import redis.clients.jedis.Jedis;
 import rfx.server.configs.ContentTypePool;
-import rfx.server.http.BaseModel;
+import rfx.server.http.DataService;
 import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorConfig;
 import rfx.server.http.HttpRequestEvent;
@@ -22,13 +22,13 @@ import rfx.server.http.HttpRequestEvent;
 public class RealtimeAnalyticsHttpProcessor extends HttpProcessor {
 	
 	@Override
-	protected BaseModel process(HttpRequestEvent requestEvent) {		
+	protected DataService process(HttpRequestEvent requestEvent) {		
 		String cmd = requestEvent.param("cmd", "show-all");
 		System.out.println("cmd: " + cmd);
 		return new AnalyticData(cmd).processCommand();
 	}
 
-	static class AnalyticData implements BaseModel{	
+	static class AnalyticData implements DataService{	
 		static final String classpath = AnalyticData.class.getName();
 		String cmd = "Hello ";
 		Set<String> hotKeywords = new HashSet<>();
@@ -68,14 +68,15 @@ public class RealtimeAnalyticsHttpProcessor extends HttpProcessor {
 		}
 
 		@Override
-		public boolean isOutputableText() {
+		public String getClasspath() {
 			// TODO Auto-generated method stub
-			return false;
+			return DataService.getClasspath(this);
 		}
 
 		@Override
-		public String classpath() {			
-			return classpath;
+		public boolean isProcessable() {
+			// TODO Auto-generated method stub
+			return false;
 		}
 		
 	}

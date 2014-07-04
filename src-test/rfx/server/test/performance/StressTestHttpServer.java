@@ -32,8 +32,8 @@ public class StressTestHttpServer {
 		String rs = HttpClientUtil.executeGet(url);
 
 		if (rs.length()>3) {
-			//System.out.println(rs+" \n");
-			validCount.incrementAndGet();
+			int c = validCount.incrementAndGet();
+			System.out.println(c+" \n");
 		} else {
 			System.out.println(rs);
 			invalidCount.incrementAndGet();
