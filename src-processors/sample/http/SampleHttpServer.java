@@ -18,7 +18,7 @@ public class SampleHttpServer {
         System.out.println("-------------- SAMPLE HTTP SERVER with HOST["+ip+":"+port+"] --------------");        
         
         //MemoryManagementUtil.startMemoryUsageTask();
-        String publicClasspath = "sample.http";
+        String publicClasspath = "sample";
         int poolSize = 30000;
         
         new HttpServer(ip,port,poolSize).run(false,publicClasspath);

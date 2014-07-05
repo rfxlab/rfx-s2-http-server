@@ -47,6 +47,6 @@
     <bean id="commonSpringDAO" class="rfx.server.util.sql.CommonSpringDAO" />
     
     <!-- All Data Access Objects -->
-
+	<bean id="pollAppDAO" class="sample.pollapp.business.dao.PollAppDAOImpl" />
 	
 </beans>
