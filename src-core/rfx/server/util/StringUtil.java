@@ -8,6 +8,8 @@ import java.util.Base64;
 import java.util.Formatter;
 import java.util.List;
 
+import com.google.gson.Gson;
+
 
 
 public class StringUtil {
@@ -23,6 +25,12 @@ public class StringUtil {
 	    return num;    
 	}
 
+	public static String toJsonString(Object arg) {
+		if(arg != null){
+			return new Gson().toJson(arg);
+		}
+		return StringPool.BLANK;
+	}
 	
 	public static String toString(Object ...args) {
 		StringBuilder s = new StringBuilder();

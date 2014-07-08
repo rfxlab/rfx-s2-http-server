@@ -28,7 +28,7 @@ public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandl
 	private static final Map<String, HttpProcessorManager> handlers = new HashMap<>();
 	
 	//TODO move to config file
-	final static String MAIN_PACKAGE = "sample";
+	final static String MAIN_PACKAGE = "ambient.delivery";
 	public static final int PATTERN_INDEX = 2;
 	public static int DEFAULT_MAX_POOL_SIZE = 20000;
 		
@@ -49,7 +49,8 @@ public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandl
         	//TODO filter DDOS/bad/attacking requests 
         	        	
         	String uri = request.getUri();
-        	String ip = NettyHttpUtil.getRequestIP(ctx, request);
+        	String remoteIp = NettyHttpUtil.getRemoteIP(ctx, request);
+        	String localIp = NettyHttpUtil.getLocalIP(ctx);
         	
         	//System.out.println("===> uri: " + uri);
     		if (uri.equalsIgnoreCase(NettyHttpUtil.FAVICON_URI)) {
@@ -64,12 +65,12 @@ public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandl
 				HttpProcessorManager processorManager = HttpProcessorManager.routingForUriPath(handlers,qDecoder);
 				HttpRequestEvent requestEvent = null;
 				if(processorManager != null){
-					requestEvent = new HttpRequestEvent(ip, uri, params, request);
+					requestEvent = new HttpRequestEvent(localIp, remoteIp, uri, params, request);
 					response = processorManager.doProcessing(requestEvent);
 				} else {
 					processorManager = HttpProcessorManager.routingForUriPattern(handlers,qDecoder, PATTERN_INDEX);
 					if(processorManager != null){
-						requestEvent = new HttpRequestEvent(ip, uri, params, request);
+						requestEvent = new HttpRequestEvent(localIp, remoteIp, uri, params, request);
 						response = processorManager.doProcessing(requestEvent);
 					} else {
 						String s = "Not found HttpProcessor for URI: "+uri;

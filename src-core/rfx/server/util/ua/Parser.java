@@ -16,6 +16,7 @@
 
 package rfx.server.util.ua;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -24,6 +25,10 @@ import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
+import rfx.server.util.ua.DeviceParser.DevicePattern;
+import rfx.server.util.ua.OSParser.OSPattern;
+
+
 /**
  * Java implementation of <a href="https://github.com/tobie/ua-parser">UA Parser</a>
  *
@@ -31,10 +36,46 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
  */
 public class Parser {
 
-  private static final String REGEX_YAML_PATH = "/ua_parser/regexes.yaml";
+  private static final String REGEX_YAML_PATH = "configs/regexes.yaml";
   private UserAgentParser uaParser;
   private OSParser osParser;
   private DeviceParser deviceParser;
+  
+  static Parser _uaParser;
+  public static Parser load(){
+	  if(_uaParser == null){
+		  try {
+			FileInputStream uaConfig = new FileInputStream(REGEX_YAML_PATH);
+			_uaParser = new Parser(uaConfig);
+		  } catch (Exception e) {
+			System.err.println(e.getMessage());
+			e.printStackTrace();
+			System.exit(1);
+		  }
+	  }	  
+	  return _uaParser;
+  }
+  
+  public void printDictionary(){
+	  System.out.println("---------osParser-----------");
+		List<OSPattern> list = _uaParser.osParser.getPatterns();
+		for (OSPattern osPattern : list) {
+			if(osPattern.getOsReplacement() != null){
+				if(osPattern.getOsReplacement().length()>1){
+					System.out.println(osPattern.getOsReplacement());
+				}
+			}
+		}
+		System.out.println("----------deviceParser-----------");
+		List<DevicePattern> list2 = _uaParser.deviceParser.getPatterns();
+		for (DevicePattern devicePattern : list2) {
+			if(devicePattern.getFamilyReplacement() != null){
+				if(devicePattern.getFamilyReplacement().length()>1){
+					System.out.println(devicePattern.getFamilyReplacement());
+				}
+			}
+		}
+  }
 
   public Parser() throws IOException {
     this(Parser.class.getResourceAsStream(REGEX_YAML_PATH));
@@ -47,7 +88,7 @@ public class Parser {
   public Client parse(String agentString) {
     UserAgent ua = parseUserAgent(agentString);
     OS os = parseOS(agentString);
-    Device device = deviceParser.parse(agentString);
+    Device device = deviceParser.parse(agentString,os);
     return new Client(ua, os, device);
   }
 
@@ -56,10 +97,10 @@ public class Parser {
   }
 
   public Device parseDevice(String agentString) {
-    return deviceParser.parse(agentString);
+    return deviceParser.parse(agentString, parseOS(agentString));
   }
 
-  public OS parseOS(String agentString) {
+  public OS parseOS(String agentString) {    
     return osParser.parse(agentString);
   }
 

@@ -20,25 +20,31 @@ public class HttpRequestEvent implements Serializable{
 	private static final long serialVersionUID = 4820504738374857535L;
 	final static String REGEX_FOR_ROOT_DOMAIN = ".*\\.(?=.*\\.)";
 	
-	String ipAddress;
+	String localIp;
+	String remoteIp;
 	String uriPath; 
 	Map<String, List<String>> params;
 	HttpRequest request;
 	
-	public HttpRequestEvent(String ipAddress, String uriPath, Map<String, List<String>> params, HttpRequest request) {
+	public HttpRequestEvent(String localIp, String remoteIp, String uriPath, Map<String, List<String>> params, HttpRequest request) {
 		super();
-		this.ipAddress = ipAddress;
+		this.localIp = localIp;
+		this.remoteIp = remoteIp;
 		this.uriPath = uriPath;
 		this.params = params;
 		this.request = request;
 	}
 
-	public String getIpAddress() {
-		return ipAddress;
+	public String getRemoteIp() {
+		return remoteIp;
 	}
 
 	public String getUriPath() {
 		return uriPath;
+	}
+	
+	public String getLocalIp() {
+		return localIp;
 	}
 
 	public Map<String, List<String>> getParams() {
@@ -66,7 +72,7 @@ public class HttpRequestEvent implements Serializable{
 	}
 			
 	public void clear(){
-		this.ipAddress = null;
+		this.remoteIp = null;
 		this.uriPath = null;
 		this.params = null;
 		this.request = null;
@@ -75,7 +81,7 @@ public class HttpRequestEvent implements Serializable{
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		s.append(" ipAddress: ").append(ipAddress);
+		s.append(" ipAddress: ").append(remoteIp);
 		s.append(" uriPath: ").append(uriPath);
 		s.append(" params: ").append(params);		
 		return s.toString();

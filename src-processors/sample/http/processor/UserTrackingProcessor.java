@@ -17,7 +17,7 @@ public class UserTrackingProcessor extends HttpProcessor {
 		String kafkaType =  HttpLogKafkaHandler.logSocialActivityKafka;
 		KafkaLogHandler kafkaHandler = HttpLogKafkaHandler.getKafkaHandler(kafkaType );
 		if(kafkaHandler != null){
-			kafkaHandler.writeLogToKafka(e.getIpAddress(), e.getRequest());
+			kafkaHandler.writeLogToKafka(e.getRemoteIp(), e.getRequest());
 		}
 		return EMPTY_MODEL;
 	}

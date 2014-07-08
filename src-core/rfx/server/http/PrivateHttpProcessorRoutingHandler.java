@@ -44,7 +44,8 @@ public class PrivateHttpProcessorRoutingHandler extends SimpleChannelInboundHand
         if (msg instanceof HttpRequest) {        	
         	HttpRequest request = (HttpRequest) msg;
         	String uri = request.getUri();
-        	String ip = NettyHttpUtil.getRequestIP(ctx, request);
+        	String remoteIp = NettyHttpUtil.getRemoteIP(ctx, request);
+        	String localIp = NettyHttpUtil.getLocalIP(ctx);
         
     		if (uri.equalsIgnoreCase(NettyHttpUtil.FAVICON_URI)) {
     			NettyHttpUtil.response1pxGifImage(ctx);
@@ -68,12 +69,12 @@ public class PrivateHttpProcessorRoutingHandler extends SimpleChannelInboundHand
 				HttpProcessorManager processorManager = HttpProcessorManager.routingForUriPath(handlers,qDecoder);
 				HttpRequestEvent requestEvent = null;
 				if(processorManager != null){
-					requestEvent = new HttpRequestEvent(ip, uri, params, request);
+					requestEvent = new HttpRequestEvent(localIp,remoteIp, uri, params, request);
 					response = processorManager.doProcessing(requestEvent);
 				} else {
 					processorManager = HttpProcessorManager.routingForUriPattern(handlers,qDecoder, PATTERN_INDEX);
 					if(processorManager != null){
-						requestEvent = new HttpRequestEvent(ip, uri, params, request);
+						requestEvent = new HttpRequestEvent(localIp, remoteIp, uri, params, request);
 						response = processorManager.doProcessing(requestEvent);
 					} else {
 						String s = "Not found HttpProcessor for URI: "+uri;

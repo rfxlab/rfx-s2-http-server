@@ -157,19 +157,33 @@ public class NettyHttpUtil {
 	
 	public static String getRemoteIP(ChannelHandlerContext ctx) {
 		try {
-			SocketAddress remoteAddress = ctx.channel().remoteAddress();
-			if(remoteAddress instanceof InetSocketAddress){
-				return ((InetSocketAddress)remoteAddress).getAddress().getHostAddress();
+			SocketAddress address = ctx.channel().remoteAddress();
+			if(address instanceof InetSocketAddress){
+				return ((InetSocketAddress)address).getAddress().getHostAddress();
 			}
-			return remoteAddress.toString().split("/")[1].split(":")[0];
+			return address.toString().split("/")[1].split(":")[0];
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 		return "0.0.0.0";
 	}
+	
+	public static String getLocalIP(ChannelHandlerContext ctx) {
+		try {
+			SocketAddress address = ctx.channel().localAddress();
+			if(address instanceof InetSocketAddress){
+				return ((InetSocketAddress)address).getAddress().getHostAddress();
+			}
+			return address.toString().split("/")[1].split(":")[0];
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return "0.0.0.0";
+	}
+	
 	static final String unknown = "unknown" ;
 	//http://r.va.gg/2011/07/handling-x-forwarded-for-in-java-and-tomcat.html
-	public static String getRequestIP(ChannelHandlerContext ctx, HttpRequest request){
+	public static String getRemoteIP(ChannelHandlerContext ctx, HttpRequest request){
 		String ipAddress = request.headers().get("X-Forwarded-For");		
 		if ( ! StringUtil.isNullOrEmpty(ipAddress) && ! unknown.equalsIgnoreCase(ipAddress)) {			
 			//LogUtil.dumpToFileIpLog(ipAddress);

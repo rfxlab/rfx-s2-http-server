@@ -81,4 +81,8 @@ public class DateTimeUtil {
 	public static synchronized String getDateHourString(Date d ){
 		return DATEHOUR_FORMAT.format(d);
 	}
+	
+	public static int currentUnixTimestamp(){
+		return (int) (System.currentTimeMillis() / 1000L);
+	}
 }

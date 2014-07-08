@@ -16,7 +16,6 @@
 
 package rfx.server.util.ua;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -24,16 +23,9 @@ import java.util.Map;
  * 
  * @author Steve Jiang (@sjiang) <gh at iamsteve com>
  */
-public class OS {
-	static final Map<String, String> mobileDeviceTypeMap = new HashMap<String, String>();
-	static {
-		mobileDeviceTypeMap.put("iOS", "General_Mobile");
-		mobileDeviceTypeMap.put("Android", "General_Mobile");
-		mobileDeviceTypeMap.put("Windows Phone", "General_Mobile");
-		mobileDeviceTypeMap.put("BlackBerry OS", "General_Mobile");
-	}
+public class OS {	
 	public final String family, major, minor, patch, patchMinor;
-
+	
 	public OS(String family, String major, String minor, String patch,
 			String patchMinor) {
 		this.family = family;
@@ -83,13 +75,6 @@ public class OS {
 						minor == null ? null : '"' + minor + '"',
 						patch == null ? null : '"' + patch + '"',
 						patchMinor == null ? null : '"' + patchMinor + '"');
-	}
+	}	
 	
-	public String deviceType() {
-		String type = mobileDeviceTypeMap.get(family);
-		if(type == null){
-			type = "General_Desktop";
-		}
-		return type;
-	}
 }

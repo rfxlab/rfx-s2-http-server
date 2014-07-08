@@ -25,15 +25,33 @@ import java.util.Map;
  */
 public class Device {
 	
+	final static public String IPAD = "ipad";
+	final static public String PC = "General_Desktop";
+	final static public String TABLET = "General_Tablet";
+	final static public String MOBILE = "General_Mobile";
 	
 	public final String family;
+	private String deviceType = "General_Desktop";
 
 	public Device(String family) {
-		this.family = family;
+		this.family = family;		
 	}
 
 	public static Device fromMap(Map<String, Object> m) {
 		return new Device((String) m.get("family"));
+	}
+	
+	public void setDeviceType(String deviceType) {
+		if(deviceType != null){
+			this.deviceType = deviceType;
+		}
+	}
+	
+	public String deviceType() {
+		if(this.family.toLowerCase().contains(IPAD)){
+			deviceType = "General_Tablet";
+		}
+		return deviceType;
 	}
 
 	@Override
