@@ -102,6 +102,10 @@ public class Utils {
 	}
 	
 	public static String randomUniqueString(){
-		return StringUtil.safeSubString(Long.toString(Utils.randLong(), 36),11);
+		return randomUniqueString(11);
+	}
+	
+	public static String randomUniqueString(int maxLength){
+		return StringUtil.safeSubString(Long.toString(Utils.randLong(), 36),maxLength);
 	}
 }
