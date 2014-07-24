@@ -1,6 +1,9 @@
 package rfx.server.util.template;
 
+import io.netty.handler.codec.http.HttpHeaders;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import rfx.server.http.DataService;
@@ -29,13 +32,19 @@ public class MustacheServiceModel extends HashMap<String, Object> implements Dat
 	}
 
 	@Override
-	public boolean isProcessable() {		
+	public boolean isOutputable() {		
 		return false;
 	}
 
 	@Override
 	public String getClasspath() {
 		return classpath;
+	}
+
+	@Override
+	public List<HttpHeaders> getHttpHeaders() {
+		// TODO Auto-generated method stub
+		return null;
 	}	
 	
 }

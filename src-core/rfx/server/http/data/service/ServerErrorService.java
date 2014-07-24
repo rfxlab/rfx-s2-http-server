@@ -17,6 +17,6 @@ public class ServerErrorService extends ViewableDataService {
 	@Override
 	public String getClasspath() {
 		return classpath;
-	}
+	}	
 	
 }

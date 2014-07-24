@@ -6,7 +6,7 @@ import java.io.IOException;
 import net.spy.memcached.MemcachedClient;
 
 /**
- * the utility class for connecting and retrieving data from Memcached
+ * the utility class for connecting and retrieving data from MemCached
  * 
  * @author Trieu.nguyen
  *
@@ -18,7 +18,7 @@ public abstract class MemcacheCommand<T> {
 	
 	public MemcacheCommand(String poolname) throws IOException {
 		this.poolname = poolname;
-		mcClient = MemcacheUtil.getMemcachedClient(poolname);	
+		mcClient = MemcacheUtil.getMemcachedClient(poolname);
 	}
 	
 	public T execute() {

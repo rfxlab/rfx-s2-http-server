@@ -11,7 +11,7 @@ import rfx.server.util.sql.DbDataAccessObject;
 public class GenerateUnitTestUtil {
 
 	public static void main(String[] args) {
-		String mainPackage = "sample.business.dao";
+		String mainPackage = "ambient.delivery.business.dao";
 		Reflections reflections = new Reflections(mainPackage);
 		Set<Class<?>> daoClasses = reflections
 				.getTypesAnnotatedWith(DbDataAccessObject.class);

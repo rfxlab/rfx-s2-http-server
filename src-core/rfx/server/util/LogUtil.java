@@ -261,6 +261,11 @@ public class LogUtil {
 		dumpToFile(tag + " : " + log, true);
 	}
 	
+	public static void debug(Object tag, Object log) {
+		System.out.println(ANSI_RED + tag + ANSI_RESET + " : " + log);
+		dumpToFile(tag + " : " + log, true);
+	}
+	
 	public static void error(Object log) {
 		System.err.println(log);		
 		dumpToFile(String.valueOf(log),true);

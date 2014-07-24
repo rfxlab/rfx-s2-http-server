@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import rfx.server.http.common.NettyHttpUtil;
+import rfx.server.util.UrlUtil;
 
 /**
  * the HTTP data request
@@ -18,8 +19,7 @@ import rfx.server.http.common.NettyHttpUtil;
 public class HttpRequestEvent implements Serializable{
 
 	private static final long serialVersionUID = 4820504738374857535L;
-	final static String REGEX_FOR_ROOT_DOMAIN = ".*\\.(?=.*\\.)";
-	
+
 	String localIp;
 	String remoteIp;
 	String uriPath; 
@@ -60,7 +60,7 @@ public class HttpRequestEvent implements Serializable{
 	}
 	
 	public String getRootDomain(){
-		return getHost().replaceAll(REGEX_FOR_ROOT_DOMAIN, "");
+		return getHost().replaceAll(UrlUtil.REGEX_FOR_ROOT_DOMAIN, "");
 	}
 	
 	public String param(String name){
@@ -81,9 +81,10 @@ public class HttpRequestEvent implements Serializable{
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		s.append(" ipAddress: ").append(remoteIp);
+		s.append(" remoteIp: ").append(remoteIp);
+		s.append(" localIp: ").append(localIp);
 		s.append(" uriPath: ").append(uriPath);
 		s.append(" params: ").append(params);		
 		return s.toString();
-	}
+	}	
 }

@@ -4,22 +4,25 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
+/**
+ * date time utility class, support parse, format, get unix timestamp
+ * 
+ * @author Trieu.nguyen
+ *
+ */
 public class DateTimeUtil {
-	public final static long COOKIE_AGE_10_YEARS = 630720000;
-	public final static long COOKIE_AGE_2_YEARS = 63072000;
-	public final static long COOKIE_AGE_1_HOUR = 3600; // One hour
-	public final static long COOKIE_AGE_2_HOURS = 7200; // 2 hours
-	public final static long COOKIE_AGE_3_HOURS = 10800; // 3 hours	
-	public final static long COOKIE_AGE_1_DAY = 86400; // One day
-	public final static long COOKIE_AGE_3_DAYS = 259200; // 3 days
-	public final static long COOKIE_AGE_1_WEEK = 604800; // One week
+
+	public final static String LOG_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	final static String GMT_DATE_TIME_FORMAT = "EEE, MMM d, yyyy hh:mm:ss z";
 	
 	static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	static final DateFormat DATE_NAME_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 	static final DateFormat HOUR_NAME_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:00:00");
 	static final DateFormat DATE_FORMAT_FOR_DB = new SimpleDateFormat("yyyy-MM-dd");
 	static final DateFormat DATEHOUR_FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH");
+	static final DateFormat LOG_TIME_FORMATER = new SimpleDateFormat(LOG_TIME_FORMAT);
 	
 
 	public static String formatDate(Date d ){
@@ -84,5 +87,19 @@ public class DateTimeUtil {
 	
 	public static int currentUnixTimestamp(){
 		return (int) (System.currentTimeMillis() / 1000L);
+	}
+	
+	public static String getLogTimeString(){
+		return (new SimpleDateFormat(LOG_TIME_FORMAT)).format(new Date());
+	}
+	
+	public static String getGMTDateTimeString() {		
+		SimpleDateFormat sdf = new SimpleDateFormat(GMT_DATE_TIME_FORMAT);		
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		return sdf.format(new Date());
+	}
+	
+	public static String format(String format, Date date){
+		return (new SimpleDateFormat(format)).format(date);
 	}
 }

@@ -21,6 +21,6 @@ public class SampleHttpServer {
         String publicClasspath = "sample";
         int poolSize = 30000;
         
-        new HttpServer(ip,port,poolSize).run(false,publicClasspath);
+        new HttpServer(ip,port, configs.getPrivatePort(), poolSize,true).run(false,publicClasspath);
 	}
 }

@@ -120,5 +120,11 @@ public final class StringPool {
     public static final String FTL_EXT = ".ftl";
     
     public static final String BASE64_GIF_BLANK = "R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";    
+    
+    public static final String KEY = "key";
+    public static final String VALUE = "value";
+    
+    public static final String HTTP_URL_PREFIX = "http://";    
+    public static final String HTTPS_URL_PREFIX = "https://";
 
 }

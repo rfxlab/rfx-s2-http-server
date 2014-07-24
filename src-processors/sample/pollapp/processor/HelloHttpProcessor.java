@@ -1,5 +1,7 @@
 package sample.pollapp.processor;
 
+import io.netty.handler.codec.http.HttpHeaders;
+
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
@@ -59,9 +61,16 @@ public class HelloHttpProcessor extends HttpProcessor {
 		}
 
 		@Override
-		public boolean isProcessable() {
+		public boolean isOutputable() {
 			// TODO Auto-generated method stub
 			return false;
+		}
+
+
+		@Override
+		public List<HttpHeaders> getHttpHeaders() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 	}

@@ -1,5 +1,9 @@
 package rfx.server.http;
 
+import io.netty.handler.codec.http.HttpHeaders;
+
+import java.util.List;
+
 
 /**
  * the base class for HTTP processor, input: HttpRequest output: processed model object
@@ -9,9 +13,10 @@ package rfx.server.http;
  */
 public abstract class HttpProcessor {
 	
-	public static final DataService EMPTY_MODEL = new DataService() {		
+	
+	public static final DataService EMPTY = new DataService() {
 		@Override
-		public boolean isProcessable() {			
+		public boolean isOutputable() {			
 			return false;
 		}		
 		@Override
@@ -20,6 +25,42 @@ public abstract class HttpProcessor {
 		public String getClasspath() {			
 			return DataService.class.getName();
 		}
+		@Override
+		public List<HttpHeaders> getHttpHeaders() {
+			return null;
+		}
+	};
+	
+	public static DataService redirect(String url){
+		return new RedirectService(url);
+	}
+	
+	public static class RedirectService implements DataService {
+		String redirectedUrl;
+		
+		public RedirectService(String redirectedUrl) {
+			super();
+			this.redirectedUrl = redirectedUrl;
+		}
+
+		public String getRedirectedUrl() {
+			return redirectedUrl;
+		}
+		
+		@Override
+		public boolean isOutputable() {			
+			return false;
+		}		
+		@Override
+		public void freeResource() {}
+		@Override
+		public String getClasspath() {			
+			return DataService.class.getName();
+		}
+		@Override
+		public List<HttpHeaders> getHttpHeaders() {
+			return null;
+		}
 	};
 	
 	/**
@@ -27,13 +68,12 @@ public abstract class HttpProcessor {
 	 * 
 	 * @return processed model object
 	 */
-	public DataService doProcessing(HttpRequestEvent requestEvent) {
+	public DataService doProcessing(HttpRequestEvent event) {
 		//TODO support hooking, filtering HttpRequestEvent
 		
 		//call the implemented process method
-		return process(requestEvent);
+		return process(event);
 	}
-	
 
 	
 	///////////// for the implementation class /////////////

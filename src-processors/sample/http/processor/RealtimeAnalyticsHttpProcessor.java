@@ -1,6 +1,9 @@
 package sample.http.processor;
 
+import io.netty.handler.codec.http.HttpHeaders;
+
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import redis.clients.jedis.Jedis;
@@ -74,9 +77,15 @@ public class RealtimeAnalyticsHttpProcessor extends HttpProcessor {
 		}
 
 		@Override
-		public boolean isProcessable() {
+		public boolean isOutputable() {
 			// TODO Auto-generated method stub
 			return false;
+		}
+
+		@Override
+		public List<HttpHeaders> getHttpHeaders() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 	}

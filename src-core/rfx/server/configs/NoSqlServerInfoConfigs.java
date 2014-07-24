@@ -81,6 +81,6 @@ public class NoSqlServerInfoConfigs {
 
 	public static void main(String[] args) {		
 		theInstance();
-		System.out.println(pools);
+		System.out.println(pools.get("REDIS_SERVER1"));
 	}
 }

@@ -15,12 +15,18 @@ import java.net.URLDecoder;
 import java.util.Set;
 
 import rfx.server.http.cookie.CookieData;
-import rfx.server.util.DateTimeUtil;
 import rfx.server.util.LocationUtil;
 import rfx.server.util.SecurityUtil;
 
 public class CookieUtil {
-
+	public final static long COOKIE_AGE_10_YEARS = 630720000;
+	public final static long COOKIE_AGE_2_YEARS = 63072000;
+	public final static long COOKIE_AGE_1_HOUR = 3600; // One hour
+	public final static long COOKIE_AGE_2_HOURS = 7200; // 2 hours
+	public final static long COOKIE_AGE_3_HOURS = 10800; // 3 hours	
+	public final static long COOKIE_AGE_1_DAY = 86400; // One day
+	public final static long COOKIE_AGE_3_DAYS = 259200; // 3 days
+	public final static long COOKIE_AGE_1_WEEK = 604800; // One week
 
 	/*
 	 * rand format 3b10f37d26bae61d.1330937373.4.1331004249.1330998456.2
@@ -136,14 +142,14 @@ public class CookieUtil {
 	}
 
 	static void setDefaultCookieInfo(Cookie cookie) {
-		cookie.setMaxAge(DateTimeUtil.COOKIE_AGE_2_YEARS);
+		cookie.setMaxAge(COOKIE_AGE_2_YEARS);
 		cookie.setPath(CookieData.DEFAULT_DOMAIN);
 		cookie.setPath(CookieData.DEFAULT_PATH);
 		cookie.setHttpOnly(true);
 	}
 
 	public static void addExpireTime2YearsForCookie(Cookie cookie) {
-		cookie.setMaxAge(DateTimeUtil.COOKIE_AGE_2_YEARS);
+		cookie.setMaxAge(COOKIE_AGE_2_YEARS);
 	}
 	
 	public static void addExpireTimeForCookie(Cookie cookie, long maxAge) {
@@ -176,6 +182,25 @@ public class CookieUtil {
 	public static FullHttpResponse handleGetIdPath(HttpRequest request,String ipAdress, String uri)  {		
 		// http://example.com/getid?callback=callback
 		return new CookieData(request, ipAdress, uri).responseForGetId();
+	}
+	
+	public static Cookie createCookie(String name, String value, String domain, String path, long maxAge) {
+		Cookie cookie = new DefaultCookie(name, value);
+		cookie.setDomain(domain);
+		cookie.setPath(path);
+		cookie.setMaxAge(maxAge);
+		return cookie;
+	}
+	
+	public static Cookie createCookie(String name, String value, long maxAge) {
+		Cookie cookie = new DefaultCookie(name, value);		
+		cookie.setMaxAge(maxAge);		
+		return cookie;
+	}
+	
+	public static void setCookie(String name, String value, String domain, String path, long maxAge, FullHttpResponse response) {
+		Cookie cookie = createCookie(name, value, domain, path, maxAge);
+		response.headers().add(SET_COOKIE, ServerCookieEncoder.encode(cookie));
 	}
 
 }

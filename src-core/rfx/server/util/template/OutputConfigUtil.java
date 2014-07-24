@@ -1,23 +1,26 @@
 package rfx.server.util.template;
 
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.reflections.Reflections;
 
-import rfx.server.configs.ContentTypePool;
 import rfx.server.http.DataService;
 import rfx.server.http.HttpOutputResource;
 import rfx.server.http.HttpRequestEvent;
 import rfx.server.http.OutputConfig;
 import rfx.server.http.common.NettyHttpUtil;
 import rfx.server.util.FileUtils;
-import rfx.server.util.JsOptimizerUtil;
+import rfx.server.util.StringUtil;
 
 public class OutputConfigUtil {
 	
@@ -33,25 +36,41 @@ public class OutputConfigUtil {
 	}
 	
 	public static FullHttpResponse processOutput(HttpRequestEvent requestEvent, DataService model, String contentType) throws IOException{
+		if( model == null){
+			return NettyHttpUtil.theHttpContent(StringUtil.toString("Null model"), contentType);
+		}
+		if( ! model.isOutputable() ){
+			return NettyHttpUtil.theHttpContent(StringUtil.toString("The model ",model.getClass().getName(), " is not outputable"), contentType);
+		}
 		OutputConfig config = getOutputConfig(model);
 		int type = config.type();
-		String location = config.location();		
-		
+		String location = config.location();
 		
 		if(type == OutputConfig.HANDLEBARS_TEMPLATE){			
-			String text = HandlebarsTemplateUtil.execute(location, model);
-			if(requestEvent.param("jscompress", "").equals("1"))
-			{
-				switch (contentType) {
-					case ContentTypePool.JAVA_SCRIPT:
-						text = JsOptimizerUtil.compile(text);
-						break;
-					default:
-						break;
-				}			
-			}
+			String text = StringEscapeUtils.unescapeHtml4(HandlebarsTemplateUtil.execute(location, model));
+			
+//			if(requestEvent.param("jscompress", "").equals("1"))
+//			{
+//				switch (contentType) {
+//					case ContentTypePool.JAVA_SCRIPT:
+//						text = JsOptimizerUtil.compile(text);
+//						break;
+//					default:
+//						break;
+//				}			
+//			}
 //			System.out.println(text);
-			return NettyHttpUtil.theHttpContent(text , contentType);
+			FullHttpResponse response = NettyHttpUtil.theHttpContent(text , contentType);
+			List<HttpHeaders> list = model.getHttpHeaders();
+			if(list != null){
+				list.stream().forEach(new Consumer<HttpHeaders>() {
+					@Override
+					public void accept(HttpHeaders h) {
+						response.headers().add(h);
+					}
+				});	
+			}			
+			return response;
 		} else if(type == OutputConfig.STATIC_FILE){			
 			HttpOutputResource re = FileUtils.readHttpOutputResource(location);
 			return NettyHttpUtil.theHttpContent(re , contentType);

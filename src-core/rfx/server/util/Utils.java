@@ -108,4 +108,11 @@ public class Utils {
 	public static String randomUniqueString(int maxLength){
 		return StringUtil.safeSubString(Long.toString(Utils.randLong(), 36),maxLength);
 	}
+	
+	public static void repeat(int n, Runnable r) {
+		for (int i = 0; i < n; i++){
+			r.run();
+		}
+	}
+	
 }

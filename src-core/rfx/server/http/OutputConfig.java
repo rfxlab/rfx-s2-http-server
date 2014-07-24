@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OutputConfig {
-	String location() ;
+	String location() default "system/default";
 	int type() default HANDLEBARS_TEMPLATE;
 	
 	public static int STATIC_FILE = 11;

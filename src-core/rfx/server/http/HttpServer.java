@@ -10,16 +10,17 @@ import rfx.server.http.common.PrivateHttpServerInitializer;
 import rfx.server.http.common.PublicHttpServerInitializer;
 import rfx.server.http.websocket.WebSocketServerInitializer;
 import rfx.server.util.LogUtil;
+import rfx.server.util.template.HandlebarsTemplateUtil;
 import rfx.server.util.template.OutputConfigUtil;
 
 public class HttpServer {
 	static String host = "localhost:8080";
-	static final int PRIVATE_HTTP_PORT = 31000;
+	
 	public final static String DEFAULT_CLASSPATH = "rfx";
-	public final static String SERVER_INFO_VERSION = "RfxHttpServer/0.1";
+	public final static String SERVER_INFO_VERSION = "JAmbientDelivery/0.1";
 	
 	
-    int port;
+    int port,privatePort = 31000;;
     String ip;
     int publicPoolSize = PublicHttpProcessorRoutingHandler.DEFAULT_MAX_POOL_SIZE;
     int privatePoolSize = PrivateHttpProcessorRoutingHandler.DEFAULT_MAX_POOL_SIZE;
@@ -33,15 +34,23 @@ public class HttpServer {
     public HttpServer(String ip, int port) {
     	setHost(ip, port);
     }
-    
-    public HttpServer(String ip, int port, int processorPoolSize) {
+       
+    public HttpServer(String ip, int port, int privatePort, int processorPoolSize) {
     	setHost(ip, port);
+    	this.privatePort = privatePort;
     	this.privatePoolSize = this.publicPoolSize = processorPoolSize;
+    	HandlebarsTemplateUtil.enableUsedCache();
     }
     
-    public HttpServer(String ip, int port, int processorPoolSize, boolean noCacheMode) {
+    public HttpServer(String ip, int port, int privatePort, int processorPoolSize, boolean noCacheMode) {
     	setHost(ip, port);
+    	this.privatePort = privatePort;
     	this.privatePoolSize = this.publicPoolSize = processorPoolSize;    	
+    	if(noCacheMode){
+    		HandlebarsTemplateUtil.disableUsedCache();
+    	} else {
+    		HandlebarsTemplateUtil.enableUsedCache();
+    	}
     }
     
     public static String getHost() {
@@ -85,14 +94,14 @@ public class HttpServer {
             //bind to private access (for administrator only) host info, default 10000
             Channel ch2;
             if("*".equals(ip)){
-            	ch2 = adminServerBootstrap.bind(PRIVATE_HTTP_PORT).sync().channel();
+            	ch2 = adminServerBootstrap.bind(privatePort).sync().channel();
             } else {
-            	ch2 = adminServerBootstrap.bind(ip,PRIVATE_HTTP_PORT).sync().channel();
+            	ch2 = adminServerBootstrap.bind(ip,privatePort).sync().channel();
             }                        
             ch2.config().setConnectTimeoutMillis(1800);            
             
             LogUtil.i("publicServerBootstrap ", "is started and listening at " + this.ip + ":" + this.port);
-            LogUtil.i("adminServerBootstrap ", "is started and listening at " + this.ip + ":" + PRIVATE_HTTP_PORT);
+            LogUtil.i("adminServerBootstrap ", "is started and listening at " + this.ip + ":" + privatePort);
             ch1.closeFuture().sync();            
             ch2.closeFuture().sync();
             System.out.println("Shutdown...");

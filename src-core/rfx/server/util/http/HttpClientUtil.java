@@ -25,7 +25,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
@@ -54,9 +53,10 @@ public class HttpClientUtil {
 	public static final HttpClient getThreadSafeClient(int slot) throws Exception {		
 		HttpClient httpClient = httpClientPool.get(slot);
 		if(httpClient == null){
-			PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-	        cm.setMaxTotal(50);
-	        httpClient = HttpClients.custom().setConnectionManager(cm).build();
+//			PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+//	        cm.setMaxTotal(40);	        
+//	        httpClient = HttpClients.createMinimal().setConnectionManager(cm).build();
+			httpClient = HttpClients.createMinimal();
 		    httpClientPool.put(slot, httpClient);
 		}
 	    return httpClient;

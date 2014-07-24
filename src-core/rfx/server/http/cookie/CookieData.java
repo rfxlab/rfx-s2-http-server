@@ -20,7 +20,6 @@ import rfx.server.configs.HttpServerConfigs;
 import rfx.server.http.common.CookieUtil;
 import rfx.server.http.common.NettyHttpUtil;
 import rfx.server.log.handlers.StaticFileHandler;
-import rfx.server.util.DateTimeUtil;
 import rfx.server.util.SecurityUtil;
 import rfx.server.util.StringPool;
 import rfx.server.util.StringUtil;
@@ -220,14 +219,14 @@ public class CookieData {
 			if( ! noCache ){
 				if(this.fospAidCookie == null){
 					this.fospAidCookie = CookieUtil.createCookie(USER_ID_COOKIE_NAME,	userid, DEFAULT_DOMAIN, DEFAULT_PATH);
-					this.fospAidCookie.setMaxAge(DateTimeUtil.COOKIE_AGE_10_YEARS);
+					this.fospAidCookie.setMaxAge(CookieUtil.COOKIE_AGE_10_YEARS);
 					response.headers().add(SET_COOKIE,ServerCookieEncoder.encode(fospAidCookie));
 				}			 
 				
 				
 				
 				Cookie sessionCookie = CookieUtil.createCookie(SESSION_COOKIE_NAME, URLEncoder.encode(userSession, "UTF-8"), DEFAULT_DOMAIN,	DEFAULT_PATH);
-				sessionCookie.setMaxAge(DateTimeUtil.COOKIE_AGE_10_YEARS);
+				sessionCookie.setMaxAge(CookieUtil.COOKIE_AGE_10_YEARS);
 				response.headers().add(SET_COOKIE,ServerCookieEncoder.encode(sessionCookie));
 							
 				Cookie tracking_version = CookieUtil.createCookie(TRACKING_VERSION,URLEncoder.encode(eatv, "UTF-8"), DEFAULT_DOMAIN,DEFAULT_PATH);

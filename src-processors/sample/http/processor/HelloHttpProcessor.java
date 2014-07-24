@@ -1,5 +1,9 @@
 package sample.http.processor;
 
+import io.netty.handler.codec.http.HttpHeaders;
+
+import java.util.List;
+
 import rfx.server.configs.ContentTypePool;
 import rfx.server.http.DataService;
 import rfx.server.http.HttpProcessor;
@@ -44,9 +48,15 @@ public class HelloHttpProcessor extends HttpProcessor {
 		}
 
 		@Override
-		public boolean isProcessable() {
+		public boolean isOutputable() {
 			// TODO Auto-generated method stub
 			return false;
+		}
+
+		@Override
+		public List<HttpHeaders> getHttpHeaders() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 	}

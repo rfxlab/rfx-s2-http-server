@@ -15,14 +15,13 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.reflections.Reflections;
 
 import rfx.server.configs.ContentTypePool;
+import rfx.server.http.HttpProcessor.RedirectService;
 import rfx.server.http.common.NettyHttpUtil;
 import rfx.server.log.handlers.StaticFileHandler;
 import rfx.server.util.RoundRobin;
 import rfx.server.util.StringPool;
 import rfx.server.util.StringUtil;
 import rfx.server.util.template.OutputConfigUtil;
-
-import com.google.gson.Gson;
 
 /**
  * @author Trieu.nguyen
@@ -69,32 +68,34 @@ public class HttpProcessorManager {
 	
 
 	/**
-	 * always called by UrlMappingSingleProcessorHandler.callProcessor
+	 * the main router for all processors
 	 * 
 	 * @return FullHttpResponse
 	 */
-	public FullHttpResponse doProcessing(HttpRequestEvent requestEvent) {		
+	public FullHttpResponse doProcessing(HttpRequestEvent event) {		
 		DataService model = null;
 		FullHttpResponse response = null;
-		try {			
-			model = roundRobinRounter.next().doProcessing(requestEvent);
-			if(model.isProcessable()){				
-				//TODO add debug mode
-				//System.out.println("..doProcessing:" + model );			
-				response = OutputConfigUtil.processOutput(requestEvent, model, contentType);				
+		HttpProcessor processor;
+		try {
+			processor = roundRobinRounter.next();
+			model = processor.doProcessing(event);
+			if(model instanceof RedirectService){
+				String url = ((RedirectService)model).getRedirectedUrl();
+				response = NettyHttpUtil.redirect(url);
 			} else {
 				switch (contentType) {
-					case ContentTypePool.JSON:
-						String json = new Gson().toJson(model);
-						response = NettyHttpUtil.theHttpContent(json, contentType);
-						break;				
 					case ContentTypePool.TRACKING_GIF:
 						response = StaticFileHandler.theBase64Image1pxGif();
 						break;
+					case ContentTypePool.JSON:
+						String json = StringUtil.toJsonString(model);
+						response = NettyHttpUtil.theHttpContent(json, contentType);
+						break;
 					default:
+						response = OutputConfigUtil.processOutput(event, model, contentType);
 						break;
 				}
-			}		
+			}
 		} 
 		catch (Throwable e) {						
 			e.printStackTrace();
@@ -107,9 +108,7 @@ public class HttpProcessorManager {
 			if(model != null){
 				model.freeResource();
 			}
-		}		
-		//TODO log the result
-		
+		}
 		if(response != null){
 			return response;
 		}
@@ -148,8 +147,7 @@ public class HttpProcessorManager {
 				if( config.privateAccess() == filteredAccessMode){
 					HttpProcessorManager manager = tempMap.get(config.uriPath());
 					if( manager == null ){						
-						manager = new HttpProcessorManager(config.contentType(), clazz, processorPoolSize);
-						
+						manager = new HttpProcessorManager(config.contentType(), clazz, processorPoolSize);						
 						if( StringUtil.isNotEmpty(config.uriPath()) ){
 							tempMap.put(config.uriPath(), manager);
 							String s = clazz.getName() + " ;uriPath:"+config.uriPath()+" ;content-type:"+config.contentType();

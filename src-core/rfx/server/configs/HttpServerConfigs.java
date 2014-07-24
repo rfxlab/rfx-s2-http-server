@@ -16,19 +16,21 @@ public class HttpServerConfigs implements Serializable {
 
 	private static final long serialVersionUID = 4936959262031389418L;
 	
-	private int port = 8080;
-	private String ip = "127.0.0.1";
-	private int websocketEnable = 0;
+	int port = 8080;
+	int privatePort = 31000;
+	int websocketEnable = 0;
+	String ip = "127.0.0.1";
+
 	
-	private String secretKey;
-	private String cookieDomain = "";
-	private String defaultPartitioner = "";
-	private String accessLogFileName = "access.log";
-	private String debugLogFolderPath = "";
-	private int accessLogEnable = 0;
-	private int writeKafkaLogEnable = 1;
-	private int debugModeEnabled = 0;
-	private int cacheHttpMaxAge = 7200;
+	String secretKey;
+	String cookieDomain = "";
+	String defaultPartitioner = "";
+	String accessLogFileName = "access.log";
+	String debugLogFolderPath = "";
+	int accessLogEnable = 0;
+	int writeKafkaLogEnable = 1;
+	int debugModeEnabled = 0;
+	int cacheHttpMaxAge = 7200;
 	Map<String,Map<String,String>> kafkaProducerList;
 	int numberBatchJob = 20;
 	int timeSendKafkaPerBatchJob = 4000;
@@ -37,17 +39,8 @@ public class HttpServerConfigs implements Serializable {
 	int kafkaProducerAsyncEnabled = 1;
 	int kafkaProducerAckEnabled = 1;
 	
-	int urlApiGenderDetectionEnabled = 1;
-	String urlApiGenderDetection;
-	
-	String defaultLogHandlerClassPath;
-	
-	int genderCacheTimeout = 12;//minutes
-	int genderCacheMaxSize = 12000000;//unique visitors
-	
-	public String getUrlApiGenderDetection() {
-		return urlApiGenderDetection;
-	}
+	String defaultLogHandlerClassPath;	
+
 	
 	public int getKafkaProducerAsyncEnabled() {
 		return kafkaProducerAsyncEnabled;
@@ -130,6 +123,14 @@ public class HttpServerConfigs implements Serializable {
 	}
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	public int getPrivatePort() {
+		return privatePort;
+	}
+
+	public void setPrivatePort(int privatePort) {
+		this.privatePort = privatePort;
 	}
 
 	public Map<String, Map<String, String>> getKafkaProducerList() {
@@ -216,40 +217,16 @@ public class HttpServerConfigs implements Serializable {
 		this.timeSendKafkaPerBatchJob = timeSendKafkaPerBatchJob;
 	}
 
-	public int getGenderCacheTimeout() {
-		if(genderCacheTimeout == 0){
-			genderCacheTimeout = 12;
-		}
-		return genderCacheTimeout;
-	}
-
-	public void setGenderCacheTimeout(int genderCacheTimeout) {
-		this.genderCacheTimeout = genderCacheTimeout;
-	}
-
-	public int getGenderCacheMaxSize() {
-		if(genderCacheMaxSize == 0){
-			genderCacheMaxSize = 12000000;
-		}
-		return genderCacheMaxSize;
-	}
-
-	public void setGenderCacheMaxSize(int genderCacheMaxSize) {
-		this.genderCacheMaxSize = genderCacheMaxSize;
+	public String getDefaultLogHandlerClassPath() {
+		return defaultLogHandlerClassPath;
 	}
 
 	public boolean isWebsocketEnable() {
 		return websocketEnable == 1;
 	}
 
-	public int getUrlApiGenderDetectionEnabled() {
-		return urlApiGenderDetectionEnabled;
+	public void setWebsocketEnable(int websocketEnable) {
+		this.websocketEnable = websocketEnable;
 	}
-
-	public String getDefaultLogHandlerClassPath() {
-		return defaultLogHandlerClassPath;
-	}
-
-	
 	
 }
