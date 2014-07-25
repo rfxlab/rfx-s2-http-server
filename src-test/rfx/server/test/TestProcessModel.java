@@ -15,7 +15,7 @@ public class TestProcessModel {
 		OutputConfigUtil.initTemplateConfigCache("rfx.server");
 		
 		DataService model = new ServerInfoService("all").build();
-		String templateLocation = OutputConfigUtil.getOutputConfig(model).location();
+		String templateLocation = OutputConfigUtil.getOutputConfig(model).template();
 		String text = HandlebarsTemplateUtil.execute(templateLocation, model);
 		System.out.println(templateLocation);
 		

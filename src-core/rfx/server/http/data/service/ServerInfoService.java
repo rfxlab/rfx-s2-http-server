@@ -10,7 +10,7 @@ import rfx.server.http.OutputConfig;
 import rfx.server.http.ViewableDataService;
 import rfx.server.monitor.util.MemoryWatcher;
 
-@OutputConfig(location = "system/server-info")
+@OutputConfig(template = "system/server-info")
 public class ServerInfoService extends ViewableDataService {
 	static final String classpath = ServerInfoService.class.getName();
 	String time;

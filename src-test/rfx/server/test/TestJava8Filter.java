@@ -115,25 +115,23 @@ public class TestJava8Filter {
 		ExecutorService executorService = Executors.newFixedThreadPool(poolSize);
 		for (int i = 1; i <= 20; i++) {
 			final int id = i;
-			executorService.execute(new Runnable() {
-			    public void run() {
-			        System.out.println("Worker "+id);
-			        while(true){	
+			executorService.execute( () -> {
+				System.out.println("Worker "+id);
+				while(true){	
+					if(indexedData.size()==0){
+						Utils.sleep(20);
 						if(indexedData.size()==0){
-							Utils.sleep(20);
-							if(indexedData.size()==0){
-								break;
-							}
+							break;
 						}
-						long count = indexedData.keySet().parallelStream().limit(STREAM_SIZE)
-								.map(functor1).filter(t -> t != null).map(functor2).count();
-						totalProcessedCount.addAndGet(count);
-						System.out.println("processed count = "+count);
-						System.out.println("remain indexedData.size = "+indexedData.size());
-						System.out.println("Thread.activeCount = "+Thread.activeCount());
-						Utils.sleep(1);
 					}
-			    }
+					long count = indexedData.keySet().parallelStream().limit(STREAM_SIZE)
+									.map(functor1).filter(t -> t != null).map(functor2).count();
+					totalProcessedCount.addAndGet(count);
+					System.out.println("processed count = "+count);
+					System.out.println("remain indexedData.size = "+indexedData.size());
+					System.out.println("Thread.activeCount = "+Thread.activeCount());
+					Utils.sleep(1);
+				}
 			});
 		}		
 		executorService.shutdown();

@@ -44,7 +44,7 @@ public class OutputConfigUtil {
 		}
 		OutputConfig config = getOutputConfig(model);
 		int type = config.type();
-		String location = config.location();
+		String location = config.template();
 		
 		if(type == OutputConfig.HANDLEBARS_TEMPLATE){			
 			String text = StringEscapeUtils.unescapeHtml4(HandlebarsTemplateUtil.execute(location, model));
@@ -85,7 +85,7 @@ public class OutputConfigUtil {
 			if (modelClass.isAnnotationPresent(OutputConfig.class) ) {
 				Annotation annotation = modelClass.getAnnotation(OutputConfig.class);
 				OutputConfig templateConfig = (OutputConfig) annotation;
-				String tplLocation = templateConfig.location();
+				String tplLocation = templateConfig.template();
 				int type = templateConfig.type();
 				outputConfigCache.put(modelClass.getName(), templateConfig);
 				
