@@ -2,6 +2,7 @@ package sample.http;
 
 import rfx.server.configs.HttpServerConfigs;
 import rfx.server.http.HttpServer;
+import rfx.server.util.cache.CacheManagerForAllDAO;
 
 public class SampleHttpServer {
 
@@ -21,6 +22,7 @@ public class SampleHttpServer {
         String publicClasspath = "sample";
         int poolSize = 30000;
         
+        CacheManagerForAllDAO.init();
         new HttpServer(ip,port, configs.getPrivatePort(), poolSize,true).run(false,publicClasspath);
 	}
 }

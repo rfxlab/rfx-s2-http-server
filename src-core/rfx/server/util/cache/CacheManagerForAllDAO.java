@@ -1,14 +1,18 @@
 package rfx.server.util.cache;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.reflections.Reflections;
 
-import rfx.server.util.HashUtil;
 import rfx.server.util.StringPool;
-import rfx.server.util.cache.GuavaCacheUtil;
+import rfx.server.util.StringUtil;
 
 import com.google.common.cache.LoadingCache;
 
@@ -20,6 +24,11 @@ import com.google.common.cache.LoadingCache;
  */
 @Aspect
 public class CacheManagerForAllDAO {
+	
+	final static String daoClasspath = "sample.pollapp.business.dao";
+	final static String withinClasspath = "within("+daoClasspath+".*)";
+	
+	final static Map<String, CachePool> signatureConfigCache = new HashMap<>();
 
 	//TODO use Memcache here
 	static boolean cacheAllMethodsInDAO = true;
@@ -28,27 +37,32 @@ public class CacheManagerForAllDAO {
 		System.out.println("---CacheManagerForAllDAO---");
 	}
 		
-	@Around("within(sample.pollapp.business.dao.*)")
+	@Around(withinClasspath)
     public Object process(ProceedingJoinPoint pJoinPoint){
 		try {
 			long maximumSize = 10000;
 			long expireAfter = 8;
-			LoadingCache<String, Object> cache = GuavaCacheUtil.getLoadingCache(pJoinPoint.getTarget(), maximumSize, expireAfter);
+			
 			if(cacheAllMethodsInDAO){
 				Object value = null;
 //		        System.out.println(" ---------Before invoking ---------- ");
 		        
-		        String key = pJoinPoint.getSignature().getName() + HashUtil.hashUrlCrc64(Arrays.toString(pJoinPoint.getArgs()));
+		        //String key = pJoinPoint.getSignature().getName() + HashUtil.hashUrlCrc64(Arrays.toString(pJoinPoint.getArgs()));
+				String key = StringUtil.toString(pJoinPoint.getSignature().getName(), StringPool.UNDERLINE, StringUtil.join(pJoinPoint.getArgs(),StringPool.UNDERLINE));
+		        
+		        LoadingCache<String, Object> cache = GuavaCacheUtil.getLoadingCache(pJoinPoint.getTarget(), maximumSize, expireAfter);
 	        	value = cache.get(key);	        	
-	        	//System.out.println("Target: "+pJoinPoint.getTarget());
+	        	System.out.println("++ Target: "+pJoinPoint.getTarget().getClass().getName());
+	        	System.out.println("++ Signature: "+pJoinPoint.getSignature().getName());
 	        	
-	        	if(StringPool.BLANK.equals(value)){
-	        		//System.out.println("+Before call method=" + pJoinPoint.getSignature().getName());
-	        		//System.out.println("++Agruments Passed=" + Arrays.toString(pJoinPoint.getArgs()));
+	        	System.out.println("++ call method=" + pJoinPoint.getSignature().getName());
+        		System.out.println("++ Agruments Passed=" + Arrays.toString(pJoinPoint.getArgs()));
+	        	
+	        	if(StringUtil.isEmpty(value)){	        		
 	                value = pJoinPoint.proceed();	                
 	                cache.put(key, value);
 	        	} else {
-	        		System.out.println("Hit cache by key:" + key );
+	        		System.out.println("Hit cache by key: " + key );
 	        	}
 	        	//System.out.println(" value: "+value);
 	        	
@@ -71,6 +85,67 @@ public class CacheManagerForAllDAO {
 //		System.out.println("Agruments Passed=" + Arrays.toString(joinPoint.getArgs()));
 //
 //	}
+	
+	static class CachePool {
+		LoadingCache<String, Object> cache;
+		String keyPrefix;
+		 
+		
+		 
+		public CachePool(LoadingCache<String, Object> cache, String keyPrefix) {
+			super();
+			this.cache = cache;
+			this.keyPrefix = keyPrefix;
+		}
+		
+		public LoadingCache<String, Object> getCache() {
+			return cache;
+		}
+		public void setCache(LoadingCache<String, Object> cache) {
+			this.cache = cache;
+		}
+		public String getKeyPrefix() {
+			return keyPrefix;
+		}
+		public void setKeyPrefix(String keyPrefix) {
+			this.keyPrefix = keyPrefix;
+		}
+		 
+		public String buildKey(String signatureName, Object[] args){
+			if(StringUtil.isEmpty(keyPrefix)){
+				return StringUtil.toString(signatureName, StringPool.UNDERLINE, StringUtil.join(args,StringPool.UNDERLINE));
+			}
+			return StringUtil.toString(keyPrefix, signatureName, StringPool.UNDERLINE, StringUtil.join(args,StringPool.UNDERLINE));
+		}
+	}
 
+	public static void init() throws Exception{
+		Reflections reflections = new Reflections(daoClasspath);
+		Set<Class<?>> classes = reflections.getTypesAnnotatedWith(CacheConfig.class);			
+		for (Class<?> clazz : classes) {
+			String className = clazz.getName();
+			if (clazz.isAnnotationPresent(CacheConfig.class) ) {
+				Annotation annotation = clazz.getAnnotation(CacheConfig.class);
+				CacheConfig cacheConfig = (CacheConfig) annotation;
+				
+				long maximumSize = cacheConfig.maximumSize() > 0 ? cacheConfig.maximumSize() : 1000000;
+				long expireAfter = cacheConfig.expireAfter() > 0 ? cacheConfig.expireAfter() : 10;
+				String keyPrefix = cacheConfig.keyPrefix();
+				int type = cacheConfig.type();
+							
+				
+				if(type == CacheConfig.LOCAL_CACHE_ENGINE){	
+					LoadingCache<String, Object> cache = GuavaCacheUtil.getLoadingCache(className, maximumSize, expireAfter );
+					signatureConfigCache.put(className, new CachePool(cache, keyPrefix));
+				}
+				
+				System.out.println("...registered signatureConfigCache:" + className);
+			}			
+		}
+	}
+	
+	public static void main(String[] args) throws Exception {
+		init();
+	}
 	
 }

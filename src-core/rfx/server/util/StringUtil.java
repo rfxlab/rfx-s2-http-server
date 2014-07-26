@@ -135,7 +135,7 @@ public class StringUtil {
 		if (s == null) {
 			return true;
 		}		
-		return s.toString().isEmpty();
+		return String.valueOf(s).isEmpty();
 	}
 	
 	public static boolean isEmpty(String s) {
@@ -162,7 +162,11 @@ public class StringUtil {
 	
 	
 	
-	public static String join(String[] array, String joinStr){
+	public static String join(String[] array, String joinStr){		
+		return join(array, joinStr);
+	}
+	
+	public static String join(Object[] array, String joinStr){
 		StringBuilder s = new StringBuilder();
 		int l = array.length, n = l -1;
 		for (int i=0; i<l;i++) {
