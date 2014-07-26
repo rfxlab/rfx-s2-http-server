@@ -1,6 +1,7 @@
 package sample.pollapp.business.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,8 @@ import java.util.function.Consumer;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+
+
 
 import rfx.server.util.DatabaseDomainUtil;
 import rfx.server.util.sql.CommonSpringDAO;
@@ -42,6 +45,19 @@ public class PollAppDAOImpl extends CommonSpringDAO implements PollAppDAO {
 			poll.addChoice(choice);
 		}
 		return new ArrayList<Poll>(polls.values());
+	}
+	
+	public Poll getPoll(int id) {
+		Poll poll = new Poll();
+		poll.setId(id);
+		poll.setPublishedDate(new Date());
+		poll.setQuestion("what do you want to do ?");
+		List<Choice> choices = new ArrayList<>();
+		choices.add(new Choice(1, id, "eat", 1));
+		choices.add(new Choice(2, id, "sleep", 22));
+		poll.setChoices(choices );
+		rfx.server.util.Utils.sleep(2000);
+		return poll;
 	}
 	
 	public static void main(String[] args) {

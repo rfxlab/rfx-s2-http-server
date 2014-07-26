@@ -7,6 +7,19 @@ public class Choice {
 	String text;
 	int votes;
 	
+	
+	
+	public Choice(int id, int pollId, String text, int votes) {
+		super();
+		this.id = id;
+		this.pollId = pollId;
+		this.text = text;
+		this.votes = votes;
+	}
+	
+	public Choice() {
+	}
+	
 	public int getId() {
 		return id;
 	}
