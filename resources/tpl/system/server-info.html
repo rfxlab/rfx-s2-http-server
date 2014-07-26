@@ -3,14 +3,14 @@
 <head></head>
 <body>
 
-	<h3>Server Info</h3>
+	<h3>Rfx Http Server version {{rfxServerVersion}}</h3>
 	
 	<b>
-	{{#ifCond rfxServerVersion '==' "0.1" }}
-		 Snapshot version
+	{{#doIf rfxServerVersion '==' "1.0" }}
+		 Stable Build
 	{{else}}	  
-		 Stable version
-	{{/ifCond}}
+		 Snapshot Build
+	{{/doIf}}
 	</b>
 	
 	<h3>Time: {{time}}</h3>
@@ -38,8 +38,8 @@
 		{{/each}}
 	</ul>	
 	
-		
+	{{#base64Decode "SmF2YSA4IGlzIGNvb2wgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2U=" }}{{/base64Decode}}	
+	{{#randomInteger}}{{/randomInteger}}
 	
-
 </body>
 </html>
