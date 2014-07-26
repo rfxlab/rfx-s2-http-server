@@ -13,7 +13,9 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 
 
+
 import rfx.server.util.DatabaseDomainUtil;
+import rfx.server.util.cache.Cachable;
 import rfx.server.util.cache.CacheConfig;
 import rfx.server.util.sql.CommonSpringDAO;
 import rfx.server.util.sql.SqlTemplateString;
@@ -50,6 +52,7 @@ public class PollAppDAOImpl extends CommonSpringDAO implements PollAppDAO {
 		return new ArrayList<Poll>(polls.values());
 	}
 	
+	@Cachable
 	public Poll getPoll(int id) {
 		Poll poll = new Poll();
 		poll.setId(id);

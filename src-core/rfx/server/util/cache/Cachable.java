@@ -1,0 +1,12 @@
+package rfx.server.util.cache;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Cachable {
+	long expireAfter() default 600; //10 minutes
+}
