@@ -37,6 +37,8 @@ public class GuavaCacheUtil {
 		}
 	};
 	
+	
+	
 	public static LoadingCache<String, Object> getLoadingCache(Object object, long maximumSize, long expireAfter){
 		String key = String.valueOf(object);
 		LoadingCache<String, Object> cache = cachePool.get(key);

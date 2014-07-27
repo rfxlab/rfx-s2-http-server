@@ -23,7 +23,7 @@ import rfx.server.util.sql.SqlTemplateUtil;
 import sample.pollapp.model.Choice;
 import sample.pollapp.model.Poll;
 
-@CacheConfig( keyPrefix = "poll:", expireAfter = 6 )
+@CacheConfig( type = CacheConfig.MEMCACHE_CACHE_ENGINE, keyPrefix = "poll:", expireAfter = 6 )
 public class PollAppDAOImpl extends CommonSpringDAO implements PollAppDAO {
 	
 	@SqlTemplateString

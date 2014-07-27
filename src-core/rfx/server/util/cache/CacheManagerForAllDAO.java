@@ -101,12 +101,14 @@ public class CacheManagerForAllDAO {
 		LoadingCache<String, Object> cache;
 		String keyPrefix;
 		Map<String, Long> cachableMethods;
+		long defaultExpire = 1;
 		 		 
-		public CachePool(LoadingCache<String, Object> cache, String keyPrefix, Map<String, Long> cachableMethods) {
+		public CachePool(LoadingCache<String, Object> cache, String keyPrefix, Map<String, Long> cachableMethods, long defaultExpire) {
 			super();
 			this.cache = cache;
 			this.keyPrefix = keyPrefix;
 			this.cachableMethods = cachableMethods;
+			this.defaultExpire = defaultExpire;
 		}
 		
 		public LoadingCache<String, Object> getCache() {
@@ -130,7 +132,10 @@ public class CacheManagerForAllDAO {
 		}
 		
 		public long getExpireAfter(String methodName){
-			return cachableMethods.getOrDefault(methodName, 0L);
+			if(cachableMethods != null){
+				return cachableMethods.getOrDefault(methodName, 0L);
+			}
+			return defaultExpire;
 		}
 		
 		@Override
@@ -145,30 +150,38 @@ public class CacheManagerForAllDAO {
 		for (Class<?> clazz : classes) {
 			String className = clazz.getName();
 			if (clazz.isAnnotationPresent(CacheConfig.class) ) {
-				Method[] methods = clazz.getMethods();
-				Map<String, Long> cachableMethods = new HashMap<>(methods.length);
-				for (Method method : methods) {
-					if(method.isAnnotationPresent(Cachable.class)){
-						Annotation am = method.getAnnotation(Cachable.class);
-						Cachable cachable = (Cachable) am;
-						String mkey = method.getName();
-						if(cachableMethods.containsKey(mkey)){
-							throw new IllegalArgumentException("duplicated cachable method key at class:"+className + " method:" + mkey);
-						}
-						cachableMethods.put(mkey, cachable.expireAfter());
-					}
-				}
 				Annotation annotation = clazz.getAnnotation(CacheConfig.class);
 				CacheConfig cacheConfig = (CacheConfig) annotation;
 				
 				long maximumSize = cacheConfig.maximumSize() > 0 ? cacheConfig.maximumSize() : 1000000;
 				long expireAfter = cacheConfig.expireAfter() > 0 ? cacheConfig.expireAfter() : 10;
 				String keyPrefix = cacheConfig.keyPrefix();
+				boolean allMethods = cacheConfig.allMethods;
 				int type = cacheConfig.type();							
 				
+				Map<String, Long> cachableMethods = null;
+				if(allMethods){
+					Method[] methods = clazz.getMethods();
+					cachableMethods = new HashMap<>(methods.length);
+					for (Method method : methods) {
+						if(method.isAnnotationPresent(Cachable.class)){
+							Annotation am = method.getAnnotation(Cachable.class);
+							Cachable cachable = (Cachable) am;
+							String mkey = method.getName();
+							if(cachableMethods.containsKey(mkey)){
+								throw new IllegalArgumentException("duplicated cachable method key at class:"+className + " method:" + mkey);
+							}
+							cachableMethods.put(mkey, cachable.expireAfter());
+						}
+					}
+				}
+				
 				if(type == CacheConfig.LOCAL_CACHE_ENGINE){	
-					LoadingCache<String, Object> cache = GuavaCacheUtil.getLoadingCache(className, maximumSize, expireAfter );
-					signatureConfigCache.put(className, new CachePool(cache, keyPrefix, cachableMethods));
+					LoadingCache<String, Object> cacheImpl = GuavaCacheUtil.getLoadingCache(className, maximumSize, expireAfter );
+					signatureConfigCache.put(className, new CachePool(cacheImpl, keyPrefix, cachableMethods, expireAfter));
+				} else if(type == CacheConfig.MEMCACHE_CACHE_ENGINE){
+					LoadingCache<String, Object> cacheImpl = new MemcacheLoadingImpl();
+					signatureConfigCache.put(className, new CachePool(cacheImpl, keyPrefix, cachableMethods, expireAfter));
 				}
 				
 				System.out.println("...registered signatureConfigCache:" + className);

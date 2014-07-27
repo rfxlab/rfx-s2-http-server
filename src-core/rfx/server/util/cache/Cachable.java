@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Cachable {
-	long expireAfter() default 600; //10 minutes
+	long expireAfter() default 3600; //1 hour
 }
