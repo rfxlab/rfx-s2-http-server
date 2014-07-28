@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.reflections.Reflections;
 
+import rfx.server.configs.ContentTypePool;
 import rfx.server.http.DataService;
 import rfx.server.http.HttpOutputResource;
 import rfx.server.http.HttpRequestEvent;
@@ -47,7 +48,10 @@ public class OutputConfigUtil {
 		String location = config.template();
 		
 		if(type == OutputConfig.HANDLEBARS_TEMPLATE){			
-			String text = StringEscapeUtils.unescapeHtml4(HandlebarsTemplateUtil.execute(location, model));
+			String text = HandlebarsTemplateUtil.execute(location, model);
+			if(ContentTypePool.HTML_UTF8.equals(contentType)){
+				text = StringEscapeUtils.unescapeHtml4(text);
+			}
 			
 //			if(requestEvent.param("jscompress", "").equals("1"))
 //			{
