@@ -167,7 +167,12 @@ public class CacheManagerForAllDAO {
 						if(method.isAnnotationPresent(Cachable.class)){
 							Annotation am = method.getAnnotation(Cachable.class);
 							Cachable cachable = (Cachable) am;
-							String mkey = method.getName();
+							String mkey;
+							if( cachable.keyFormat().isEmpty() ){
+								mkey = method.getName(); 
+							} else {
+								mkey = cachable.keyFormat();
+							}
 							if(cachableMethods.containsKey(mkey)){
 								throw new IllegalArgumentException("duplicated cachable method key at class:"+className + " method:" + mkey);
 							}

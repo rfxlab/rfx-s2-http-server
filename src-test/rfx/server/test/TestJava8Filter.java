@@ -34,7 +34,7 @@ public class TestJava8Filter {
 		}
 	}
 	
-	static Function<String, Tuple> functor1 = new Function<String, Tuple>() {
+	static Function<String, Tuple> functor1 = new Function<String, Tuple>() {		
 		@Override
 		public Tuple apply(String t) {
 			
