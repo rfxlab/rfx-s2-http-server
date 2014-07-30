@@ -28,7 +28,7 @@ public abstract class WebDataService implements DataService{
 	protected HttpHeaders defaultHttpHeaders = new DefaultHttpHeaders();
 	
 	@Override
-	public boolean isOutputable() {	
+	public boolean isRenderedByTemplate() {	
 		return true;
 	}
 	

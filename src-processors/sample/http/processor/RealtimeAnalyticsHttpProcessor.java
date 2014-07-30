@@ -55,8 +55,7 @@ public class RealtimeAnalyticsHttpProcessor extends HttpProcessor {
 				}
 				
 				//String key = "trending-keywords:"+minuteStr;
-			
-				
+							
 				break;
 			default:
 				break;
@@ -66,25 +65,21 @@ public class RealtimeAnalyticsHttpProcessor extends HttpProcessor {
 		
 		@Override
 		public void freeResource() {
-			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public String getClasspath() {
-			// TODO Auto-generated method stub
 			return DataService.getClasspath(this);
 		}
 
 		@Override
-		public boolean isOutputable() {
-			// TODO Auto-generated method stub
+		public boolean isRenderedByTemplate() {
 			return false;
 		}
 
 		@Override
 		public List<HttpHeaders> getHttpHeaders() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 		

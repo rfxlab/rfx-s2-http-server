@@ -26,7 +26,7 @@ public interface DataService {
 	/**
 	 * @return true if the model can be processed and rendered to text
 	 */
-	public boolean isOutputable();
+	public boolean isRenderedByTemplate();
 	
 	public static String getClasspath(DataService e){
 		String classpath = e.getClass().getName();

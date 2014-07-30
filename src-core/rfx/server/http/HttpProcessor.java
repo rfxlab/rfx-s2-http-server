@@ -19,7 +19,7 @@ public abstract class HttpProcessor {
 	
 	public static final DataService EMPTY = new DataService() {
 		@Override
-		public boolean isOutputable() {			
+		public boolean isRenderedByTemplate() {			
 			return false;
 		}		
 		@Override
@@ -51,7 +51,7 @@ public abstract class HttpProcessor {
 		}
 		
 		@Override
-		public boolean isOutputable() {			
+		public boolean isRenderedByTemplate() {			
 			return false;
 		}		
 		@Override

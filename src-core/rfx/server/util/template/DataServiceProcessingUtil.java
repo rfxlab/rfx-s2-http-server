@@ -39,8 +39,8 @@ public class DataServiceProcessingUtil {
 		if( model == null){
 			return NettyHttpUtil.theHttpContent(StringUtil.toString("Null model"), contentType);
 		}
-		if( ! model.isOutputable() ){
-			return NettyHttpUtil.theHttpContent(StringUtil.toString("The model ",model.getClass().getName(), " is not outputable"), contentType);
+		if( ! model.isRenderedByTemplate() ){
+			return NettyHttpUtil.theHttpContent(StringUtil.toString("The model ",model.getClass().getName(), " is not rendered By template, check isRenderedByTemplate method"), contentType);
 		}
 		DataServiceConfig outConfig = getOutputConfig(model);
 		int type = outConfig.type();

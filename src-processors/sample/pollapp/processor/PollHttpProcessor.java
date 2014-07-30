@@ -10,6 +10,7 @@ import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorConfig;
 import rfx.server.http.data.DataService;
 import rfx.server.http.data.HttpRequestEvent;
+import rfx.server.http.data.StringDataService;
 import rfx.server.util.DatabaseDomainUtil;
 import rfx.server.util.StringUtil;
 import sample.pollapp.business.dao.PollAppDAO;
@@ -40,8 +41,7 @@ public class PollHttpProcessor extends HttpProcessor {
 			List<Poll> polls = Arrays.asList(pollAppDAO.getPoll(id));
 			return new MyData(polls);
 		}
-		
-		return null;		
+		return new StringDataService("Empty");		
 	}
 
 	static class MyData implements DataService{		
@@ -64,26 +64,22 @@ public class PollHttpProcessor extends HttpProcessor {
 
 		@Override
 		public void freeResource() {
-			// TODO Auto-generated method stub
 			
 		}
 		
 		@Override
 		public String getClasspath() {
-			// TODO Auto-generated method stub
 			return classpath;
 		}
 
 		@Override
-		public boolean isOutputable() {
-			// TODO Auto-generated method stub
+		public boolean isRenderedByTemplate() {
 			return false;
 		}
 
 
 		@Override
 		public List<HttpHeaders> getHttpHeaders() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 		

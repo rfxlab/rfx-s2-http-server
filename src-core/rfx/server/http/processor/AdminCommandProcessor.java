@@ -59,7 +59,7 @@ public class AdminCommandProcessor extends HttpProcessor {
 		}
 		
 		@Override
-		public boolean isOutputable() {	
+		public boolean isRenderedByTemplate() {	
 			//this is JSON text, 
 			return false;
 		}

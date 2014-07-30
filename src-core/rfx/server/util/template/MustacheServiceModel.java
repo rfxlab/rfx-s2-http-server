@@ -32,7 +32,7 @@ public class MustacheServiceModel extends HashMap<String, Object> implements Dat
 	}
 
 	@Override
-	public boolean isOutputable() {		
+	public boolean isRenderedByTemplate() {		
 		return false;
 	}
 

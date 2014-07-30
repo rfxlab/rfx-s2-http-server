@@ -19,6 +19,7 @@ import rfx.server.http.HttpProcessor.RedirectService;
 import rfx.server.http.common.NettyHttpUtil;
 import rfx.server.http.data.DataService;
 import rfx.server.http.data.HttpRequestEvent;
+import rfx.server.http.data.StringDataService;
 import rfx.server.log.handlers.StaticFileHandler;
 import rfx.server.util.RoundRobin;
 import rfx.server.util.StringPool;
@@ -75,26 +76,31 @@ public class HttpProcessorManager {
 	 * @return FullHttpResponse
 	 */
 	public FullHttpResponse doProcessing(HttpRequestEvent event) {		
-		DataService model = null;
+		DataService dataServe = null;
 		FullHttpResponse response = null;
 		HttpProcessor processor;
 		try {
 			processor = roundRobinRounter.next();
-			model = processor.doProcessing(event);
-			if(model instanceof RedirectService){
-				String url = ((RedirectService)model).getRedirectedUrl();
+			dataServe = processor.doProcessing(event);
+			if(dataServe instanceof RedirectService){
+				String url = ((RedirectService)dataServe).getRedirectedUrl();
 				response = NettyHttpUtil.redirect(url);
-			} else {
+			} 
+			else if(dataServe instanceof StringDataService){
+				StringDataService stringDataService = (StringDataService) dataServe;
+				response = NettyHttpUtil.theHttpContent(stringDataService.toString(), stringDataService.getContentType(contentType));
+			}
+			else {
 				switch (contentType) {
 					case ContentTypePool.TRACKING_GIF:
 						response = StaticFileHandler.theBase64Image1pxGif();
 						break;
 					case ContentTypePool.JSON:
-						String json = StringUtil.convertObjectToSafeJson(model);
+						String json = StringUtil.convertObjectToSafeJson(dataServe);
 						response = NettyHttpUtil.theHttpContent(json, contentType);
 						break;
 					default:
-						response = DataServiceProcessingUtil.processOutput(event, model, contentType);
+						response = DataServiceProcessingUtil.processOutput(event, dataServe, contentType);
 						break;
 				}
 			}
@@ -107,8 +113,8 @@ public class HttpProcessorManager {
 			response = NettyHttpUtil.theHttpContent(s.toString());			
 		} 
 		finally {
-			if(model != null){
-				model.freeResource();
+			if(dataServe != null){
+				dataServe.freeResource();
 			}
 		}
 		if(response != null){
