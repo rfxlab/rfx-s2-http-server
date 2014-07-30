@@ -17,11 +17,13 @@ import org.reflections.Reflections;
 import rfx.server.configs.ContentTypePool;
 import rfx.server.http.HttpProcessor.RedirectService;
 import rfx.server.http.common.NettyHttpUtil;
+import rfx.server.http.data.DataService;
+import rfx.server.http.data.HttpRequestEvent;
 import rfx.server.log.handlers.StaticFileHandler;
 import rfx.server.util.RoundRobin;
 import rfx.server.util.StringPool;
 import rfx.server.util.StringUtil;
-import rfx.server.util.template.OutputConfigUtil;
+import rfx.server.util.template.DataServiceProcessingUtil;
 
 /**
  * @author Trieu.nguyen
@@ -88,11 +90,11 @@ public class HttpProcessorManager {
 						response = StaticFileHandler.theBase64Image1pxGif();
 						break;
 					case ContentTypePool.JSON:
-						String json = StringUtil.toJsonString(model);
+						String json = StringUtil.convertObjectToSafeJson(model);
 						response = NettyHttpUtil.theHttpContent(json, contentType);
 						break;
 					default:
-						response = OutputConfigUtil.processOutput(event, model, contentType);
+						response = DataServiceProcessingUtil.processOutput(event, model, contentType);
 						break;
 				}
 			}

@@ -85,7 +85,7 @@ public class HandlebarsHelpers {
 			default:
 				break;
     	}
-    	System.out.println(param0  + " " + param1 + " " + operator + " rs: " + rs);    	
+    	//System.out.println(param0  + " " + param1 + " " + operator + " rs: " + rs);    	
     	return rs;	
     }
 	

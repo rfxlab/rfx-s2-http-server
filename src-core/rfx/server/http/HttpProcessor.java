@@ -4,6 +4,9 @@ import io.netty.handler.codec.http.HttpHeaders;
 
 import java.util.List;
 
+import rfx.server.http.data.DataService;
+import rfx.server.http.data.HttpRequestEvent;
+
 
 /**
  * the base class for HTTP processor, input: HttpRequest output: processed model object

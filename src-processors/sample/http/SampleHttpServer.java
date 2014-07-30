@@ -21,8 +21,9 @@ public class SampleHttpServer {
         //MemoryManagementUtil.startMemoryUsageTask();
         String publicClasspath = "sample";
         int poolSize = 30000;
+        boolean cacheAllCompiledTemplates = true;
         
         CacheManagerForAllDAO.init();
-        new HttpServer(ip,port, configs.getPrivatePort(), poolSize,true).run(false,publicClasspath);
+        new HttpServer(ip,port, configs.getPrivatePort(), poolSize,cacheAllCompiledTemplates).run(false,publicClasspath);
 	}
 }

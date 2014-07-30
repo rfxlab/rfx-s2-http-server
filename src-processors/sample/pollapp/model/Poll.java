@@ -5,12 +5,19 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 
 public class Poll implements Comparable<Poll> {
+	
+	@Expose
 	int id;
+	@Expose
 	String question;
+	@Expose
 	Date publishedDate;
+	@Expose
 	List<Choice> choices = new ArrayList<Choice>();
+	@Expose
 	int totalVotes;
 	
 	public int getId() {

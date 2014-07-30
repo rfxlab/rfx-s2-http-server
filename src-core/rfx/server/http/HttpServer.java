@@ -10,8 +10,8 @@ import rfx.server.http.common.PrivateHttpServerInitializer;
 import rfx.server.http.common.PublicHttpServerInitializer;
 import rfx.server.http.websocket.WebSocketServerInitializer;
 import rfx.server.util.LogUtil;
+import rfx.server.util.template.DataServiceProcessingUtil;
 import rfx.server.util.template.HandlebarsTemplateUtil;
-import rfx.server.util.template.OutputConfigUtil;
 
 public class HttpServer {
 	static String host = "localhost:8080";
@@ -42,14 +42,14 @@ public class HttpServer {
     	HandlebarsTemplateUtil.enableUsedCache();
     }
     
-    public HttpServer(String ip, int port, int privatePort, int processorPoolSize, boolean noCacheMode) {
+    public HttpServer(String ip, int port, int privatePort, int processorPoolSize, boolean cacheAllCompiledTemplates) {
     	setHost(ip, port);
     	this.privatePort = privatePort;
     	this.privatePoolSize = this.publicPoolSize = processorPoolSize;    	
-    	if(noCacheMode){
-    		HandlebarsTemplateUtil.disableUsedCache();
-    	} else {
+    	if(cacheAllCompiledTemplates){    		
     		HandlebarsTemplateUtil.enableUsedCache();
+    	} else {
+    		HandlebarsTemplateUtil.disableUsedCache();
     	}
     }
     
@@ -63,8 +63,8 @@ public class HttpServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {        
         	//init cache for all public model
-        	OutputConfigUtil.initTemplateConfigCache(DEFAULT_CLASSPATH);
-        	OutputConfigUtil.initTemplateConfigCache(classpath);
+        	DataServiceProcessingUtil.initTemplateConfigCache(DEFAULT_CLASSPATH);
+        	DataServiceProcessingUtil.initTemplateConfigCache(classpath);
         	
         	//public service processor
             ServerBootstrap publicServerBootstrap = new ServerBootstrap();            

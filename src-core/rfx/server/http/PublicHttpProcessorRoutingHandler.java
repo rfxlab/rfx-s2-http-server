@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import rfx.server.http.common.NettyHttpUtil;
+import rfx.server.http.data.HttpRequestEvent;
 
 /**
  * the public handler for all Netty's message, transform to HttpRequestEvent and routing all matched processors

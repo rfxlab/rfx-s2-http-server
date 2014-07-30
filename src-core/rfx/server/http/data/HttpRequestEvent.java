@@ -1,4 +1,4 @@
-package rfx.server.http;
+package rfx.server.http.data;
 
 import io.netty.handler.codec.http.HttpHeaders.Names;
 import io.netty.handler.codec.http.HttpRequest;
@@ -11,7 +11,7 @@ import rfx.server.http.common.NettyHttpUtil;
 import rfx.server.util.UrlUtil;
 
 /**
- * the HTTP data request
+ * the HTTP request event, only basic information for routing
  * 
  * @author trieu
  *
@@ -87,4 +87,8 @@ public class HttpRequestEvent implements Serializable{
 		s.append(" params: ").append(params);		
 		return s.toString();
 	}	
+	
+	public HttpRequestData toHttpRequestData(){
+		return new HttpRequestData(this);
+	}
 }
