@@ -11,7 +11,7 @@ import rfx.server.http.common.PublicHttpServerInitializer;
 import rfx.server.http.websocket.WebSocketServerInitializer;
 import rfx.server.util.LogUtil;
 import rfx.server.util.template.HandlebarsTemplateUtil;
-import rfx.server.util.template.OutputConfigUtil;
+import rfx.server.util.template.DataServiceProcessingUtil;
 
 public class HttpServer {
 	static String host = "localhost:8080";
@@ -63,8 +63,8 @@ public class HttpServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {        
         	//init cache for all public model
-        	OutputConfigUtil.initTemplateConfigCache(DEFAULT_CLASSPATH);
-        	OutputConfigUtil.initTemplateConfigCache(classpath);
+        	DataServiceProcessingUtil.initTemplateConfigCache(DEFAULT_CLASSPATH);
+        	DataServiceProcessingUtil.initTemplateConfigCache(classpath);
         	
         	//public service processor
             ServerBootstrap publicServerBootstrap = new ServerBootstrap();            

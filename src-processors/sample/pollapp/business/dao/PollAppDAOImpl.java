@@ -10,10 +10,6 @@ import java.util.function.Consumer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
-
-
-
-
 import rfx.server.util.DatabaseDomainUtil;
 import rfx.server.util.cache.Cachable;
 import rfx.server.util.cache.CacheConfig;
@@ -23,7 +19,7 @@ import rfx.server.util.sql.SqlTemplateUtil;
 import sample.pollapp.model.Choice;
 import sample.pollapp.model.Poll;
 
-@CacheConfig( type = CacheConfig.MEMCACHE_CACHE_ENGINE, keyPrefix = "poll:", expireAfter = 6 )
+@CacheConfig( type = CacheConfig.LOCAL_CACHE_ENGINE, keyPrefix = "poll:", expireAfter = 6 )
 public class PollAppDAOImpl extends CommonSpringDAO implements PollAppDAO {
 	
 	@SqlTemplateString
@@ -62,6 +58,7 @@ public class PollAppDAOImpl extends CommonSpringDAO implements PollAppDAO {
 		choices.add(new Choice(1, id, "eat", 1));
 		choices.add(new Choice(2, id, "sleep", 22));
 		poll.setChoices(choices );
+		System.out.println(poll);
 		rfx.server.util.Utils.sleep(2000);
 		return poll;
 	}

@@ -6,12 +6,12 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import rfx.server.http.OutputConfig;
-import rfx.server.http.ViewableDataService;
+import rfx.server.http.data.DataServiceConfig;
+import rfx.server.http.data.WebDataService;
 import rfx.server.monitor.util.MemoryWatcher;
 
-@OutputConfig(template = "system/server-info")
-public class ServerInfoService extends ViewableDataService {
+@DataServiceConfig(template = "system/server-info")
+public class ServerInfoService extends WebDataService {
 	static final String classpath = ServerInfoService.class.getName();
 	String time;
 	List<String> infos = new ArrayList<>();
@@ -88,7 +88,7 @@ public class ServerInfoService extends ViewableDataService {
 	}
 
 	@Override
-	public ViewableDataService build() {
+	public WebDataService build() {
 		time = new Date().toString();
 		if (filter.equals("all")) {
 			showAll = true;

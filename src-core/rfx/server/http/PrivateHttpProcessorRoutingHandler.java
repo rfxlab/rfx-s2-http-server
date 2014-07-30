@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import rfx.server.http.common.NettyHttpUtil;
+import rfx.server.http.data.HttpRequestEvent;
 
 
 /**

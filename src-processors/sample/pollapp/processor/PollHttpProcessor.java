@@ -5,17 +5,17 @@ import io.netty.handler.codec.http.HttpHeaders;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-
 import rfx.server.configs.ContentTypePool;
-import rfx.server.http.DataService;
 import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorConfig;
-import rfx.server.http.HttpRequestEvent;
+import rfx.server.http.data.DataService;
+import rfx.server.http.data.HttpRequestEvent;
 import rfx.server.util.DatabaseDomainUtil;
 import rfx.server.util.StringUtil;
 import sample.pollapp.business.dao.PollAppDAO;
 import sample.pollapp.model.Poll;
+
+import com.google.gson.annotations.Expose;
 
 /**
  * @author trieu
@@ -45,6 +45,8 @@ public class PollHttpProcessor extends HttpProcessor {
 	}
 
 	static class MyData implements DataService{		
+		
+		@Expose
 		List<Poll> polls;	
 		
 		static final String classpath = MyData.class.getName();

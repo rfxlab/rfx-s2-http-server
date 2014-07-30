@@ -9,11 +9,13 @@ import java.util.Formatter;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 
 
 public class StringUtil {
 	static final String TAG = "storm.StringUtil";
+	static final GsonBuilder GSON_BUILDER = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
 	
 	public static Long Dot2LongIP(String dottedIP) {
 	    String[] addrArray = dottedIP.split("\\.");        
@@ -25,7 +27,15 @@ public class StringUtil {
 	    return num;    
 	}
 
-	public static String toJsonString(Object arg) {
+	public static String convertObjectToSafeJson(Object arg) {
+		if(arg != null){			
+		    Gson gson = GSON_BUILDER.create();
+			return gson.toJson(arg);
+		}
+		return StringPool.BLANK;
+	}
+	
+	public static String convertObjectToJson(Object arg) {
 		if(arg != null){
 			return new Gson().toJson(arg);
 		}

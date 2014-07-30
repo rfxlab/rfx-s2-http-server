@@ -8,10 +8,10 @@ import java.util.Set;
 
 import redis.clients.jedis.Jedis;
 import rfx.server.configs.ContentTypePool;
-import rfx.server.http.DataService;
 import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorConfig;
-import rfx.server.http.HttpRequestEvent;
+import rfx.server.http.data.DataService;
+import rfx.server.http.data.HttpRequestEvent;
 
 
 

@@ -21,6 +21,7 @@ import rfx.server.util.SecurityUtil;
 public class CookieUtil {
 	public final static long COOKIE_AGE_10_YEARS = 630720000;
 	public final static long COOKIE_AGE_2_YEARS = 63072000;
+	public final static long COOKIE_AGE_1_YEAR = 31536000;
 	public final static long COOKIE_AGE_1_HOUR = 3600; // One hour
 	public final static long COOKIE_AGE_2_HOURS = 7200; // 2 hours
 	public final static long COOKIE_AGE_3_HOURS = 10800; // 3 hours	

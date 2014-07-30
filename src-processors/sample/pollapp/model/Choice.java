@@ -1,13 +1,17 @@
 package sample.pollapp.model;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 
 public class Choice {
-	int id, pollId;
+	@Expose
+	int id;
+	@Expose
+	int pollId;
+	@Expose
 	String text;
+	@Expose
 	int votes;
-	
-	
 	
 	public Choice(int id, int pollId, String text, int votes) {
 		super();
