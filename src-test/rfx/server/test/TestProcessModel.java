@@ -2,7 +2,7 @@ package rfx.server.test;
 
 import java.io.IOException;
 
-import rfx.server.http.data.DataService;
+import rfx.server.http.data.service.DataService;
 import rfx.server.http.data.service.ServerInfoService;
 import rfx.server.util.template.DataServiceProcessingUtil;
 import rfx.server.util.template.HandlebarsTemplateUtil;

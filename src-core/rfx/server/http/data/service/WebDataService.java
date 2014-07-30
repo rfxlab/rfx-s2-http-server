@@ -1,4 +1,4 @@
-package rfx.server.http.data;
+package rfx.server.http.data.service;
 
 import io.netty.handler.codec.http.Cookie;
 import io.netty.handler.codec.http.DefaultHttpHeaders;

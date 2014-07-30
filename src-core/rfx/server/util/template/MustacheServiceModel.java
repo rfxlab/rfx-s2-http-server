@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import rfx.server.http.data.DataService;
+import rfx.server.http.data.service.DataService;
 
 public class MustacheServiceModel extends HashMap<String, Object> implements DataService{
 	static final String classpath = MustacheServiceModel.class.getName();

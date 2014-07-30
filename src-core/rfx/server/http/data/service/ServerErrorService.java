@@ -1,7 +1,6 @@
 package rfx.server.http.data.service;
 
 import rfx.server.http.data.DataServiceConfig;
-import rfx.server.http.data.WebDataService;
 
 @DataServiceConfig(template = "system/server-info")
 public class ServerErrorService extends WebDataService {

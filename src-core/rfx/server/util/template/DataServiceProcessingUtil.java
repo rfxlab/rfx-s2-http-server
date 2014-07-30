@@ -16,9 +16,9 @@ import org.reflections.Reflections;
 
 import rfx.server.http.HttpOutputResource;
 import rfx.server.http.common.NettyHttpUtil;
-import rfx.server.http.data.DataService;
 import rfx.server.http.data.DataServiceConfig;
 import rfx.server.http.data.HttpRequestEvent;
+import rfx.server.http.data.service.DataService;
 import rfx.server.util.FileUtils;
 import rfx.server.util.StringUtil;
 

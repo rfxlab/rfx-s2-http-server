@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Properties;
 
 import rfx.server.http.data.DataServiceConfig;
-import rfx.server.http.data.WebDataService;
 import rfx.server.monitor.util.MemoryWatcher;
 
 @DataServiceConfig(template = "system/server-info")

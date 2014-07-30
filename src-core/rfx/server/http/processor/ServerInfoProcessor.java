@@ -3,8 +3,8 @@ package rfx.server.http.processor;
 import rfx.server.configs.ContentTypePool;
 import rfx.server.http.HttpProcessor;
 import rfx.server.http.HttpProcessorConfig;
-import rfx.server.http.data.DataService;
 import rfx.server.http.data.HttpRequestEvent;
+import rfx.server.http.data.service.DataService;
 import rfx.server.http.data.service.ServerInfoService;
 
 @HttpProcessorConfig(privateAccess = HttpProcessorConfig.PRIVATE_ACCESS, uriPath = "/server-info",contentType = ContentTypePool.HTML_UTF8)
