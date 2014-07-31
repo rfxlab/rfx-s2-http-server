@@ -10,6 +10,7 @@ import rfx.server.util.StringPool;
 import rfx.server.util.StringUtil;
 import rfx.server.util.Utils;
 
+import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Helper;
 import com.github.jknack.handlebars.Options;
@@ -26,9 +27,10 @@ public class HandlebarsHelpers {
 		handlebars.registerHelper("ifExist", ifExistHelper );		
 		handlebars.registerHelper("ifHasData", ifHasDataHelper);		
 		handlebars.registerHelper("ifListHasData", ifListHasDataHelper);		
-		handlebars.registerHelper("randomInteger",randomIntegerHelper);		
-		handlebars.registerHelper("eachInMap",eachInMapHelper);
+		handlebars.registerHelper("randomInteger",randomIntegerHelper);
 		handlebars.registerHelper("base64Decode",base64DecodeHelper);
+		handlebars.registerHelper("eachInMap",eachInMapHelper);
+		handlebars.registerHelper("forEach",forEachHelper);
 	}
 	
 	public static final String OPERATOR_EQUALS = "==";    
@@ -259,6 +261,37 @@ public class HandlebarsHelpers {
 			return StringPool.BLANK;
 		}
 	};
+	
+	/**
+	 * sample: <br>
+	 * 	{{#forEach infos "e" }}
+			{{e.order}} {{e.data}} {{isNotLastItem}} 
+		{{/forEach}}
+	 */
+	static Helper<List<Object>> forEachHelper =  new Helper<List<Object>>() {
+		@Override
+		public CharSequence apply(List<Object> list, Options options) throws IOException {
+			String itemKey = options.params.length > 0 ? options.param(0) : "item";
+			StringBuilder out = new StringBuilder();
+			int index = 0, lastIndex = list.size() - 1;			
+			for (Object object : list) {				
+				Context context = Context.newContext(object);
+				context.data(itemKey, object);
+				context.data("index", index);
+				context.data("isNotLastItem", index < lastIndex);
+				try {
+					String s = options.fn(context).toString();								
+					out.append(s);
+				} catch (Exception e) {}
+				finally {
+					context.destroy();	
+				}				
+				index++;
+			}
+			return out.toString();
+		}
+	};
+	
 	
 	/**
 	 * Sample: {{#base64Decode "SmF2YSA4IGlzIGNvb2wgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2U=" }}{{/base64Decode}}	

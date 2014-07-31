@@ -38,6 +38,17 @@
 		{{/each}}
 	</ul>	
 	
+	<ul>
+		{{#forEach infos "e" }}
+			{{#doIf e.order '==' 3 }}	
+				<li>{{e.order}} <b>{{data}}</b> </li> 
+			{{else}}
+				<li>{{e.order}} <i>{{data}}</i> </li>
+			{{/doIf}}	
+			{{#if isNotLastItem }},{{/if}}
+		{{/forEach}}
+	</ul>
+	
 	{{#base64Decode "SmF2YSA4IGlzIGNvb2wgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2U=" }}{{/base64Decode}}	
 	{{#randomInteger}}{{/randomInteger}}
 	

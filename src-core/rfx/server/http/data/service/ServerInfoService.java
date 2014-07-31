@@ -13,13 +13,41 @@ import rfx.server.monitor.util.MemoryWatcher;
 public class ServerInfoService extends WebDataService {
 	static final String classpath = ServerInfoService.class.getName();
 	String time;
-	List<String> infos = new ArrayList<>();
+	List<Info> infos = new ArrayList<>();
 	String filter;
 	boolean showAll;
 	boolean showCompact;
 	String memoryStats;
 	
 	String rfxServerVersion = "1.0";
+	
+	static class Info {
+		String data;
+		int order;
+		
+		public Info(String data, int order) {
+			setData(data);
+			setOrder(order);
+		}
+		public void setData(String data) {
+			this.data = data;
+		}
+		public String getData() {
+			return data;
+		}
+		
+		public int getOrder() {
+			return order;
+		}
+		public void setOrder(int order) {
+			this.order = order;
+		}
+		@Override
+		public String toString() {
+			// TODO Auto-generated method stub
+			return data;
+		}
+	}
 
 	public ServerInfoService(String filter) {
 		this.filter = filter;		
@@ -33,11 +61,11 @@ public class ServerInfoService extends WebDataService {
 		this.time = time;
 	}
 
-	public List<String> getInfos() {
+	public List<Info> getInfos() {
 		return infos;
 	}
 
-	public void setInfos(List<String> infos) {
+	public void setInfos(List<Info> infos) {
 		this.infos = infos;
 	}
 
@@ -100,15 +128,18 @@ public class ServerInfoService extends WebDataService {
 
 		Properties props = System.getProperties();
 		Enumeration<?> e = props.propertyNames();
+		int i = 0;
 		while (e.hasMoreElements()) {
 			String key = e.nextElement().toString();
-			String s = (key + " : " + props.getProperty(key));
+			String s = (key + " : " + props.getProperty(key));			
 			if (showAll) {
-				infos.add(s);
+				i++;
+				infos.add(new Info(s,i));
 			} else if (showCompact) {
 				{
 					if (key.startsWith("java.vm")) {
-						infos.add(s);
+						i++;
+						infos.add(new Info(s,i));
 					}
 				}
 			}
@@ -122,6 +153,4 @@ public class ServerInfoService extends WebDataService {
 	public String getClasspath() {
 		return classpath;
 	}
-
-	
 }
