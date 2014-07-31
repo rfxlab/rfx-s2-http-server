@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import rfx.server.util.StringPool;
 import rfx.server.util.StringUtil;
@@ -20,12 +23,17 @@ import com.github.jknack.handlebars.Options;
  *
  */
 public class HandlebarsHelpers {
+	static final String ParallelStream = "parallelStream";
 	
 	public static void register(Handlebars handlebars){		
 		handlebars.registerHelper("doIf", doIfHelper);
+		handlebars.registerHelper("doif", doIfHelper);
+		
 		handlebars.registerHelper("ifHasData", ifHasDataHelper);
 		
 		handlebars.registerHelper("forEach",forEachHelper);
+		handlebars.registerHelper("foreach",forEachHelper);
+		
 		handlebars.registerHelper("eachInMap",eachInMapHelper);
 		
 		handlebars.registerHelper("base64Decode",base64DecodeHelper);
@@ -134,16 +142,18 @@ public class HandlebarsHelpers {
 			if(param0 != null){
 				Object[] toks = options.params;
 				int len = toks.length;
-				if(len < 2){					
-					if(param0 instanceof Boolean){
-						return Boolean.parseBoolean(param0.toString()) ? options.fn(this) : options.inverse(this);
-					} else if(param0 instanceof Integer){
-						return Integer.parseInt(param0.toString()) > 0 ? options.fn(this) : options.inverse(this);
-					} else if(param0 instanceof Long){
-						return Long.parseLong(param0.toString()) > 0l ? options.fn(this) : options.inverse(this);
-					} else if(param0 instanceof Double){
-						return Double.parseDouble(param0.toString()) > 0.0f ? options.fn(this) : options.inverse(this);
-					}
+				if(len < 2){
+					if(param0.getClass().isPrimitive()){
+						if(param0 instanceof Boolean){
+							return Boolean.parseBoolean(param0.toString()) ? options.fn(this) : options.inverse(this);
+						} else if(param0 instanceof Integer){
+							return Integer.parseInt(param0.toString()) > 0 ? options.fn(this) : options.inverse(this);
+						} else if(param0 instanceof Long){
+							return Long.parseLong(param0.toString()) > 0l ? options.fn(this) : options.inverse(this);
+						} else if(param0 instanceof Double){
+							return Double.parseDouble(param0.toString()) > 0.0f ? options.fn(this) : options.inverse(this);
+						}
+					}					
 					//the param0 != null and with no operator, just return true
 					return options.fn(this);
 				}
@@ -289,23 +299,39 @@ public class HandlebarsHelpers {
 	static Helper<List<Object>> forEachHelper =  new Helper<List<Object>>() {
 		@Override
 		public CharSequence apply(List<Object> list, Options options) throws IOException {
-			String itemKey = options.params.length > 0 ? options.param(0) : "item";
-			StringBuilder out = new StringBuilder();
-			int index = 0, lastIndex = list.size() - 1;			
-			for (Object object : list) {				
-				Context context = Context.newContext(object);
-				context.data(itemKey, object);
-				context.data("index", index);
-				context.data("isNotLastItem", index < lastIndex);
-				try {
-					String s = options.fn(context).toString();								
-					out.append(s);
-				} catch (Exception e) {}
-				finally {
-					context.destroy();	
-				}				
-				index++;
+			if(list == null){
+				return StringPool.BLANK;
 			}
+			int len = options.params.length;
+			String itemKey = len > 0 ? options.param(0) : "item";
+			boolean parallelStream = len > 1 ? options.param(1).equals(ParallelStream) : false;
+			StringBuilder out = new StringBuilder();
+			AtomicInteger index = new AtomicInteger(0);
+			final int lastIndex = list.size() - 1;
+			Stream<Object> stream;
+			if(parallelStream){
+				stream = list.parallelStream();
+			} else {
+				stream = list.stream();
+			}			
+			stream.forEach(new Consumer<Object>() {
+				@Override
+				public void accept(Object object) {
+					int i = index.get();
+					Context context = Context.newContext(object);
+					context.data(itemKey, object);
+					context.data("index", i);
+					context.data("isNotLastItem", i < lastIndex);
+					try {
+						String s = options.fn(context).toString();								
+						out.append(s);
+					} catch (Exception e) {}
+					finally {
+						context.destroy();	
+					}				
+					index.incrementAndGet();
+				}
+			});
 			return out.toString();
 		}
 	};

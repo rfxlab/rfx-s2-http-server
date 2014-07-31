@@ -30,22 +30,18 @@
 	{{#ifHasData memoryStats}}
 	<br>
 	<strong>Memory:	{{memoryStats}}	</strong>
-	{{/ifHasData}}
-	
-	<ul>
-		{{#each infos}}
-			<li>{{.}}</li> 
-		{{/each}}
-	</ul>	
-	
+	{{/ifHasData}}	
+
 	<ul>
 		{{#forEach infos "e" }}
+			<li>
 			{{#doIf e.order '==' 3 }}	
-				<li>{{e.order}} <b>{{data}}</b> </li> 
+				{{e.order}} <b>{{data}}</b> 
 			{{else}}
-				<li>{{e.order}} <i>{{data}}</i> </li>
+				{{e.order}} <i>{{data}}</i>
 			{{/doIf}}	
 			{{#if isNotLastItem }},{{/if}}
+			</li> 
 		{{/forEach}}
 	</ul>
 	
