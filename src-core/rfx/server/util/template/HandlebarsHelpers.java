@@ -22,15 +22,20 @@ import com.github.jknack.handlebars.Options;
 public class HandlebarsHelpers {
 	
 	public static void register(Handlebars handlebars){		
-		handlebars.registerHelper("doIf", doIfHelper);		
-		handlebars.registerHelper("ifCond", ifCondHelper);					
-		handlebars.registerHelper("ifExist", ifExistHelper );		
-		handlebars.registerHelper("ifHasData", ifHasDataHelper);		
-		handlebars.registerHelper("ifListHasData", ifListHasDataHelper);		
-		handlebars.registerHelper("randomInteger",randomIntegerHelper);
-		handlebars.registerHelper("base64Decode",base64DecodeHelper);
-		handlebars.registerHelper("eachInMap",eachInMapHelper);
+		handlebars.registerHelper("doIf", doIfHelper);
+		handlebars.registerHelper("ifHasData", ifHasDataHelper);
+		
 		handlebars.registerHelper("forEach",forEachHelper);
+		handlebars.registerHelper("eachInMap",eachInMapHelper);
+		
+		handlebars.registerHelper("base64Decode",base64DecodeHelper);
+		handlebars.registerHelper("base64Encode",base64EncodeHelper);
+		handlebars.registerHelper("randomInteger",randomIntegerHelper);
+						
+		handlebars.registerHelper("ifExist", ifExistHelper );
+		handlebars.registerHelper("ifListHasData", ifListHasDataHelper);	
+		
+		handlebars.registerHelper("ifCond", ifCondHelper);	
 	}
 	
 	public static final String OPERATOR_EQUALS = "==";    
@@ -127,13 +132,26 @@ public class HandlebarsHelpers {
 		@Override
 		public CharSequence apply(Object param0, Options options)	throws IOException {				
 			if(param0 != null){
-				String operator = options.param(0);
-				Object param1 = options.param(1);
-				
-				boolean rs = applyIf(param0, param1, operator);
-				
 				Object[] toks = options.params;
 				int len = toks.length;
+				if(len < 2){					
+					if(param0 instanceof Boolean){
+						return Boolean.parseBoolean(param0.toString()) ? options.fn(this) : options.inverse(this);
+					} else if(param0 instanceof Integer){
+						return Integer.parseInt(param0.toString()) > 0 ? options.fn(this) : options.inverse(this);
+					} else if(param0 instanceof Long){
+						return Long.parseLong(param0.toString()) > 0l ? options.fn(this) : options.inverse(this);
+					} else if(param0 instanceof Double){
+						return Double.parseDouble(param0.toString()) > 0.0f ? options.fn(this) : options.inverse(this);
+					}
+					//the param0 != null and with no operator, just return true
+					return options.fn(this);
+				}
+				
+				String operator = options.param(0);
+				Object param1 = options.param(1);				
+				boolean rs = applyIf(param0, param1, operator);
+				
 				if(len >= 6){
 					int i = 2;
 					while (i < len) {														
@@ -294,7 +312,7 @@ public class HandlebarsHelpers {
 	
 	
 	/**
-	 * Sample: {{#base64Decode "SmF2YSA4IGlzIGNvb2wgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2U=" }}{{/base64Decode}}	
+	 * Sample: {{#base64Decode "SmF2YSA4IGlzIGNvb2wgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2U=" }}{{/base64Decode}} => Java 8 is cool programming language 
 	 */
 	static Helper<String> base64DecodeHelper =  new Helper<String>() {
 		@Override
@@ -305,4 +323,19 @@ public class HandlebarsHelpers {
 			return StringPool.BLANK;			
 		}
 	};
+	
+	/**
+	 * Sample: {{#base64Encode "Java 8 is cool programming language" }}{{/base64Encode}} => SmF2YSA4IGlzIGNvb2wgcHJvZ3JhbW1pbmcgbGFuZ3VhZ2U= 
+	 */
+	static Helper<String> base64EncodeHelper =  new Helper<String>() {
+		@Override
+		public CharSequence apply(String s, Options options)	throws IOException {				
+			if(StringUtil.isNotEmpty(s)){
+				return StringUtil.base64StringEncode(s);	
+			}
+			return StringPool.BLANK;			
+		}
+	};
+	
+	
 }

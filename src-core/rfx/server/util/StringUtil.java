@@ -333,6 +333,10 @@ public class StringUtil {
 		return new String(Base64.getDecoder().decode(value));
 	}
 	
+	public static String base64StringEncode(String value){
+		return new String(Base64.getEncoder().encode(value.getBytes()));
+	}
+	
 	public static String safeSubString(String s, int maxLength){
 		if(isEmpty(s)){
 			return s;
