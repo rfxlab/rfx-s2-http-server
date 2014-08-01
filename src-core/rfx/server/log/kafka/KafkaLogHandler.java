@@ -4,6 +4,7 @@ import io.netty.handler.codec.http.HttpRequest;
 
 public interface KafkaLogHandler {
 	public static final String logSocialActivityKafka = "kafka-social-activity-Producer";
+	//public static final String logItemTrackingKafka = "kafka-item-tracking-Producer";
 	
 	//FIXME
 	public static final String userid_bkKW   ="userid_bk%22%2C%22";

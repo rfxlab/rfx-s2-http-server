@@ -52,16 +52,19 @@ public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandl
         	String uri = request.getUri();
         	String remoteIp = NettyHttpUtil.getRemoteIP(ctx, request);
         	String localIp = NettyHttpUtil.getLocalIP(ctx);
+        	        	
+        	System.out.println(request.getMethod().name() + "==> uri: " + uri);
         	
-        	//System.out.println("===> uri: " + uri);
+
     		if (uri.equalsIgnoreCase(NettyHttpUtil.FAVICON_URI)) {
     			NettyHttpUtil.response1pxGifImage(ctx);
     		} else {
     			FullHttpResponse response = null;
-
 				
 				QueryStringDecoder qDecoder = new QueryStringDecoder(uri);
 				Map<String, List<String>> params = qDecoder.parameters();
+				
+				//boolean isPOSTMethod = "POST".equals(request.getMethod().name());
 				
 				HttpProcessorManager processorManager = HttpProcessorManager.routingForUriPath(handlers,qDecoder);
 				HttpRequestEvent requestEvent = null;
