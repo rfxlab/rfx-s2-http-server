@@ -16,6 +16,12 @@ import sample.save2dropbox.model.Item;
 
 import com.google.gson.Gson;
 
+/**
+ * @author trieu
+ * 
+ * the recommend items, the core idea is, modeling interest's user by using most used keywords from past to current 
+ *
+ */
 public class UserRecommender {
 	
 	static <K,V extends Comparable<? super V>> SortedSet<Map.Entry<K,V>> entriesSortedByValues(Map<K,V> map) {

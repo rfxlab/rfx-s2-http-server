@@ -31,6 +31,10 @@ import sample.save2dropbox.model.Item;
 
 import com.google.gson.Gson;
 
+/**
+ * @author trieu
+ *
+ */
 public class SearchEngineLucene {
 
 	static void addUserWithKeyword(IndexWriter w, Item item)

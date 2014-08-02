@@ -8,6 +8,10 @@ import rfx.server.http.HttpProcessorConfig;
 import rfx.server.http.data.HttpRequestEvent;
 import rfx.server.http.data.service.DataService;
 
+/**
+ * @author trieu
+ *
+ */
 @HttpProcessorConfig(uriPath= "/item-tracking", contentType = ContentTypePool.TRACKING_GIF)
 public class ItemTrackingProcessor extends HttpProcessor {
 	

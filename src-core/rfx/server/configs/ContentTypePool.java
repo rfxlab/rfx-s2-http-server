@@ -8,6 +8,7 @@ public class ContentTypePool {
     public static final String JAVA_SCRIPT = "application/javascript; charset=utf-8";
     public static final String XML = "application/xml; charset=utf-8";
     public static final String JSON = "application/json; charset=utf-8";
+    public static final String JSONP = "application/javascript; charset=utf-8";
     
     public static final String TEXT_UTF8 = "text/plain; charset=UTF-8";
     public static final String HTML_UTF8 = "text/html; charset=UTF-8";

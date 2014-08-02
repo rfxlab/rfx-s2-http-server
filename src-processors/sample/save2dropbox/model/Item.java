@@ -3,13 +3,27 @@ package sample.save2dropbox.model;
 import rfx.server.util.StringUtil;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 
+/**
+ * @author trieu
+ * 
+ * general object for recommender engine
+ *
+ */
 public class Item {
+	
+	@Expose
 	int post_id;
+	@Expose
 	String keywords;
+	@Expose
 	String dp_link;
+	@Expose
 	String title;
+	@Expose
 	String link;
+	@Expose
 	int user_id;
 	
 	public Item() {
