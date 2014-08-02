@@ -1,5 +1,8 @@
 package sample.save2dropbox.model;
 
+import java.util.Arrays;
+import java.util.List;
+
 import rfx.server.util.StringUtil;
 
 import com.google.gson.Gson;
@@ -13,10 +16,12 @@ import com.google.gson.annotations.Expose;
  */
 public class Item {
 	
+	static final String COMMA = " , ";
+	
 	@Expose
 	int post_id;
 	@Expose
-	String keywords;
+	List<String> keywords;
 	@Expose
 	String dp_link;
 	@Expose
@@ -26,14 +31,28 @@ public class Item {
 	@Expose
 	int user_id;
 	
+	@Expose
+	int weight;
+	
 	public Item() {
 	}	
 	
-	public Item(int post_id, String keywords, String dp_link, String title,
+	public Item(int post_id, List<String> keywords, String dp_link, String title,
 			String link, int user_id) {
 		super();
 		this.post_id = post_id;
 		this.keywords = keywords;
+		this.dp_link = dp_link;
+		this.title = title;
+		this.link = link;
+		this.user_id = user_id;
+	}
+	
+	public Item(int post_id, String keywords, String dp_link, String title,
+			String link, int user_id) {
+		super();
+		this.post_id = post_id;		
+		this.keywords = Arrays.asList(keywords.split(COMMA));
 		this.dp_link = dp_link;
 		this.title = title;
 		this.link = link;
@@ -46,10 +65,15 @@ public class Item {
 	public void setPost_id(int post_id) {
 		this.post_id = post_id;
 	}
-	public String getKeywords() {
-		return StringUtil.safeString(keywords);
+	public List<String> getKeywords() {
+		return (keywords);
 	}
-	public void setKeywords(String keywords) {
+	
+	public String getKeywordsAsString() {
+		return StringUtil.joinListToString(COMMA, keywords);
+	}
+	
+	public void setKeywords(List<String> keywords) {
 		this.keywords = keywords;
 	}
 	public String getDp_link() {		
@@ -77,6 +101,16 @@ public class Item {
 		this.user_id = user_id;
 	}
 	
+	
+	
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+
 	@Override
 	public String toString() {
 		return new Gson().toJson(this);

@@ -12,6 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import redis.clients.jedis.Jedis;
 import rfx.server.configs.NoSqlServerInfoConfigs;
+import rfx.server.util.SocialAnalyticsUtil;
+import rfx.server.util.StringUtil;
+import rfx.server.util.Utils;
 import sample.save2dropbox.model.Item;
 
 import com.google.gson.Gson;
@@ -23,6 +26,10 @@ import com.google.gson.Gson;
  *
  */
 public class UserRecommender {
+	
+	static String redisHost = NoSqlServerInfoConfigs.getServerInfo("REDIS_SERVER1").host;
+	static int redisPort = NoSqlServerInfoConfigs.getServerInfo("REDIS_SERVER1").port;
+	
 	
 	static <K,V extends Comparable<? super V>> SortedSet<Map.Entry<K,V>> entriesSortedByValues(Map<K,V> map) {
         SortedSet<Map.Entry<K,V>> sortedEntries = new TreeSet<Map.Entry<K,V>>(
@@ -37,7 +44,7 @@ public class UserRecommender {
         return sortedEntries;
     }
 	
-	public static List<String> getTop5KeywordsOfUser(int userId){
+	public static List<String> getTopKeywordsOfUser(int userId){
 		String host = NoSqlServerInfoConfigs.getServerInfo("REDIS_SERVER1").host;
 		int port = NoSqlServerInfoConfigs.getServerInfo("REDIS_SERVER1").port;
 		Jedis jedis = new Jedis(host, port);
@@ -54,7 +61,7 @@ public class UserRecommender {
 				if(item.getKeywords() == null){
 					return;
 				}
-				String[] keywords = item.getKeywords().split(",");
+				List<String> keywords = item.getKeywords();
 				for (String keyword : keywords) {
 					keyword = keyword.trim();
 					if(!keyword.isEmpty()){
@@ -80,14 +87,15 @@ public class UserRecommender {
 //		userKeywordStats.put("Facebook", 5);
 //		userKeywordStats.put("Dell", 3);
 		
-		int top5 = 5;
+		int top = 10;
 		SortedSet<Entry<String, Integer>> sortedset = entriesSortedByValues(userKeywordStats);
-		List<String> top5Keywords = new ArrayList<String>(5);
+		List<String> top5Keywords = new ArrayList<String>(top);
+		
 		for (Entry<String, Integer> entry  : sortedset) {
 		    //System.out.println(entry.getKey()+" => "+entry.getValue());
 			top5Keywords.add(entry.getKey());
-		    top5--;
-		    if(top5 <= 0){
+		    top--;
+		    if(top <= 0){
 		    	break;
 		    }
 		}
@@ -95,31 +103,76 @@ public class UserRecommender {
 	}
 	
 	public static List<Item> recomendItems(int userId){
-		return SearchEngineLucene.searchItemsByKeywords(getTop5KeywordsOfUser(userId),userId);
+		return SearchEngineLucene.searchItemsByKeywords(getTopKeywordsOfUser(userId),userId);
 	}
 	
-	public static void main(String[] args) {
-		int userId = 55455908;
-		//System.out.println(getTop5KeywordsOfUser(userId));
-		
-		String host = NoSqlServerInfoConfigs.getServerInfo("REDIS_SERVER1").host;
-		int port = NoSqlServerInfoConfigs.getServerInfo("REDIS_SERVER1").port;
-		Jedis jedis = new Jedis(host, port);
-		Set<String> userKeys = jedis.keys("user:*");
-		userKeys.parallelStream().forEach((String userkey)->{
-			Map<String, String> map = jedis.hgetAll(userkey);
-			List<Item> userItems = new ArrayList<>();
-			map.values().stream().forEach((String json)->{
-				try {
-					Item item = new Gson().fromJson(json, Item.class);
-					userItems.add(item);
-					System.out.println(item.getDp_link());
-				} catch (Exception e) {}
-			});
-			SearchEngineLucene.indexItems(userItems);
+	public static void computeRecomendedItemsForUser(int userId){
+		List<Item> items = SearchEngineLucene.searchItemsByKeywords(getTopKeywordsOfUser(userId),userId);
+		Jedis jedis = new Jedis(redisHost, redisPort);
+		items.stream().forEach((Item item)->{			
+			System.out.println(item.getLink());
+			int fbLike = SocialAnalyticsUtil.getFacebookLikeCount(item.getLink());	
+			System.out.println(fbLike);
+			String recKey = "user:" + item.getUser_id() + " post:" + item.getPost_id();
+			jedis.zadd("recommend:"+userId, fbLike, recKey);//user:55455908 post:18
 		});
 		jedis.close();
 	}
 	
+	public static void fullIndexingItems(){
+		
+		Jedis jedis = new Jedis(redisHost, redisPort);
+		Set<String> userKeys = jedis.keys("user:*");
+		userKeys.stream().forEach((String userkey)->{
+			
+			Map<String, String> map = jedis.hgetAll(userkey);
+			System.out.println("indexing items of user " + userkey + " itemCount "+map.size());
+			
+			List<Item> userItems = new ArrayList<>();
+			map.values().stream().forEach((String json)->{
+				String k = "";
+				int user_id = StringUtil.safeParseInt(userkey.replace("user:", ""));
+				try {
+					Item item = new Gson().fromJson(json, Item.class);
+					item.setUser_id(user_id);
+					//jedis.hget(KEY_INDEXED_ITEMS, item.)
+					k = "p:"+item.getPost_id();
+					System.out.println(" item " + k);
+					String v = jedis.hget(KEY_INDEXED_ITEMS, k);
+					if(v == null)
+					{
+						userItems.add(item);
+						System.out.println("INDEXED "+k + " " + v);
+						jedis.hset(KEY_INDEXED_ITEMS, k,"1");
+					}					
+				} catch (Exception e) {
+					System.err.println(e.getMessage() + " at k: " + k);
+				}
+			});
+			SearchEngineLucene.indexItems(userItems);
+		});
+		jedis.close();
+		Utils.sleep(1000);
+		
+		
+		userKeys.stream().forEach((String userkey)->{
+			int userId = StringUtil.safeParseInt(userkey.replace("user:", ""));
+			computeRecomendedItemsForUser(userId );
+		});
+		Utils.sleep(500);
+	}
+	
+	static final String KEY_INDEXED_ITEMS = "indexed-items";
+	
+	public static void main(String[] args) {
+		int userId = 47579516;
+		//System.out.println(getTopKeywordsOfUser(userId));
+		//System.out.println(UserRecommender.recomendItems(userId));
+		//fullIndexingItems();		
+		
+		//computeRecomendedItemsForUser(userId);
+		fullIndexingItems();
+	}
+	//issue: remove duplicated keywords: CSS and css is the same
 	
 }

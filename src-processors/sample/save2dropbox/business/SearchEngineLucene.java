@@ -33,6 +33,7 @@ import com.google.gson.Gson;
 
 /**
  * @author trieu
+ * why not Solr or Elastic Seach, we need consider (Jimfs is an in-memory file system for lucene's Directory) https://github.com/google/jimfs
  *
  */
 public class SearchEngineLucene {
@@ -40,8 +41,8 @@ public class SearchEngineLucene {
 	static void addUserWithKeyword(IndexWriter w, Item item)
 			throws IOException {
 		Document doc = new Document();
-		doc.add(new TextField("keywords", item.getKeywords(), Field.Store.YES));
-		doc.add(new StringField("userId", item.getUser_id()+"", Field.Store.YES));
+		doc.add(new TextField("keywords", item.getKeywordsAsString(), Field.Store.YES));
+		doc.add(new StringField("user_id", item.getUser_id()+"", Field.Store.YES));
 		doc.add(new StringField("title", item.getTitle(), Field.Store.YES));
 		doc.add(new StringField("post_id", item.getPost_id()+"", Field.Store.YES));
 		doc.add(new StringField("dp_link", item.getDp_link(), Field.Store.YES));
@@ -55,7 +56,7 @@ public class SearchEngineLucene {
 		String title = doc.get("title");
 		String dp_link = doc.get("dp_link");
 		String link = doc.get("link");
-		int user_id = StringUtil.safeParseInt(doc.get("userId"));
+		int user_id = StringUtil.safeParseInt(doc.get("user_id"));
 		return new Item(post_id, keywords, dp_link, title, link, user_id);
 	}
 	

@@ -10,7 +10,6 @@ import rfx.server.http.HttpProcessorConfig;
 import rfx.server.http.data.HttpRequestEvent;
 import rfx.server.http.data.service.DataService;
 import rfx.server.util.StringUtil;
-import sample.save2dropbox.business.UserRecommender;
 import sample.save2dropbox.model.Item;
 
 import com.google.gson.annotations.Expose;
@@ -78,7 +77,7 @@ public class RecommendItemHttpProcessor extends HttpProcessor {
 
 		public ItemDataService build(int userId){
 			 //items = SearchEngineLucene.searchItemsByKeywords(Arrays.asList("safari","chrome"), userId);
-			 items = UserRecommender.recomendItems(userId);
+			 //items = UserRecommender.recomendItems(userId);
 			 return this;
 		}
 		
