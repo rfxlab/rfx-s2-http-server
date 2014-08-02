@@ -1,7 +1,13 @@
 rfx-s2-http-server
 ====================
 
-Reactive Small and Scalable HTTP Server for real-time big data processing
+Reactive Small and Scalable HTTP Server for real-time reactive processing and log tracking
+
+Powered By
+* Log tracking Server at FPT Online, VnExpress.net (http://l.a.eclick.vn)
+* Log tracking Server at FPT Online, Advertising Network Eclick.vn (http://c.d.eclick.vn, http://t.d.eclick.vn)
+* The Platform for saving interested text to user's dropbox (http://nguyentantrieu.info/blog/save2mycloud-store-your-useful-information-in-dropbox)
+    
 
 RUN:
 
@@ -31,4 +37,4 @@ VERSION:
 
         
 Have fun! Trieu
-This project is implemented by https://twitter.com/tantrieuf31
+This project is implemented by https://twitter.com/tantrieuf31 at http://mc2ads.com
