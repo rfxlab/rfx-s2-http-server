@@ -29,8 +29,6 @@ import org.apache.lucene.util.Version;
 import rfx.server.util.StringUtil;
 import sample.save2dropbox.model.Item;
 
-import com.google.gson.Gson;
-
 /**
  * @author trieu
  * why not Solr or Elastic Seach, we need consider (Jimfs is an in-memory file system for lucene's Directory) https://github.com/google/jimfs
@@ -88,10 +86,10 @@ public class SearchEngineLucene {
 			for (Item item : items) {
 				addUserWithKeyword(w, item);
 			}
-//			addUserWithKeyword(w,new Item(1, "chrome, firefox", "http:/111", "item 1", "http:/111", 1));
-//			addUserWithKeyword(w,new Item(2, "chrome, explorer", "http:/111", "item 2", "http:/111", 1));
-//			addUserWithKeyword(w,new Item(3, "Android, explorer", "http:/111", "item 3", "http:/111", 2));
-//			addUserWithKeyword(w,new Item(4, "firefox, safari", "http:/111", "item 4", "http:/111", 2));
+			addUserWithKeyword(w,new Item(1, "chrome , firefox", "http:/111", "item 1", "http:/111", 1));
+			addUserWithKeyword(w,new Item(2, "chrome , explorer", "http:/111", "item 2", "http:/111", 1));
+			addUserWithKeyword(w,new Item(3, "Android , explorer", "http:/111", "item 3", "http:/111", 2));
+			addUserWithKeyword(w,new Item(4, "firefox , safari", "http:/111", "item 4", "http:/111", 2));
 			
 			w.commit();
 			w.close();			
@@ -108,13 +106,13 @@ public class SearchEngineLucene {
 		return create;
 	}
 	
-	public static List<Item> searchItemsByKeywords(List<String> keywords, int userId){
+	public static List<Item> searchItemsByKeywords(List<String> keywords, int user_id){
 		List<Item> matchedItems = new ArrayList<>();
 		Directory directory = null;
 		try {
 			// 0. Specify the analyzer for tokenizing text.
 			// The same analyzer should be used for indexing and searching
-			// 1. create the index
+			// 1. the index
 			boolean create = false;
 			File indexDirFile = new File("data/lucene-index");
 			if ( ! indexDirFile.exists() || !indexDirFile.isDirectory()) {
@@ -134,18 +132,17 @@ public class SearchEngineLucene {
 			for (String keyword : keywords) {
 				querystr.append("\"").append(keyword).append("\" ");
 			}
-
-			// the "title" arg specifies the default field to use
-			// when no field is explicitly specified in the query.
+			System.out.println(querystr);
+		
 			Query kq = new QueryParser(Version.LUCENE_47, "keywords", analyzer).parse(querystr.toString().trim());
 			
-			BooleanQuery q = new BooleanQuery();
-			q.add(kq, Occur.MUST);
+			BooleanQuery query = new BooleanQuery();
+			query.add(kq, Occur.MUST);
 			
-			if(userId > 0){
+			if(user_id > 0){
 				//only recommend items that not owned by user
-				Query uq = new QueryParser(Version.LUCENE_47, "userId", analyzer).parse("\""+userId+"\"");
-				q.add(uq, Occur.MUST_NOT);
+				Query uq = new QueryParser(Version.LUCENE_47, "user_id", analyzer).parse("\""+user_id+"\"");
+				query.add(uq, Occur.MUST_NOT);
 			}
 
 			// 3. search
@@ -153,7 +150,7 @@ public class SearchEngineLucene {
 			IndexReader reader = DirectoryReader.open(directory);
 			IndexSearcher searcher = new IndexSearcher(reader);
 			TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
-			searcher.search(q, collector);
+			searcher.search(query, collector);
 			ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
 			// 4. display results
@@ -164,12 +161,10 @@ public class SearchEngineLucene {
 				matchedItems.add(documentToItem(d));
 				//System.out.println((i + 1) + ". " + d.get("keywords") + "\t"+ d.get("title"));
 			}
-
-			// reader can only be closed when there
+			
 			// is no need to access the documents any more.
 			reader.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			if(directory != null){
@@ -186,7 +181,11 @@ public class SearchEngineLucene {
 //				new Item(5, "cloud computing, cloud storage", "http:/111", "item 5", "http:/111", 1)
 //				,new Item(6, "big data, cloud computing", "http:/111", "item 6", "http:/111", 1)
 //				));
-		List<Item> items = searchItemsByKeywords(Arrays.asList("safari","chrome"), 0);
-		System.out.println(new Gson().toJson(items));
+		//indexItems(new ArrayList<Item>());
+		List<Item> items = searchItemsByKeywords(Arrays.asList("framework"), 0);
+		for (Item item : items) {
+			System.out.println(item);
+		}
+		
 	}
 }

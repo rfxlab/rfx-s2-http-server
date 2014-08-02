@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -87,11 +89,11 @@ public class UserRecommender {
 //		userKeywordStats.put("Facebook", 5);
 //		userKeywordStats.put("Dell", 3);
 		
-		int top = 10;
+		int top = 5;
 		SortedSet<Entry<String, Integer>> sortedset = entriesSortedByValues(userKeywordStats);
 		List<String> top5Keywords = new ArrayList<String>(top);
 		
-		for (Entry<String, Integer> entry  : sortedset) {
+		for (Entry<String, Integer> entry : sortedset) {
 		    //System.out.println(entry.getKey()+" => "+entry.getValue());
 			top5Keywords.add(entry.getKey());
 		    top--;
@@ -102,8 +104,9 @@ public class UserRecommender {
 		return top5Keywords;
 	}
 	
-	public static List<Item> recomendItems(int userId){
-		return SearchEngineLucene.searchItemsByKeywords(getTopKeywordsOfUser(userId),userId);
+	public static List<Item> recommendItems(int userId){
+		List<String> dnaUser = getTopKeywordsOfUser(userId);
+		return SearchEngineLucene.searchItemsByKeywords(dnaUser,userId);
 	}
 	
 	public static void computeRecomendedItemsForUser(int userId){
@@ -142,7 +145,7 @@ public class UserRecommender {
 					if(v == null)
 					{
 						userItems.add(item);
-						System.out.println("INDEXED "+k + " " + v);
+						System.out.println("INDEXED "+k);
 						jedis.hset(KEY_INDEXED_ITEMS, k,"1");
 					}					
 				} catch (Exception e) {
@@ -152,8 +155,7 @@ public class UserRecommender {
 			SearchEngineLucene.indexItems(userItems);
 		});
 		jedis.close();
-		Utils.sleep(1000);
-		
+		Utils.sleep(500);		
 		
 		userKeys.stream().forEach((String userkey)->{
 			int userId = StringUtil.safeParseInt(userkey.replace("user:", ""));
@@ -164,14 +166,38 @@ public class UserRecommender {
 	
 	static final String KEY_INDEXED_ITEMS = "indexed-items";
 	
+	public static void scheduleJob(){
+		Timer scheduledService = new Timer(true);//daemon process
+		
+		TimerTask autoTask = new TimerTask() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				fullIndexingItems();
+			}
+		};
+		long delay =  1;
+		long period =  15;
+		scheduledService.schedule(autoTask , delay *1000L, period*1000L);	
+	}
+	
 	public static void main(String[] args) {
-		int userId = 47579516;
+		//int userId = 47579516;
 		//System.out.println(getTopKeywordsOfUser(userId));
-		//System.out.println(UserRecommender.recomendItems(userId));
-		//fullIndexingItems();		
+//		List<Item> items = UserRecommender.recommendItems(userId);
+//		for (Item item : items) {
+//			System.out.println(item);
+//		}
+		
+		scheduleJob();	
+		while (true) {
+			Utils.sleep(1000);			
+		}
 		
 		//computeRecomendedItemsForUser(userId);
-		fullIndexingItems();
+		//fullIndexingItems();
+		
 	}
 	//issue: remove duplicated keywords: CSS and css is the same
 	
