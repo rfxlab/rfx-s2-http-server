@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import rfx.server.util.StringPool;
@@ -271,18 +269,15 @@ public class HandlebarsHelpers {
 				@SuppressWarnings("unchecked")
 				Map<String,Object> map = (Map<String, Object>) param0;
 				StringBuilder out = new StringBuilder();
-				map.forEach(new BiConsumer<String,Object>() {
-					@Override
-					public void accept(String key, Object value) {
-						Map<String,Object> context = new HashMap<String, Object>(2);
-						context.put(StringPool.KEY, key);
-						context.put(StringPool.VALUE, value);
-						try {
-							String s = options.fn(context).toString();								
-							out.append(s);
-						} catch (Exception e) {}
-						context.clear();
-					}
+				map.forEach((String key, Object value) ->{
+					Map<String,Object> context = new HashMap<String, Object>(2);
+					context.put(StringPool.KEY, key);
+					context.put(StringPool.VALUE, value);
+					try {
+						String s = options.fn(context).toString();								
+						out.append(s);
+					} catch (Exception e) {}
+					context.clear();
 				});
 				return out.toString();
 			}
@@ -313,24 +308,27 @@ public class HandlebarsHelpers {
 				stream = list.parallelStream();
 			} else {
 				stream = list.stream();
-			}			
-			stream.forEach(new Consumer<Object>() {
-				@Override
-				public void accept(Object object) {
-					int i = index.get();
-					Context context = Context.newContext(object);
-					context.data(itemKey, object);
-					context.data("index", i);
-					context.data("isNotLastItem", i < lastIndex);
-					try {
-						String s = options.fn(context).toString();								
-						out.append(s);
-					} catch (Exception e) {}
-					finally {
-						context.destroy();	
-					}				
-					index.incrementAndGet();
-				}
+			}
+			Map<String, Object> hash = options.hash;
+			stream.forEach((Object object) ->{
+				int i = index.get();
+				Context context = Context.newContext(object);
+				context.data(itemKey, object);
+				context.data("index", i);
+				context.data("isNotLastItem", i < lastIndex);					
+				if(hash != null){
+					hash.forEach((String k, Object v)->{
+						context.data(k,v);
+					});
+				}					
+				try {
+					String s = options.fn(context).toString();								
+					out.append(s);
+				} catch (Exception e) {}
+				finally {
+					context.destroy();	
+				}				
+				index.incrementAndGet();
 			});
 			return out.toString();
 		}
