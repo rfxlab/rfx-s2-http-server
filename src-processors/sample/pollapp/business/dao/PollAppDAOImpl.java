@@ -50,6 +50,7 @@ public class PollAppDAOImpl extends CommonSpringDAO implements PollAppDAO {
 	
 	@Cachable
 	public Poll getPoll(int id) {
+		System.out.println("..."+id);
 		Poll poll = new Poll();
 		poll.setId(id);
 		poll.setPublishedDate(new Date());

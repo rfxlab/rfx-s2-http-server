@@ -41,7 +41,7 @@
     </bean>		
         
     <!-- the AOP object manage caching for all DAO (default) -->
-	<bean name="cacheManagerForAllDAO" class="rfx.server.util.cache.CacheManagerForAllDAO" />
+	<bean name="cacheManagerForAllDAO" class="sample.pollapp.cache.CacheManagerForAllDAO" />
     
     <!-- common DAO to access database -->
     <bean id="commonSpringDAO" class="rfx.server.util.sql.CommonSpringDAO" />

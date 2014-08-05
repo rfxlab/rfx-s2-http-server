@@ -2,7 +2,7 @@ package sample.http;
 
 import rfx.server.configs.HttpServerConfigs;
 import rfx.server.http.HttpServer;
-import rfx.server.util.cache.CacheManagerForAllDAO;
+import sample.pollapp.cache.CacheManagerForAllDAO;
 
 public class SampleHttpServer {
 
