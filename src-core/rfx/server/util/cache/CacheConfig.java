@@ -14,7 +14,7 @@ public @interface CacheConfig {
 	int type() default LOCAL_CACHE_ENGINE; //default using Google Guava Cache and store items in local JVM Memory
 
 	boolean allMethods = true; // cache all methods in DAOImpl class
-	String nosqlHostKey() default ""; // for Memcache or Redis or orther Key-Value NoSQL database
+	String poolName() default ""; // for Memcache or Redis or orther Key-Value NoSQL database
 	
 	public static int LOCAL_CACHE_ENGINE = 1;
 	public static int MEMCACHE_CACHE_ENGINE = 2;

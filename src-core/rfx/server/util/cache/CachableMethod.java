@@ -1,36 +1,24 @@
 package rfx.server.util.cache;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import rfx.server.util.StringPool;
 
-public class CachableMethod {
-	long expireAfter;
-	String cachePoolName = StringPool.BLANK;
-	int cacheType;
-	String keyPrefix = StringPool.BLANK;
-	
-	public long getExpireAfter() {
-		return expireAfter;
-	}
-	public void setExpireAfter(long expireAfter) {
-		this.expireAfter = expireAfter;
-	}
-	public String getCachePoolName() {
-		return cachePoolName;
-	}
-	public void setCachePoolName(String cachePoolName) {
-		this.cachePoolName = cachePoolName;
-	}
-	public int getCacheType() {
-		return cacheType;
-	}
-	public void setCacheType(int cacheType) {
-		this.cacheType = cacheType;
-	}
-	public String getKeyPrefix() {
-		return keyPrefix;
-	}
-	public void setKeyPrefix(String keyPrefix) {
-		this.keyPrefix = keyPrefix;
-	}
-	
+/**
+ * 
+ * 
+ * the annotation for method only, get metadata about expire time and keyPrefix (default is methodName) <br>
+ * if (expireAfter ==  REQUEST_SESSION) the cachable data of method will be invalidated after finishing response to client 
+ *  <br>
+ * @author trieu <br>
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CachableMethod {
+	public final static long HTTP_EVENT_PROCESSING_DONE = 0;
+	long expireAfter() default HTTP_EVENT_PROCESSING_DONE;
+	String keyPrefix() default StringPool.BLANK;
 }

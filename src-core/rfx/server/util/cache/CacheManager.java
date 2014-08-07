@@ -2,6 +2,7 @@ package rfx.server.util.cache;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -9,6 +10,8 @@ import java.util.Set;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.reflections.Reflections;
+
+import rfx.server.util.StringUtil;
 
 import com.google.common.cache.LoadingCache;
 
@@ -23,20 +26,20 @@ public abstract class CacheManager {
 		for (Class<?> clazz : classes) {
 			String className = clazz.getName();
 			String implKey = className + daoClassNameImpleSuffix;
+			
 			System.out.println("...Data Access Object: " + implKey);
 			if (clazz.isAnnotationPresent(CacheConfig.class) ) {
 				Method[] methods = clazz.getMethods();
 				Map<String, Long> cachableMethods = new HashMap<>(methods.length);
 				for (Method method : methods) {
-					if(method.isAnnotationPresent(Cachable.class)){
-						Annotation am = method.getAnnotation(Cachable.class);
-						Cachable cachable = (Cachable) am;
-						
+					if(method.isAnnotationPresent(CachableMethod.class)){
+						Annotation am = method.getAnnotation(CachableMethod.class);
+						CachableMethod cachable = (CachableMethod) am;						
 						String mkey;
-						if( cachable.keyFormat().isEmpty() ){
+						if( cachable.keyPrefix().isEmpty() ){
 							mkey = method.getName(); 
 						} else {
-							mkey = cachable.keyFormat();//TODO
+							mkey = cachable.keyPrefix();//TODO
 						}
 						if(cachableMethods.containsKey(mkey)){
 							throw new IllegalArgumentException("duplicated cachable method key at class:"+className + " method:" + mkey);
@@ -56,7 +59,8 @@ public abstract class CacheManager {
 					LoadingCache<String, Object> cacheImpl = GuavaCacheUtil.getLoadingCache(implKey, maximumSize, expireAfter );
 					signatureConfigCache.put(implKey, new CachePool(cacheImpl, keyPrefix, cachableMethods, expireAfter));
 				} else if(type == CacheConfig.MEMCACHE_CACHE_ENGINE){
-					LoadingCache<String, Object> cacheImpl = new MemcacheLoadingImpl();
+					String poolName = cacheConfig.poolName();
+					LoadingCache<String, Object> cacheImpl = new MemcacheLoadingImpl(poolName);
 					signatureConfigCache.put(implKey, new CachePool(cacheImpl, keyPrefix, cachableMethods, expireAfter));
 				}
 				
@@ -80,20 +84,21 @@ public abstract class CacheManager {
 			Object[] args = pJoinPoint.getArgs();
 			long expireAfter = cachePool.getExpireAfter(methodName);
 			if(expireAfter > 0){
-				System.out.println(className +" " +methodName + " " + cachePool);
+				//System.out.println(className +" " +methodName + " " + cachePool);
 				String key = cachePool.buildKey(methodName, args);
 		        LoadingCache<String, Object> cache = cachePool.getCache();
-	        	value = cache.get(key);
+	        	value = cache.get(key);	
 	        	
-//	        	System.out.println("++ Target: "+pJoinPoint.getTarget().getClass().getName());
-//	        	System.out.println("++ Signature: "+pJoinPoint.getSignature().getName());
-//	        	
-//	        	System.out.println("++ call method=" + pJoinPoint.getSignature().getName());
-//        		System.out.println("++ Agruments Passed=" + Arrays.toString(pJoinPoint.getArgs()));
-	        	
-	        	if(value == null){	        		
-	                value = pJoinPoint.proceed();	                
-	                cache.put(key, value);
+	        	if(StringUtil.isEmpty(value)){	        		
+	                value = pJoinPoint.proceed();	 
+	                if(value != null){
+	                	cache.put(key, value);
+	                } else {
+	                	System.err.println("---- NUll VALUE when processMethod -----");
+	    	        	System.err.println("++ Target: "+pJoinPoint.getTarget().getClass().getName());
+	    	        	System.err.println("++ call method=" + pJoinPoint.getSignature().getName());
+	            		System.err.println("++ Agruments Passed=" + Arrays.toString(pJoinPoint.getArgs()));
+	                }
 	        	} else {
 	        		System.out.println("Hit cache by key: " + key );
 	        	}		

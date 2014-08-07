@@ -7,7 +7,14 @@ import rfx.server.util.StringUtil;
 
 import com.google.common.cache.LoadingCache;
 
+/**
+ * @author trieu
+ * 
+ * the cache pool of class DAO implementation
+ *
+ */
 public class CachePool {
+	
 	LoadingCache<String, Object> cache;
 	String keyPrefix;
 	Map<String, Long> cachableMethods;
@@ -24,24 +31,21 @@ public class CachePool {
 	public LoadingCache<String, Object> getCache() {
 		return cache;
 	}
-	
 	public void setCache(LoadingCache<String, Object> cache) {
 		this.cache = cache;
 	}
-	
 	public String getKeyPrefix() {
 		return keyPrefix;
 	}
-	
 	public void setKeyPrefix(String keyPrefix) {
 		this.keyPrefix = keyPrefix;
 	}
 	 
-	public String buildKey(String signatureName, Object[] args){
+	public String buildKey(String methodName, Object[] args){
 		if(StringUtil.isEmpty(keyPrefix)){
-			return StringUtil.toString(signatureName, StringPool.UNDERLINE, StringUtil.join(args,StringPool.UNDERLINE));
+			return StringUtil.toString(methodName, StringPool.UNDERLINE, StringUtil.join(args,StringPool.UNDERLINE));
 		}
-		return StringUtil.toString(keyPrefix, signatureName, StringPool.UNDERLINE, StringUtil.join(args,StringPool.UNDERLINE));
+		return StringUtil.toString(keyPrefix, StringPool.UNDERLINE, StringUtil.join(args,StringPool.UNDERLINE));
 	}
 	
 	public long getExpireAfter(String methodName){
