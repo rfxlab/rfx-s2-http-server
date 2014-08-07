@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.KetamaConnectionFactory;
 import net.spy.memcached.MemcachedClient;
-import rfx.server.configs.NoSqlServerInfoConfigs;
+import rfx.server.configs.HostPortInfoConfigs;
 
 public class MemcacheUtil {
 	
@@ -16,7 +16,7 @@ public class MemcacheUtil {
 	public static MemcachedClient getMemcachedClient(String key) throws IOException {
 		MemcachedClient client = memcachedClientPool.get(key);
 		if(client == null){
-			 String memcache = NoSqlServerInfoConfigs.getServerInfo(key).toString();
+			 String memcache = HostPortInfoConfigs.getServerInfo(key).toString();
 	         KetamaConnectionFactory con = new KetamaConnectionFactory();
 	         client = new MemcachedClient(con, AddrUtil.getAddresses(memcache));
 	         memcachedClientPool.put(key, client);

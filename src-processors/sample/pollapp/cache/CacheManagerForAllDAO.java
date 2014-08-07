@@ -18,6 +18,7 @@ import rfx.server.util.cache.CacheManager;
 public class CacheManagerForAllDAO extends CacheManager{
 	
 	final static String daoClasspath = "sample.pollapp.business.dao";
+	final static String daoClassNameImpleSuffix = "Impl";
 	final static String withinClasspath = "within("+daoClasspath+".*)";	
 	
 	public CacheManagerForAllDAO() {
@@ -43,7 +44,7 @@ public class CacheManagerForAllDAO extends CacheManager{
 	
 	public static void init(){
 		try {
-			init(daoClasspath);
+			init(daoClasspath, daoClassNameImpleSuffix);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

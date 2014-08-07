@@ -10,7 +10,7 @@ import java.util.Properties;
 
 import rfx.server.util.StringUtil;
 
-public class NoSqlServerInfoConfigs {
+public class HostPortInfoConfigs {
 	
 	static Map<String, ServerInfo> pools = new HashMap<>();
 	
@@ -29,20 +29,20 @@ public class NoSqlServerInfoConfigs {
 		}
 	}
 	
-	protected static NoSqlServerInfoConfigs _instance = null;
+	protected static HostPortInfoConfigs _instance = null;
 	
-	public static NoSqlServerInfoConfigs theInstance(){
+	public static HostPortInfoConfigs theInstance(){
 		if(_instance == null){
-			_instance = (new NoSqlServerInfoConfigs()).loadConfigFile();
+			_instance = (new HostPortInfoConfigs()).loadConfigFile();
 		}
 		return _instance;
 	}
 	
-	NoSqlServerInfoConfigs loadConfigFile(){
+	HostPortInfoConfigs loadConfigFile(){
 		Properties props = new Properties();
 		InputStream input = null;			 
 		try {			 
-			input = new FileInputStream("configs/nosql-host-configs.properties");
+			input = new FileInputStream(ConfigManager.HOST_PORT_CONFIG_FILE);
 	 
 			// load a properties file
 			props.load(input);

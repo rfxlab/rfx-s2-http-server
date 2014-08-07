@@ -56,8 +56,9 @@ public class HttpRequestData {
 				e.printStackTrace();
 				System.err.println("--cookie: "+cookieString);
 			}			
-		}	
-		set(userAgent, refererUrl, params, cookies);
+		}
+		set(userAgent, refererUrl, event.getParams(), cookiesMap);		
+		//System.out.println(cookieString + " request COOKIE " + cookies );
 	}
 	
 	public HttpRequestData(String userAgent, String refererUrl, Map<String, List<String>> params, Map<String, String> cookies) {
@@ -91,7 +92,7 @@ public class HttpRequestData {
 		return cookies;
 	}
 	
-	public String cookie(String name){
+	public String cookie(String name){		
 		return getCookies().getOrDefault(name, "");
 	}
 

@@ -25,6 +25,16 @@ public class HttpServer {
     int publicPoolSize = PublicHttpProcessorRoutingHandler.DEFAULT_MAX_POOL_SIZE;
     int privatePoolSize = PrivateHttpProcessorRoutingHandler.DEFAULT_MAX_POOL_SIZE;
     
+    static boolean debug = false;
+    
+    public static void setDebug(boolean debug) {
+		HttpServer.debug = debug;
+	}
+    
+    public static boolean isDebug() {
+		return debug;
+	}    
+    
     void setHost(String ip, int port) {
         this.port = port;
         this.ip = ip;

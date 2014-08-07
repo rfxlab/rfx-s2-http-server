@@ -13,7 +13,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import redis.clients.jedis.Jedis;
-import rfx.server.configs.NoSqlServerInfoConfigs;
+import rfx.server.configs.HostPortInfoConfigs;
 import rfx.server.util.SocialAnalyticsUtil;
 import rfx.server.util.StringUtil;
 import rfx.server.util.Utils;
@@ -29,8 +29,8 @@ import com.google.gson.Gson;
  */
 public class UserRecommender {
 	
-	static String redisHost = NoSqlServerInfoConfigs.getServerInfo("REDIS_SERVER1").host;
-	static int redisPort = NoSqlServerInfoConfigs.getServerInfo("REDIS_SERVER1").port;
+	static String redisHost = HostPortInfoConfigs.getServerInfo("REDIS_SERVER1").host;
+	static int redisPort = HostPortInfoConfigs.getServerInfo("REDIS_SERVER1").port;
 	
 	
 	static <K,V extends Comparable<? super V>> SortedSet<Map.Entry<K,V>> entriesSortedByValues(Map<K,V> map) {
@@ -47,8 +47,8 @@ public class UserRecommender {
     }
 	
 	public static List<String> getTopKeywordsOfUser(int userId){
-		String host = NoSqlServerInfoConfigs.getServerInfo("REDIS_SERVER1").host;
-		int port = NoSqlServerInfoConfigs.getServerInfo("REDIS_SERVER1").port;
+		String host = HostPortInfoConfigs.getServerInfo("REDIS_SERVER1").host;
+		int port = HostPortInfoConfigs.getServerInfo("REDIS_SERVER1").port;
 		Jedis jedis = new Jedis(host, port);
 		
 		Map<String, String> map = jedis.hgetAll("user:" + userId);
