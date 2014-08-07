@@ -20,7 +20,6 @@ public class HttpServerConfigs implements Serializable {
 	int privatePort = 31000;
 	int websocketEnable = 0;
 	String ip = "127.0.0.1";
-
 	
 	String secretKey;
 	String cookieDomain = "";
