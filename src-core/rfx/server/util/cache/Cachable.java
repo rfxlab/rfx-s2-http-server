@@ -12,4 +12,5 @@ import rfx.server.util.StringPool;
 public @interface Cachable {
 	long expireAfter() default 3600; //1 hour
 	String keyFormat() default StringPool.BLANK;
+	String poolName() default StringPool.BLANK;
 }

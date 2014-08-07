@@ -27,7 +27,7 @@ import com.google.gson.annotations.Expose;
 @HttpProcessorConfig(uriPath= "/poll", contentType = ContentTypePool.JSON)
 public class PollHttpProcessor extends HttpProcessor {
 	
-	PollAppDAO pollAppDAO = DatabaseDomainUtil.getContext().getBean(PollAppDAO.class);
+	static PollAppDAO pollAppDAO = DatabaseDomainUtil.getContext().getBean(PollAppDAO.class);
 	
 	@Override
 	protected DataService process(HttpRequestEvent event) {		

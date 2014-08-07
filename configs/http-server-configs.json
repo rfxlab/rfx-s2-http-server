@@ -8,5 +8,5 @@
     debugModeEnabled : 1,
     cookieDomain: ".example.com",
     accessLogFileName : "access.log",
-    debugLogFolderPath : "./log",
+    debugLogFolderPath : "./log"
 }

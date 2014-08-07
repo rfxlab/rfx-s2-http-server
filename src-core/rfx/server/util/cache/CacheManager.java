@@ -10,8 +10,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.reflections.Reflections;
 
-import rfx.server.util.StringUtil;
-
 import com.google.common.cache.LoadingCache;
 
 public abstract class CacheManager {
@@ -85,7 +83,7 @@ public abstract class CacheManager {
 				System.out.println(className +" " +methodName + " " + cachePool);
 				String key = cachePool.buildKey(methodName, args);
 		        LoadingCache<String, Object> cache = cachePool.getCache();
-	        	value = cache.get(key);	     
+	        	value = cache.get(key);
 	        	
 //	        	System.out.println("++ Target: "+pJoinPoint.getTarget().getClass().getName());
 //	        	System.out.println("++ Signature: "+pJoinPoint.getSignature().getName());
@@ -93,7 +91,7 @@ public abstract class CacheManager {
 //	        	System.out.println("++ call method=" + pJoinPoint.getSignature().getName());
 //        		System.out.println("++ Agruments Passed=" + Arrays.toString(pJoinPoint.getArgs()));
 	        	
-	        	if(StringUtil.isEmpty(value)){	        		
+	        	if(value == null){	        		
 	                value = pJoinPoint.proceed();	                
 	                cache.put(key, value);
 	        	} else {

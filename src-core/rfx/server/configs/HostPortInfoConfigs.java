@@ -73,14 +73,8 @@ public class HostPortInfoConfigs {
 		return this;
 	}
 	
-		
 	public static ServerInfo getServerInfo(String key){
 		theInstance();
 		return pools.get(key);
-	}
-
-	public static void main(String[] args) {		
-		theInstance();
-		System.out.println(pools.get("REDIS_SERVER1"));
 	}
 }

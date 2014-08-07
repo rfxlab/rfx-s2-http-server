@@ -24,12 +24,15 @@ public class CachePool {
 	public LoadingCache<String, Object> getCache() {
 		return cache;
 	}
+	
 	public void setCache(LoadingCache<String, Object> cache) {
 		this.cache = cache;
 	}
+	
 	public String getKeyPrefix() {
 		return keyPrefix;
 	}
+	
 	public void setKeyPrefix(String keyPrefix) {
 		this.keyPrefix = keyPrefix;
 	}

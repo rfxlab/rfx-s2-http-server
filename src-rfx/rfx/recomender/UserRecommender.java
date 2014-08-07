@@ -29,8 +29,8 @@ import com.google.gson.Gson;
  */
 public class UserRecommender {
 	
-	static String redisHost = HostPortInfoConfigs.getServerInfo("REDIS_SERVER1").host;
-	static int redisPort = HostPortInfoConfigs.getServerInfo("REDIS_SERVER1").port;
+	static String redisHost = HostPortInfoConfigs.getServerInfo("REDIS_SERVER").host;
+	static int redisPort = HostPortInfoConfigs.getServerInfo("REDIS_SERVER").port;
 	
 	
 	static <K,V extends Comparable<? super V>> SortedSet<Map.Entry<K,V>> entriesSortedByValues(Map<K,V> map) {
@@ -47,8 +47,8 @@ public class UserRecommender {
     }
 	
 	public static List<String> getTopKeywordsOfUser(int userId){
-		String host = HostPortInfoConfigs.getServerInfo("REDIS_SERVER1").host;
-		int port = HostPortInfoConfigs.getServerInfo("REDIS_SERVER1").port;
+		String host = HostPortInfoConfigs.getServerInfo("REDIS_SERVER").host;
+		int port = HostPortInfoConfigs.getServerInfo("REDIS_SERVER").port;
 		Jedis jedis = new Jedis(host, port);
 		
 		Map<String, String> map = jedis.hgetAll("user:" + userId);
