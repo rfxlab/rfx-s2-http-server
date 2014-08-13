@@ -163,6 +163,10 @@
 		</copy>
 		-->
 		
+		<copy todir="${build}">
+			<fileset dir="${src_processors}" includes="database-domain.xml" />
+		</copy>
+		
 		<!-- http server jar -->
 		<delete file="${dist}/http-server.jar" />
 		<jar jarfile="${dist}/http-server.jar" basedir="${build}" filesetmanifest="mergewithoutmain">
