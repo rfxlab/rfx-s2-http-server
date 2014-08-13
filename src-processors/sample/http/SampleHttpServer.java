@@ -26,7 +26,7 @@ public class SampleHttpServer {
 		options.addOption("lcf","load-configs-from", true, "load from specified config-folder name");
 
 		if(args.length == 0){
-			args = new String[]{ "-c" , "--load-configs-from=configs/" };	
+			args = new String[]{ "--load-configs-from=configs/" };	
 		}
 
 		try {
@@ -74,11 +74,10 @@ public class SampleHttpServer {
         System.out.println("-------------- SAMPLE HTTP SERVER with HOST["+ip+":"+port+"] --------------");        
         
         //MemoryManagementUtil.startMemoryUsageTask();
-        String publicClasspath = "sample";       
-        boolean cacheAllCompiledTemplates = true;
+        String publicClasspath = "sample";
         
         HttpServer.setDebug(debug);
         CacheManagerForAllDAO.init();
-        new HttpServer(ip,port, configs.getPrivatePort(), poolSize,cacheAllCompiledTemplates).run(false,publicClasspath);
+        new HttpServer(ip,port, configs.getPrivatePort(), poolSize,cacheTemplate).run(false,publicClasspath);
 	}
 }

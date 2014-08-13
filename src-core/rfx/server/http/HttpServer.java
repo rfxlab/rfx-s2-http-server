@@ -17,7 +17,7 @@ public class HttpServer {
 	static String host = "localhost:8080";
 	
 	public final static String DEFAULT_CLASSPATH = "rfx";
-	public final static String SERVER_INFO_VERSION = "JAmbientDelivery/0.1";
+	public final static String SERVER_INFO_VERSION = "RfxS2Http/0.1";
 	
 	
     int port,privatePort = 31000;;
@@ -27,11 +27,11 @@ public class HttpServer {
     
     static boolean debug = false;
     
-    public static void setDebug(boolean debug) {
+    public final static void setDebug(boolean debug) {
 		HttpServer.debug = debug;
 	}
     
-    public static boolean isDebug() {
+    public final static boolean isDebug() {
 		return debug;
 	}    
     

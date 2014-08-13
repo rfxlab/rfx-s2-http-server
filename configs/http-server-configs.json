@@ -1,4 +1,5 @@
 {
+	baseClasspathOfApplication : "sample",
     ip: "*",
     port : 9090,
     privatePort: 31000,
