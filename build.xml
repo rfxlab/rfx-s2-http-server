@@ -10,6 +10,7 @@
 	
 	<property name="src_core" location="src-core" />
 	<property name="src_processors" location="src-processors" />
+	<property name="src_rfx" location="src-rfx" />
 	
 	<property name="build" location="build" />		
 	<property name="lib" location="lib" />
@@ -116,11 +117,16 @@
 	<target name="compile-src" depends="init" description="compile the source ">
 		<!-- Compile src_core -->
 		<javac srcdir="${src_core}" destdir="${build}" classpathref="jars" debug="on" encoding="utf-8" optimize="on" 
-			target="1.8" includeantruntime="true" fork="yes"	executable="${javac_path}" compiler="javac1.8" />
+			target="1.8" includeantruntime="true" fork="yes" executable="${javac_path}" compiler="javac1.8" />
 		
+		<!-- Compile src_rfx 
+		<javac srcdir="${src_rfx}" destdir="${build}" classpathref="jars" debug="on" encoding="utf-8" optimize="on" 
+					target="1.8" includeantruntime="true" fork="yes" executable="${javac_path}" compiler="javac1.8" />
+					-->
+				
 		<!-- Compile src_processors -->
 		<javac srcdir="${src_processors}" destdir="${build}" classpathref="jars" debug="on" encoding="utf-8" optimize="on" 
-					target="1.8" includeantruntime="true" fork="yes"	executable="${javac_path}" compiler="javac1.8" />		
+					target="1.8" includeantruntime="true" fork="yes" executable="${javac_path}" compiler="javac1.8" />		
 		<fileset dir="bin">
 			<exclude name="**/.svn/*" />
 			<exclude name="${exclude_pattern_folder}" />
