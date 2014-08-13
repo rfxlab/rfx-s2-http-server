@@ -167,7 +167,7 @@
 		<delete file="${dist}/http-server.jar" />
 		<jar jarfile="${dist}/http-server.jar" basedir="${build}" filesetmanifest="mergewithoutmain">
 			<manifest>
-				<attribute name="Main-Class" value="rfx.server.http.HttpServerStarter" />
+				<attribute name="Main-Class" value="sample.http.SampleHttpServer" />
 				<attribute name="Class-Path" value="${class_path_for_server}" />
 			</manifest>
 			<fileset dir="${build}">
@@ -176,7 +176,7 @@
 			</fileset>
 		</jar>
 		
-		<!-- schedule job jar -->
+		<!-- schedule job jar 
 		<delete file="${dist}/recommender-job.jar" />
 		<jar jarfile="${dist}/recommender-job.jar" basedir="${build}" filesetmanifest="mergewithoutmain">
 			<manifest>
@@ -188,6 +188,7 @@
 				<exclude name="${exclude_pattern_folder}" />
 			</fileset>
 		</jar>
+		-->
 		
 		<delete dir="${build}" />
 	</target>
