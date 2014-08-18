@@ -49,7 +49,7 @@ public class HttpServer {
     	setHost(ip, port);
     	this.privatePort = privatePort;
     	this.privatePoolSize = this.publicPoolSize = processorPoolSize;
-    	HandlebarsTemplateUtil.enableUsedCache();
+    	HandlebarsTemplateUtil.enableUsedCache();    	
     }
     
     public HttpServer(String ip, int port, int privatePort, int processorPoolSize, boolean cacheAllCompiledTemplates) {

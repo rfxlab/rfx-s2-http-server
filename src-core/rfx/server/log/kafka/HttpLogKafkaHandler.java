@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
 
 import kafka.producer.ProducerConfig;
@@ -22,6 +23,7 @@ import rfx.server.http.common.CookieUtil;
 import rfx.server.util.LogUtil;
 import rfx.server.util.StringPool;
 import rfx.server.util.StringUtil;
+import rfx.server.util.Utils;
 import rfx.server.util.kafka.KafkaProducerUtil;
 
 public class HttpLogKafkaHandler implements KafkaLogHandler {
@@ -39,7 +41,7 @@ public class HttpLogKafkaHandler implements KafkaLogHandler {
 	static boolean writeToKafka =  httpServerConfigs.getWriteKafkaLogEnable() == 1;
 	AtomicLong counter = new AtomicLong();
 
-	private List<LogBuffer> logBufferList = new ArrayList<>(NUM_BATCH_JOB);
+	private List<SendLogBufferTask> logBufferList = new ArrayList<>(NUM_BATCH_JOB);
 	private Timer timer = new Timer();	
 	private Random randomGenerator;
 			
@@ -59,6 +61,7 @@ public class HttpLogKafkaHandler implements KafkaLogHandler {
 			Set<String> keys = kafkaProducerList.keySet();
 			System.out.println(keys);
 			String defaultPartitioner = httpServerConfigs.getDefaultPartitioner();
+			System.out.println("### kafkaProducerList " + kafkaProducerList.size());
 			for (String key : keys) {
 				Map<String,String> jsonProducerConfig = kafkaProducerList.get(key);
 				String topic = jsonProducerConfig.get("kafkaTopic");
@@ -90,7 +93,7 @@ public class HttpLogKafkaHandler implements KafkaLogHandler {
 	/*
 	 * Get Singleton by specified config
 	 */
-	public static HttpLogKafkaHandler getKafkaHandler(String kafkaType){
+	public static HttpLogKafkaHandler getKafkaHandler(String kafkaType){		
 		return _kafkaHandlerList.get(kafkaType);
 	}
 	
@@ -112,11 +115,20 @@ public class HttpLogKafkaHandler implements KafkaLogHandler {
 		int delta = 400;
 		for (int i = 0; i < NUM_BATCH_JOB; i++) {
 			int id = i+1;
-			LogBuffer buffer = new LogBuffer(producerConfig, topic,id);
-			timer.schedule(buffer,delta , TIME_TO_SEND );
+			SendLogBufferTask job = new SendLogBufferTask(producerConfig, topic,id);
+			timer.schedule(job,delta , TIME_TO_SEND );
 			delta += 100;
-			logBufferList.add(buffer);
+			logBufferList.add(job);
 		}		
+		timer.schedule(new TimerTask() {			
+			@Override
+			public void run() {
+				for (SendLogBufferTask task : logBufferList) {					
+					task.setRefreshProducer(true);
+					Utils.sleep(1000);
+				}	
+			}
+		}, 15000, 15000);
 		randomGenerator = new Random();
 	}	
 	
@@ -127,12 +139,11 @@ public class HttpLogKafkaHandler implements KafkaLogHandler {
 			return;
 		}		
 		countingToDebug();			
-		int index = randomGenerator.nextInt(logBufferList.size());		
-		
+		int index = randomGenerator.nextInt(logBufferList.size());
 		try {
-			LogBuffer logBuffer = logBufferList.get(index);
-			if(logBuffer != null){
-				logBuffer.push(new HttpDataLog(ip, userAgent, logDetails, cookieString));
+			SendLogBufferTask task = logBufferList.get(index);
+			if(task != null){
+				task.addToBufferQueue(new HttpDataLog(ip, userAgent, logDetails, cookieString));
 			} else {
 				LogUtil.error(topic, "writeLogToKafka: FlushLogToKafkaTask IS NULL");
 			}
@@ -143,9 +154,9 @@ public class HttpLogKafkaHandler implements KafkaLogHandler {
 	
 	@Override
 	public void flushAllLogsToKafka() {
-		for (LogBuffer logBuffer : logBufferList) {
+		for (SendLogBufferTask task : logBufferList) {
 			//flush all
-			logBuffer.flushLogsToKafkaBroker(false,-1);
+			task.flushLogsToKafkaBroker(-1);
 		}		
 	}
 	
@@ -210,8 +221,7 @@ public class HttpLogKafkaHandler implements KafkaLogHandler {
 		
 		if(StringUtil.isNotEmpty(referer)){
 			cookieStBuilder.append("; referer=").append(referer);
-		}
-		
+		}		
 		writeLogToKafka(ip, userAgent, logDetails, cookieStBuilder.toString());		
 	}
 	
@@ -225,7 +235,7 @@ public class HttpLogKafkaHandler implements KafkaLogHandler {
 		int index = randomGenerator.nextInt(logBufferList.size());		
 		
 		try {
-			LogBuffer logBuffer = logBufferList.get(index);
+			SendLogBufferTask logBuffer = logBufferList.get(index);
 			if(logBuffer != null){
 				String uri = request.getUri();
 				if(StringUtil.isEmpty(uri)){
@@ -240,7 +250,7 @@ public class HttpLogKafkaHandler implements KafkaLogHandler {
 					return;
 				}
 				logDetails = StringUtil.replace(logDetails, "%3A", ":");
-				logBuffer.push(new HttpDataLog(ip, "-", logDetails, "-"));
+				logBuffer.addToBufferQueue(new HttpDataLog(ip, "-", logDetails, "-"));
 			} else {
 				LogUtil.error(topic, "writeLogToKafka: FlushLogToKafkaTask IS NULL");
 			}

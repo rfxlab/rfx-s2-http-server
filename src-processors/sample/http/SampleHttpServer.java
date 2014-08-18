@@ -9,6 +9,7 @@ import org.apache.commons.cli.PosixParser;
 
 import rfx.server.configs.HttpServerConfigs;
 import rfx.server.http.HttpServer;
+import rfx.server.log.kafka.HttpLogKafkaHandler;
 import sample.pollapp.cache.CacheManagerForAllDAO;
 
 public class SampleHttpServer {
@@ -78,6 +79,9 @@ public class SampleHttpServer {
         
         HttpServer.setDebug(debug);
         CacheManagerForAllDAO.init();
+        if(configs.getKafkaProducerList().size() > 0){
+        	HttpLogKafkaHandler.initKafkaSession();	
+        }        
         new HttpServer(ip,port, configs.getPrivatePort(), poolSize,cacheTemplate).run(false,publicClasspath);
 	}
 }

@@ -1,8 +1,6 @@
 package rfx.server.log.kafka;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Queue;
 import java.util.TimerTask;
@@ -10,15 +8,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import kafka.javaapi.producer.Producer;
+import kafka.producer.KeyedMessage;
+import kafka.producer.ProducerConfig;
 import rfx.server.configs.HttpServerConfigs;
 import rfx.server.util.LogUtil;
 import rfx.server.util.Utils;
 import rfx.server.util.kafka.KafkaProducerUtil;
-import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
-import kafka.producer.ProducerConfig;
 
-public class LogBuffer extends TimerTask {
+public class SendLogBufferTask extends TimerTask {
 
 	private ProducerConfig producerConfig;
 	private String topic = "";
@@ -26,6 +24,7 @@ public class LogBuffer extends TimerTask {
 	private Queue<HttpDataLog> queueLogs;
 	private ExecutorService executor;
 	int numberFlushOfJob = 3;
+	boolean refreshProducer = false;
 	
 	public String getId() {
 		return actorId;
@@ -35,11 +34,23 @@ public class LogBuffer extends TimerTask {
 		this.actorId = id;
 	}
 	
-	public void push(HttpDataLog log){
+	public void addToBufferQueue(HttpDataLog log){
 		queueLogs.add(log);		
 	}
 	
-	public LogBuffer(ProducerConfig producerConfig, String topic, int id) {
+	public boolean isRefreshProducer() {
+		return refreshProducer;
+	}
+
+	public synchronized void setRefreshProducer(boolean refreshProducer) {
+		int queueSize = this.queueLogs.size();
+		if(queueSize > 0){
+			System.out.println("actorId: " + actorId + " got refreshProducer="+refreshProducer);
+			this.refreshProducer = refreshProducer;
+		}
+	}
+
+	public SendLogBufferTask(ProducerConfig producerConfig, String topic, int id) {
 		super();
 		HttpServerConfigs configs = HttpServerConfigs.load(); 
 		this.producerConfig = producerConfig;
@@ -49,7 +60,7 @@ public class LogBuffer extends TimerTask {
 		executor = Executors.newFixedThreadPool(configs.getSendKafkaThreadPerBatchJob());
 	}
 	
-	public void flushLogsToKafkaBroker(boolean refreshProducer, int maxSize ){		
+	public void flushLogsToKafkaBroker(int maxSize){		
 		int queueSize = this.queueLogs.size();
 		if(maxSize <= 0){
 			maxSize = queueSize;			
@@ -89,25 +100,20 @@ public class LogBuffer extends TimerTask {
 		
 	}
 	
-	public void flushLogsToKafkaBroker(boolean refreshProducer ){			
-		flushLogsToKafkaBroker(refreshProducer, HttpLogKafkaHandler.MAX_KAFKA_TO_SEND);
+	public void flushLogsToKafkaBroker(){			
+		flushLogsToKafkaBroker(HttpLogKafkaHandler.MAX_KAFKA_TO_SEND);
 	}
 	
 
 	@Override
-	public void run() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-		//int min = calendar.get(Calendar.MINUTE);
-		int sec = calendar.get(Calendar.SECOND);
-		boolean refreshProducer = (sec % 10) == 0 || (sec % 30) == 0;
-			
+	public void run() {	
 		for (int i = 0; i < numberFlushOfJob; i++) {
-			flushLogsToKafkaBroker(refreshProducer);
-			if(refreshProducer){
-				refreshProducer = false;
+			flushLogsToKafkaBroker();
+			if(refreshProducer){				
+				setRefreshProducer(false);
+				Utils.sleep(10);
 			}
-			Utils.sleep(10);
+			Utils.sleep(2);
 		}
 	}
 }

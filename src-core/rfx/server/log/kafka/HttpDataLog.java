@@ -83,4 +83,5 @@ public class HttpDataLog implements Serializable{
 		this.unixTimeInQueue = unixTimeInQueue;
 	}	
 	
+
 }

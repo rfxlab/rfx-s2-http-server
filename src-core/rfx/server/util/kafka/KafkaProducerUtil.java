@@ -1,18 +1,18 @@
 package rfx.server.util.kafka;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
-import rfx.server.configs.HttpServerConfigs;
 import kafka.javaapi.producer.Producer;
 import kafka.producer.ProducerConfig;
+import rfx.server.configs.HttpServerConfigs;
 
 public class KafkaProducerUtil {
 
 	static HttpServerConfigs httpServerConfigs = HttpServerConfigs.load();	
-	static Map<String, Producer<String, String>> kafkaProducerPool = new HashMap<String, Producer<String,String>>();
+	static Map<String, Producer<String, String>> kafkaProducerPool = new ConcurrentHashMap<>();
 
 	public static void addKafkaProducer(String actorId,  Producer<String, String> producer){
 		kafkaProducerPool.put(actorId, producer);
@@ -32,6 +32,7 @@ public class KafkaProducerUtil {
 			addKafkaProducer(actorId, producer);
 		} else {
 			if(refreshProducer){
+				System.out.println("### refreshProducer for actorId: " + actorId);
 				producer.close(); producer = null;
 				producer = new Producer<>(producerConfig);
 				addKafkaProducer(actorId, producer);
