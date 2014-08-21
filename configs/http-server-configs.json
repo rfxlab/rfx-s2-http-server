@@ -9,5 +9,16 @@
     debugModeEnabled : 1,
     cookieDomain: ".example.com",
     accessLogFileName : "access.log",
-    debugLogFolderPath : "./log"
+    debugLogFolderPath : "./logs",
+    
+    
+    numberBatchJob : 2,
+    defaultLogHandlerClassPath : "rfx.server.log.handlers.UserActivityLogHandler",
+    defaultPartitioner: "rfx.server.log.kafka.SimplePartitioner",
+    kafkaProducerList : {
+    	kafka-social-activity-Producer : {
+    		kafkaTopic : "item-tracking",
+    		brokerList : "127.0.0.1:9092"
+    	}
+    }
 }

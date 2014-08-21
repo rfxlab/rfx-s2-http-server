@@ -19,7 +19,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import kafka.producer.ProducerConfig;
 import rfx.server.configs.HttpServerConfigs;
-import rfx.server.http.common.CookieUtil;
 import rfx.server.util.LogUtil;
 import rfx.server.util.StringPool;
 import rfx.server.util.StringUtil;
@@ -192,32 +191,33 @@ public class HttpLogKafkaHandler implements KafkaLogHandler {
 			shouldGenCookie = true;
 		}
 		
-		if(shouldGenCookie)
-		{			
-			String userid ="",eatv="",usersession="";			
-			int sessionIx = logDetails.indexOf(usersessionKW);
-			if( sessionIx > -1 ){
-				sessionIx += usersessionKW.length();
-				usersession = logDetails.substring( sessionIx , logDetails.indexOf("%", sessionIx+2)  ) ;
-			}
-			int useridIndex = logDetails.indexOf(userid_bkKW);
-			if( useridIndex > -1 ){
-				useridIndex += userid_bkKW.length();
-				userid = logDetails.substring( useridIndex , logDetails.indexOf("%", useridIndex+2)  ) ;
-			}
-			
-			// if userid empty ---> this browser not support cross-domain cookies and localStorage
-			// create userid = hash(ip,browser,os)
-			if( StringUtil.isEmpty(userid) ){
-				String browser = userAgent;
-				String os = "";
-				userid = CookieUtil.generateUserIdByIp(ip, browser, os);
-			}
-			
-			cookieStBuilder.append("userid=").append(userid);
-			cookieStBuilder.append("; usersession=").append(usersession);
-			cookieStBuilder.append("; eatv=").append(eatv);
-		}
+		//FIXME refactoring this code
+//		if(shouldGenCookie)
+//		{			
+//			String userid ="",eatv="",usersession="";			
+//			int sessionIx = logDetails.indexOf(usersessionKW);
+//			if( sessionIx > -1 ){
+//				sessionIx += usersessionKW.length();
+//				usersession = logDetails.substring( sessionIx , logDetails.indexOf("%", sessionIx+2)  ) ;
+//			}
+//			int useridIndex = logDetails.indexOf(userid_bkKW);
+//			if( useridIndex > -1 ){
+//				useridIndex += userid_bkKW.length();
+//				userid = logDetails.substring( useridIndex , logDetails.indexOf("%", useridIndex+2)  ) ;
+//			}
+//			
+//			// if userid empty ---> this browser not support cross-domain cookies and localStorage
+//			// create userid = hash(ip,browser,os)
+//			if( StringUtil.isEmpty(userid) ){
+//				String browser = userAgent;
+//				String os = "";
+//				userid = CookieUtil.generateUserIdByIp(ip, browser, os);
+//			}
+//			
+//			cookieStBuilder.append("userid=").append(userid);
+//			cookieStBuilder.append("; usersession=").append(usersession);
+//			cookieStBuilder.append("; eatv=").append(eatv);
+//		}
 		
 		if(StringUtil.isNotEmpty(referer)){
 			cookieStBuilder.append("; referer=").append(referer);

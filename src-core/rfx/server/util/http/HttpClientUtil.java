@@ -39,7 +39,7 @@ public class HttpClientUtil {
 		
 	public static final Charset CHARSET_UTF8 = Charset.forName(StringPool.UTF_8);
 	static int DEFAULT_TIMEOUT = 10000;//10 seconds
-	public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 5.1; rv:9.0) Gecko/20100101 Firefox/9.0";
+	public static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36";
 	public static final String MOBILE_USER_AGENT = "Mozilla/5.0 (Linux; U; Android 2.2; en-us; DROID2 GLOBAL Build/S273) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1";
 	
 	final static int MAX_SIZE = 20;
@@ -168,6 +168,7 @@ public class HttpClientUtil {
 			httpget.setHeader("Accept-Charset", "utf-8");
 			httpget.setHeader("Accept", "text/html,application/xhtml+xml");
 			httpget.setHeader("Cache-Control", "max-age=3, must-revalidate, private");	
+			httpget.setHeader("Cookie", "csrftoken=uQ3Oz40ECaDOD0IYeoPa72tBGJEAlMHL; OAID=11cb826f915dfe9b0fe1aac612ec3aac; rfxuuid=exh8vjjue4k");
 			
 			//httpget.addHeader(BasicScheme.authenticate(	 new UsernamePasswordCredentials("ejgsadmin", "6uCdS7cA3"),"UTF-8", false));
 			//httpget.setHeader("Authorization", "OAuth oauth_token=223a363ea1fd0a13b44e52663b97a255, oauth_consumer_key=a324957217164fd1d76b4b60d037abec, oauth_version=1.0, oauth_signature_method=HMAC-SHA1, oauth_timestamp=1322049404, oauth_nonce=-5195915877644743836, oauth_signature=wggOr1ia7juVbG%2FZ2ydImmiC%2Ft4%3D");
