@@ -29,7 +29,7 @@ public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandl
 	private static final Map<String, HttpProcessorManager> handlers = new HashMap<>();
 	
 	//TODO move to config file
-	final static String MAIN_PACKAGE = "ambient.delivery";
+	final static String MAIN_PACKAGE = "sample";
 	public static final int PATTERN_INDEX = 2;
 	public static int DEFAULT_MAX_POOL_SIZE = 20000;
 		

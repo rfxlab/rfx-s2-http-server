@@ -105,8 +105,8 @@ public class HttpRequestData {
 		return new Gson().toJson(this);
 	}
 	
-	public boolean isAmbientBot(){
-		return userAgent.contains("Ambient");
+	public boolean isWebBot(){
+		return userAgent.contains("WebBot");
 	}
 	
 	public String deviceType(){
