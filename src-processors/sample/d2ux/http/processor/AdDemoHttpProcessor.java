@@ -8,7 +8,7 @@ import rfx.server.http.data.HttpRequestEvent;
 import rfx.server.http.data.service.DataService;
 import rfx.server.http.data.service.WebDataService;
 
-@HttpProcessorConfig(uriPattern = "ad-demo",contentType = ContentTypePool.HTML_UTF8)
+@HttpProcessorConfig(uriPath = "/ad-demo",contentType = ContentTypePool.HTML_UTF8)
 public class AdDemoHttpProcessor extends HttpProcessor {
 
 	@Override

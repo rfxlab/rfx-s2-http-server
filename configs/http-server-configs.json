@@ -1,7 +1,7 @@
 {
 	baseClasspathOfApplication : "sample",
     ip: "*",
-    port : 9090,
+    port : 14002,
     privatePort: 31000,
     websocketEnable: 0,
     cacheHttpMaxAge : 1800,
