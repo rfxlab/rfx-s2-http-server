@@ -19,7 +19,7 @@ public class HelloHttpProcessor extends HttpProcessor {
 	@Override
 	protected DataService process(HttpRequestEvent requestEvent) {		
 		String name = requestEvent.param("name", "guest");
-		System.out.println("name: " + name);
+		//System.out.println("name: " + name);
 		return new StringDataService(name);
 	}
 

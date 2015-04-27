@@ -53,7 +53,7 @@ public class PublicHttpProcessorRoutingHandler extends SimpleChannelInboundHandl
         	String remoteIp = NettyHttpUtil.getRemoteIP(ctx, request);
         	String localIp = NettyHttpUtil.getLocalIP(ctx);
         	        	
-        	System.out.println(request.getMethod().name() + "==> uri: " + uri);
+        	//System.out.println(request.getMethod().name() + "==> uri: " + uri);
         	
 
     		if (uri.equalsIgnoreCase(NettyHttpUtil.FAVICON_URI)) {

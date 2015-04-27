@@ -69,8 +69,9 @@ public class HttpServer {
     
 	public void run(boolean websocket, String classpath) throws Exception {
         // Configure the server.
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+		int cores = Runtime.getRuntime().availableProcessors()*2;
+        EventLoopGroup bossGroup = new NioEventLoopGroup(cores);
+        EventLoopGroup workerGroup = new NioEventLoopGroup(cores);
         try {        
         	//init cache for all public model
         	DataServiceProcessingUtil.initTemplateConfigCache(DEFAULT_CLASSPATH);

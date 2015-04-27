@@ -3,6 +3,8 @@ package rfx.server.log.handlers;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
+import rfx.server.log.kafka.HttpLogKafkaHandler;
+import rfx.server.log.kafka.KafkaLogHandlerUtil;
 
 public class UserActivityLogHandler  implements LogHandler {
 
@@ -13,7 +15,7 @@ public class UserActivityLogHandler  implements LogHandler {
 		if (uri.startsWith(trackingPath)) {
 			System.out.println("uri:"+uri);
 			//FIXME
-			//return KafkaLogHandlerUtil.webLogHandler(ipAddress, request, uri, HttpLogKafkaHandler.logSocialActivityKafka);
+			return KafkaLogHandlerUtil.webLogHandler(ipAddress, request, uri, HttpLogKafkaHandler.logSocialActivityKafka);
 		}
 		return null;
 	}
